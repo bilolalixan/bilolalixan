@@ -69,8 +69,21 @@ body {
   max-width: 480px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 16px 16px 12px;
+}
+
+/* Clock */
+.top-clock {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink3);
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s;
+}
+.top-clock .sec {
+  opacity: 0.45;
 }
 
 .controls-group {
@@ -327,6 +340,9 @@ body {
 
 <!-- TOP CONTROLS -->
 <div class="top-controls">
+  <div class="top-clock">
+    <span id="tH">00</span>:<span id="tM">00</span><span class="sec">:<span id="tS">00</span></span>
+  </div>
   <div class="controls-group">
 
     <!-- Theme button -->
@@ -440,6 +456,16 @@ body {
 </div>
 
 <script>
+/* ── CLOCK ── */
+function tickClock() {
+  const n = new Date();
+  document.getElementById('tH').textContent = String(n.getHours()).padStart(2,'0');
+  document.getElementById('tM').textContent = String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('tS').textContent = String(n.getSeconds()).padStart(2,'0');
+}
+tickClock();
+setInterval(tickClock, 1000);
+
 /* ── THEME ── */
 const html = document.documentElement;
 const toggle = document.getElementById('themeToggle');
