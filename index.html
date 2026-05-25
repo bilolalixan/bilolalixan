@@ -341,7 +341,7 @@ body {
 <!-- TOP CONTROLS -->
 <div class="top-controls">
   <div class="top-clock">
-    <span id="tH">00</span>:<span id="tM">00</span><span class="sec">:<span id="tS">00</span></span>
+    <span id="tDate" style="opacity:0.55;margin-right:6px;"></span><span id="tH">00</span>:<span id="tM">00</span><span class="sec">:<span id="tS">00</span></span>
   </div>
   <div class="controls-group">
 
@@ -457,8 +457,11 @@ body {
 
 <script>
 /* ── CLOCK ── */
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function tickClock() {
   const n = new Date();
+  const dateStr = MONTHS[n.getMonth()] + ' ' + n.getDate() + ' · ' + n.getFullYear() + ',';
+  document.getElementById('tDate').textContent = dateStr;
   document.getElementById('tH').textContent = String(n.getHours()).padStart(2,'0');
   document.getElementById('tM').textContent = String(n.getMinutes()).padStart(2,'0');
   document.getElementById('tS').textContent = String(n.getSeconds()).padStart(2,'0');
