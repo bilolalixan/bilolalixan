@@ -158,14 +158,13 @@ body {
 .pill svg { width: 15px; height: 15px; }
 /* Narrow phones: smaller logo, then an icon-only Blog button, so the top row fits. */
 @media (max-width: 440px) {
-  .logo { height: 18px; }
-}
-@media (max-width: 380px) {
+  .logo { height: 16px; }
   .top-actions .pill { width: 40px; padding: 0; justify-content: center; }
   .top-actions .pill span { display: none; }
 }
-@media (max-width: 340px) {
+@media (max-width: 380px) {
   .logo { height: 15px; }
+  #shareBtn { display: none; }
 }
 .icon-btn:active { transform: scale(0.94); }
 .icon-btn svg { width: 17px; height: 17px; }
@@ -235,7 +234,7 @@ body {
   transform: translateX(calc(var(--p) * -28px));
 }
 .swipe-text { font-size: 14.5px; font-weight: 500; color: var(--ink); line-height: 1.3; }
-.swipe-text span { color: var(--ink3); font-weight: 400; }
+.swipe-text .sub { color: var(--ink3); font-weight: 400; }
 .swipe-hint {
   width: 40px; height: 40px; border-radius: 50%;
   border: 1px dashed var(--line2);
@@ -320,7 +319,7 @@ body {
       <div class="top-actions">
         <a class="pill" href="/blog">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          <span>Blog</span>
+          <span data-i18n="blog">Blog</span>
         </a>
         <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
           <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -333,8 +332,8 @@ body {
     </div>
 
     <div class="hero-body">
-      <p class="eyebrow">Marketing agentligi</p>
-      <h1 class="greet">
+      <p class="eyebrow" data-i18n="eyebrow">Marketing agentligi</p>
+      <h1 class="greet" data-i18n-html="greet">
         <b>Salom</b> <span class="wave">👋</span>
         <img class="greet-avatar" src="/assets/bilolalixan.jpg" alt=""> xush kelibsiz,
         bu yerda <b>g'oyalar natijaga aylanadi</b>
@@ -343,11 +342,11 @@ body {
       <div class="chips">
         <span class="chip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <b>Toshkent</b>
+          <b data-i18n="city">Toshkent</b>
         </span>
         <span class="chip">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          Strategiya · <b>Natija</b>
+          <span data-i18n-html="strategy">Strategiya · <b>Natija</b></span>
         </span>
         <a class="icon-btn" href="/bilolalixan" aria-label="Bilolalixan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
@@ -358,14 +357,14 @@ body {
 
   <!-- SWIPE TO CONTACT -->
   <div class="card swipe" id="swipe" role="link" tabindex="0"
-       aria-label="Bilolalixan bilan bog'lanish: chapga suring yoki Enter bosing">
+       data-i18n-aria="swipeAria" aria-label="Bilolalixan bilan bog'lanish: chapga suring yoki Enter bosing">
     <div class="swipe-label">
-      <p class="swipe-text">Contact Bilolalixan<br><span>chapga suring</span></p>
+      <p class="swipe-text"><span data-i18n="swipeTitle">Contact Bilolalixan</span><br><span class="sub" data-i18n="swipeHint">chapga suring</span></p>
       <div class="swipe-hint">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
       </div>
     </div>
-    <div class="swipe-fill" id="swipeFill"><span class="fill-text" id="fillText">Davom eting</span></div>
+    <div class="swipe-fill" id="swipeFill"><span class="fill-text" id="fillText" data-i18n="keepGoing">Davom eting</span></div>
     <div class="knob" id="knob"><img src="/assets/bilolalixan.jpg" alt="Bilol alixan"></div>
   </div>
 
@@ -376,6 +375,7 @@ body {
 /* ── SWIPE LEFT → /bilolalixan ── */
 (function () {
   const TARGET = '/bilolalixan';
+  const L = (k) => (window.I18N ? window.I18N.t(k) : ({ keepGoing: 'Davom eting', release: "Qo'yib yuboring", opening: 'Ochilmoqda...' })[k]);
   const swipe    = document.getElementById('swipe');
   const knob     = document.getElementById('knob');
   const fill     = document.getElementById('swipeFill');
@@ -397,7 +397,7 @@ body {
     if (on === ready) return;
     ready = on;
     swipe.classList.toggle('ready', on);
-    fillText.textContent = on ? "Qo'yib yuboring" : 'Davom eting';
+    fillText.textContent = L(on ? 'release' : 'keepGoing');
     if (on && navigator.vibrate) navigator.vibrate(12);
   }
 
@@ -406,7 +406,7 @@ body {
     max = swipe.clientWidth - KNOB_W;
     swipe.classList.add('snap');
     render(max);
-    fillText.textContent = 'Ochilmoqda...';
+    fillText.textContent = L('opening');
     setTimeout(() => { location.href = TARGET; }, 320);
   }
 
@@ -468,10 +468,11 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
   try {
     if (navigator.share) { await navigator.share(data); return; }
     await navigator.clipboard.writeText(data.url);
-    alert('Havola nusxalandi');
+    alert(window.I18N ? window.I18N.t('copied') : 'Havola nusxalandi');
   } catch (_) {}
 });
 </script>
+<script src="/assets/i18n.js"></script>
 <script src="/assets/theme.js"></script>
 </body>
 </html>
