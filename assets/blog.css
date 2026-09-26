@@ -240,6 +240,15 @@ a { color: inherit; }
 .foot a { text-decoration: none; }
 .foot a:hover { color: var(--ink2); }
 
+/* Narrow phones: keep back button, logo, language, theme and share on one row. */
+@media (max-width: 440px) {
+  .logo { height: 18px; }
+}
+@media (max-width: 380px) {
+  .logo { height: 15px; }
+  .top-left:has(.logo) + .top-actions #shareBtn { display: none; }
+}
+
 @media (min-width: 720px) {
   .hero { padding: 26px 28px 28px; }
   .hero-body { padding-top: 88px; }
