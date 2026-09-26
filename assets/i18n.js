@@ -5,8 +5,10 @@
    - Post bodies stay in the language they were written in (Uzbek); on other
      languages a short note says so.
    - The choice is stored in localStorage "lang", shared with /bilolalixan.
-   - A language button is added next to the theme toggle when the page has
-     no language control of its own. */
+   - Builds the site menu: one button in the top row that opens a panel with
+     language (UZ/RU/EN), light mode and share. The page's own theme/share
+     buttons (and /bilolalixan's language dropdown) are hidden and driven
+     from the menu, so existing and bot-made pages need no markup changes. */
 (function () {
   const LANGS = ['uz', 'ru', 'en'];
 
@@ -26,6 +28,9 @@
       share: 'Ulashish',
       theme: "Yorug' / qorong'i rejim",
       copied: 'Havola nusxalandi',
+      menu: 'Menyu',
+      language: 'Til',
+      lightMode: "Yorug' rejim",
       home: 'Bosh sahifa',
       blogEyebrow: 'Apelsin blogi',
       blogTitle: "Marketing, biznes va <b>g'oyalar</b> haqida yozamiz",
@@ -55,6 +60,9 @@
       share: 'Поделиться',
       theme: 'Светлая / тёмная тема',
       copied: 'Ссылка скопирована',
+      menu: 'Меню',
+      language: 'Язык',
+      lightMode: 'Светлая тема',
       home: 'Главная',
       blogEyebrow: 'Блог Apelsin',
       blogTitle: 'Пишем о маркетинге, бизнесе и <b>идеях</b>',
@@ -84,6 +92,9 @@
       share: 'Share',
       theme: 'Light / dark theme',
       copied: 'Link copied',
+      menu: 'Menu',
+      language: 'Language',
+      lightMode: 'Light mode',
       home: 'Home',
       blogEyebrow: 'Apelsin blog',
       blogTitle: 'We write about marketing, business and <b>ideas</b>',
@@ -186,9 +197,7 @@
     const count = document.querySelector('[data-i18n-posts]');
     if (count) count.innerHTML = t('posts', document.querySelectorAll('#posts .post-card').length);
 
-    // Language button label + active option
-    document.querySelectorAll('.lang-switch .lang-current').forEach((el) => { el.textContent = lang.toUpperCase(); });
-    document.querySelectorAll('.lang-switch [data-lang]').forEach((el) => el.classList.toggle('active', el.dataset.lang === lang));
+    updateMenu();
   }
 
   function setLang(l) {
@@ -196,59 +205,138 @@
     lang = l;
     try { localStorage.setItem('lang', l); } catch (_) {}
     apply();
+    // /bilolalixan has its own translations; keep it in sync.
+    if (document.getElementById('langWrap') && typeof window.setLang === 'function') window.setLang(l);
     document.dispatchEvent(new CustomEvent('langchange', { detail: l }));
   }
   window.I18N.setLang = setLang;
 
-  /* Language button, inserted before the theme toggle. */
-  function buildSwitcher() {
-    if (document.getElementById('langWrap') || document.querySelector('.lang-switch')) return;
-    const anchor = document.querySelector('[data-theme-toggle]');
-    if (!anchor) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'lang-switch';
-    wrap.innerHTML =
-      '<button class="icon-btn lang-toggle" type="button" aria-haspopup="true" aria-label="Til / Язык / Language"><span class="lang-current"></span></button>' +
-      '<div class="lang-menu" role="menu">' +
-      '<button type="button" role="menuitem" data-lang="uz">🇺🇿 O\'zbek</button>' +
-      '<button type="button" role="menuitem" data-lang="ru">🇷🇺 Русский</button>' +
-      '<button type="button" role="menuitem" data-lang="en">🇬🇧 English</button>' +
+  /* ── Site menu ── */
+  const ICON_MENU = '<svg class="i-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="15" y2="15"/></svg>' +
+    '<svg class="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+  const ICON_GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+  const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>';
+
+  let menu = null;
+
+  function updateMenu() {
+    if (!menu) return;
+    menu.querySelector('.menu-toggle').setAttribute('aria-label', t('menu'));
+    menu.querySelector('[data-t="language"]').textContent = t('language');
+    menu.querySelector('[data-t="lightMode"]').textContent = t('lightMode');
+    menu.querySelector('[data-t="share"]').textContent = t('share');
+    menu.querySelectorAll('.seg [data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    const light = document.documentElement.dataset.theme === 'light';
+    menu.querySelector('.switch').setAttribute('aria-checked', String(light));
+  }
+
+  async function share() {
+    const data = { title: document.title, url: location.href };
+    try {
+      if (navigator.share) { await navigator.share(data); return; }
+      await navigator.clipboard.writeText(data.url);
+      alert(t('copied'));
+    } catch (_) {}
+  }
+
+  function buildMenu() {
+    const themeBtn = document.querySelector('[data-theme-toggle]');
+    if (!themeBtn || document.querySelector('.site-menu')) return;
+    const row = themeBtn.parentNode;
+    const shareBtn = document.getElementById('shareBtn');
+    const profileLang = document.getElementById('langWrap');
+
+    menu = document.createElement('div');
+    menu.className = 'site-menu';
+    menu.innerHTML =
+      '<button class="icon-btn menu-toggle" type="button" aria-haspopup="true" aria-expanded="false">' + ICON_MENU + '</button>' +
+      '<div class="menu-panel" role="menu">' +
+        '<div class="menu-row menu-lang"><span class="menu-ico">' + ICON_GLOBE + '</span><span class="menu-label" data-t="language"></span>' +
+          '<div class="seg" role="group">' + LANGS.map((l) => `<button type="button" data-lang="${l}">${l.toUpperCase()}</button>`).join('') + '</div></div>' +
+        '<button class="menu-row" type="button" data-act="theme"><span class="menu-ico">' + ICON_SUN + '</span><span class="menu-label" data-t="lightMode"></span>' +
+          '<span class="switch" role="switch" aria-checked="false"><span></span></span></button>' +
+        '<button class="menu-row" type="button" data-act="share"><span class="menu-ico">' + ICON_SHARE + '</span><span class="menu-label" data-t="share"></span></button>' +
       '</div>';
-    anchor.parentNode.insertBefore(wrap, anchor);
-    const toggle = wrap.querySelector('.lang-toggle');
-    toggle.addEventListener('click', (e) => { e.stopPropagation(); wrap.classList.toggle('open'); });
-    wrap.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => { wrap.classList.remove('open'); setLang(b.dataset.lang); }));
-    document.addEventListener('click', (e) => { if (!wrap.contains(e.target)) wrap.classList.remove('open'); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') wrap.classList.remove('open'); });
+    row.insertBefore(menu, themeBtn);
+
+    // The top row keeps only the menu; the old controls are driven from it.
+    [themeBtn, shareBtn, profileLang].forEach((el) => el && el.classList.add('menu-moved'));
+
+    const toggle = menu.querySelector('.menu-toggle');
+    const open = (on) => { menu.classList.toggle('open', on); toggle.setAttribute('aria-expanded', String(on)); };
+    toggle.addEventListener('click', (e) => { e.stopPropagation(); open(!menu.classList.contains('open')); });
+    menu.querySelectorAll('.seg [data-lang]').forEach((b) => b.addEventListener('click', () => setLang(b.dataset.lang)));
+    menu.querySelector('[data-act="theme"]').addEventListener('click', () => { themeBtn.click(); updateMenu(); });
+    menu.querySelector('[data-act="share"]').addEventListener('click', () => { open(false); shareBtn ? shareBtn.click() : share(); });
+    // Only real outside taps close the menu (not the synthetic clicks on the hidden buttons).
+    document.addEventListener('click', (e) => { if (e.isTrusted && !menu.contains(e.target)) open(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') open(false); });
+    new MutationObserver(updateMenu).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
   const style = document.createElement('style');
   style.textContent = `
-.lang-switch { position: relative; flex-shrink: 0; }
-.lang-toggle { font: 600 11.5px/1 inherit; font-family: inherit; letter-spacing: 0.06em; }
-.lang-menu {
-  position: absolute; right: 0; top: calc(100% + 8px); z-index: 50;
-  min-width: 150px; padding: 6px;
-  background: var(--card2); border: 0.5px solid var(--line2); border-radius: 18px;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+.menu-moved { display: none !important; }
+.site-menu { position: relative; flex-shrink: 0; }
+.menu-toggle { position: relative; }
+.menu-toggle svg { transition: transform 0.25s ease, opacity 0.2s ease; }
+.menu-toggle .i-close { position: absolute; opacity: 0; transform: rotate(-90deg); }
+.site-menu.open .menu-toggle { background: var(--ink); color: var(--bg); }
+.site-menu.open .menu-toggle .i-open { opacity: 0; transform: rotate(90deg); }
+.site-menu.open .menu-toggle .i-close { opacity: 1; transform: none; }
+.menu-panel {
+  position: absolute; right: 0; top: calc(100% + 10px); z-index: 60;
+  width: 256px; padding: 8px;
+  background: var(--card2); border: 0.5px solid var(--line2); border-radius: 22px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
   opacity: 0; pointer-events: none;
-  transform: translateY(-6px) scale(0.96); transform-origin: top right;
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  transform: translateY(-8px) scale(0.96); transform-origin: top right;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
-.lang-switch.open .lang-menu { opacity: 1; pointer-events: auto; transform: none; }
-.lang-menu button {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  padding: 10px 12px; border: none; border-radius: 12px; background: transparent;
-  font: 400 13px inherit; font-family: inherit; color: var(--ink2); text-align: left; cursor: pointer;
+.site-menu.open .menu-panel { opacity: 1; pointer-events: auto; transform: none; }
+.menu-row {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  min-height: 48px; padding: 6px 8px 6px 6px; border: none; border-radius: 16px;
+  background: transparent; color: var(--ink); text-align: left; cursor: pointer;
+  font-weight: 500; font-size: 14px; font-family: inherit;
+  transition: background 0.15s;
 }
-.lang-menu button:hover { background: var(--chip); color: var(--ink); }
-.lang-menu button.active { color: var(--ink); font-weight: 600; }
+button.menu-row:hover { background: var(--chip); }
+.menu-row + .menu-row { margin-top: 2px; }
+.menu-lang { cursor: default; flex-wrap: wrap; }
+.menu-ico {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--chip);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--ink);
+}
+.menu-ico svg { width: 16px; height: 16px; }
+.menu-label { flex: 1; }
+.seg { display: flex; gap: 2px; padding: 3px; border-radius: 100px; background: var(--chip); }
+.seg button {
+  height: 30px; min-width: 38px; padding: 0 8px; border: none; border-radius: 100px;
+  background: transparent; color: var(--ink2); cursor: pointer;
+  font-weight: 600; font-size: 11.5px; font-family: inherit; letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+}
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.switch {
+  width: 42px; height: 26px; border-radius: 100px; background: var(--chip);
+  border: 0.5px solid var(--line2); position: relative; flex-shrink: 0;
+  transition: background 0.2s;
+}
+.switch span {
+  position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--ink2); transition: transform 0.2s ease, background 0.2s;
+}
+.switch[aria-checked="true"] { background: var(--ink); }
+.switch[aria-checked="true"] span { transform: translateX(16px); background: var(--bg); }
 .lang-note {
   margin: 0 0 18px; padding: 10px 14px; border-radius: 14px;
   background: var(--chip); color: var(--ink2); font-size: 13px;
 }`;
   document.head.appendChild(style);
 
-  buildSwitcher();
+  buildMenu();
   apply();
 })();
