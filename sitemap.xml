@@ -10,4 +10,14 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://www.apelsin.asia/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.apelsin.asia/blog/apelsin-blogi-ishga-tushdi</loc>
+    <lastmod>2026-09-27</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>
