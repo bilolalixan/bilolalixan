@@ -25,6 +25,17 @@
 <meta name="twitter:image" content="https://www.apelsin.asia/assets/og-bilolalixan.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Bilol alixan Kemal O'g'li","jobTitle":"Founder","worksFor":{"@type":"Organization","name":"Kingdom Group"},"image":"https://www.apelsin.asia/assets/bilolalixan.jpg","url":"https://www.apelsin.asia/bilolalixan","telephone":"+998338308000","address":{"@type":"PostalAddress","addressLocality":"Toshkent","addressCountry":"UZ"},"sameAs":["https://www.instagram.com/bilolalixan","https://t.me/bilolalixans","https://www.linkedin.com/in/bilol-alixan-toxirov-828897304","https://www.youtube.com/@bilolalixan"]}</script>
 <meta name="theme-color" content="#0b0b0c">
+<script>
+/* Apply the saved (or system) theme before first paint. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('theme'); } catch (_) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = t === 'light' ? '#eeeef0' : '#0b0b0c';
+})();
+</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -40,9 +51,47 @@
   --ink2:    #a1a1a6;
   --ink3:    #6b6b70;
   --radius:  30px;
+  --hover:   #303035;
+  --card2-hover: #26262a;
+  --fill:    #333338;
+  --ring:    #3a3a3f;
+  --field:   #232326;
+  --prose:   #d6d6d9;
+  --ok:      #6fcf97;
+  --err:     #eb7a7a;
+  color-scheme: dark;
 }
+:root[data-theme="light"] {
+  --bg:      #eeeef0;
+  --card:    #ffffff;
+  --card2:   #f5f5f6;
+  --chip:    #ececee;
+  --line:    rgba(0,0,0,0.06);
+  --line2:   rgba(0,0,0,0.12);
+  --ink:     #0b0b0c;
+  --ink2:    #5f5f66;
+  --ink3:    #9b9ba1;
+  --hover:   #e0e0e3;
+  --card2-hover: #ececee;
+  --fill:    #e2e2e5;
+  --ring:    #d4d4d8;
+  --field:   #ffffff;
+  --prose:   #2c2c30;
+  --ok:      #1f9d55;
+  --err:     #d64545;
+  color-scheme: light;
+}
+/* White brand images turn black on the light theme. */
+[data-theme="light"] .logo,
+[data-theme="light"] .home-btn img { filter: invert(1); }
 
-html, body { background: var(--bg); }
+/* Theme toggle: sun in dark (switch to light), moon in light. */
+.theme-btn .i-moon { display: none; }
+[data-theme="light"] .theme-btn .i-sun { display: none; }
+[data-theme="light"] .theme-btn .i-moon { display: block; }
+
+
+html, body { background: var(--bg); transition: background 0.3s; }
 body {
   font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: var(--ink);
@@ -80,7 +129,7 @@ body {
   cursor: pointer; text-decoration: none; flex-shrink: 0;
   transition: background 0.15s, transform 0.15s;
 }
-.icon-btn:hover { background: #303035; }
+.icon-btn:hover { background: var(--hover); }
 .icon-btn:active { transform: scale(0.94); }
 .icon-btn svg { width: 17px; height: 17px; }
 
@@ -102,7 +151,7 @@ body {
   font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
   transition: background 0.15s, transform 0.15s;
 }
-.home-btn:hover { background: #303035; }
+.home-btn:hover { background: var(--hover); }
 .home-btn:active { transform: scale(0.96); }
 .home-btn svg { width: 15px; height: 15px; color: var(--ink2); transition: transform 0.2s; }
 .home-btn:hover svg { transform: translateX(-2px); }
@@ -117,7 +166,7 @@ body {
   display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
   transition: background 0.15s;
 }
-.lang-btn:hover { background: #303035; }
+.lang-btn:hover { background: var(--hover); }
 .lang-chevron { width: 10px; height: 10px; stroke: var(--ink2); transition: transform 0.2s; }
 .lang-wrap.open .lang-chevron { transform: rotate(180deg); }
 .lang-dropdown {
@@ -223,7 +272,7 @@ body {
   transition: border-color 0.15s, background 0.15s;
 }
 .fb-input::placeholder, .fb-text::placeholder { color: var(--ink3); }
-.fb-input:focus, .fb-text:focus { border-color: var(--ink3); background: #232326; }
+.fb-input:focus, .fb-text:focus { border-color: var(--ink3); background: var(--field); }
 .fb-text { min-height: 110px; resize: vertical; line-height: 1.55; }
 .fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 .fb-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
@@ -238,15 +287,15 @@ body {
 .fb-send:active { transform: scale(0.97); }
 .fb-send:disabled { opacity: 0.4; cursor: default; }
 .fb-status { font-size: 12.5px; min-height: 16px; color: var(--ink2); padding-left: 6px; }
-.fb-status.ok { color: #6fcf97; }
-.fb-status.err { color: #eb7a7a; }
+.fb-status.ok { color: var(--ok); }
+.fb-status.err { color: var(--err); }
 
 .foot { text-align: center; font-size: 11px; color: var(--ink3); padding: 10px 0 2px; letter-spacing: 0.02em; }
 .foot a { color: inherit; text-decoration: none; }
 .foot a:hover { color: var(--ink2); }
 
-@media (max-width: 400px) {
-  .clock .date { display: none; }
+@media (max-width: 480px) {
+  .clock .date, .clock .sec { display: none; }
 }
 @media (max-width: 370px) {
   .home-btn span { display: none; }
@@ -268,6 +317,10 @@ body {
       </a>
       <div class="top-right">
         <span class="clock"><span class="date" id="tDate"></span><b><span id="tH">00</span>:<span id="tM">00</span></b><span class="sec">:<span id="tS">00</span></span></span>
+        <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        </button>
         <div class="lang-wrap" id="langWrap">
           <button class="lang-btn" id="langMainBtn" type="button" onclick="toggleLangDropdown()" aria-label="Til">
             <span id="langLabel">UZ</span>
@@ -519,5 +572,6 @@ fbForm.addEventListener('submit', async (e) => {
   }
 });
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

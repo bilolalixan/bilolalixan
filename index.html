@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0b0b0c">
+<script>
+/* Apply the saved (or system) theme before first paint. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('theme'); } catch (_) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = t === 'light' ? '#eeeef0' : '#0b0b0c';
+})();
+</script>
 <title>Apelsin — Marketing agentligi, Toshkent</title>
 <meta name="description" content="Apelsin — Toshkentdagi marketing agentligi. Biznesingiz uchun strategiya, tahlil va marketing yechimlari: g'oyalarni natijaga aylantiramiz.">
 <link rel="canonical" href="https://www.apelsin.asia/">
@@ -40,9 +51,49 @@
   --ink2:    #a1a1a6;
   --ink3:    #6b6b70;
   --radius:  30px;
+  --hover:   #303035;
+  --card2-hover: #26262a;
+  --fill:    #333338;
+  --ring:    #3a3a3f;
+  --field:   #232326;
+  --prose:   #d6d6d9;
+  --ok:      #6fcf97;
+  --err:     #eb7a7a;
+  --knob-shadow: 0 4px 16px rgba(0,0,0,0.45);
+  color-scheme: dark;
 }
+:root[data-theme="light"] {
+  --bg:      #eeeef0;
+  --card:    #ffffff;
+  --card2:   #f5f5f6;
+  --chip:    #ececee;
+  --line:    rgba(0,0,0,0.06);
+  --line2:   rgba(0,0,0,0.12);
+  --ink:     #0b0b0c;
+  --ink2:    #5f5f66;
+  --ink3:    #9b9ba1;
+  --hover:   #e0e0e3;
+  --card2-hover: #ececee;
+  --fill:    #e2e2e5;
+  --ring:    #d4d4d8;
+  --field:   #ffffff;
+  --prose:   #2c2c30;
+  --ok:      #1f9d55;
+  --err:     #d64545;
+  --knob-shadow: 0 4px 14px rgba(0,0,0,0.14);
+  color-scheme: light;
+}
+/* White brand images turn black on the light theme. */
+[data-theme="light"] .logo,
+[data-theme="light"] .home-btn img { filter: invert(1); }
 
-html, body { background: var(--bg); }
+/* Theme toggle: sun in dark (switch to light), moon in light. */
+.theme-btn .i-moon { display: none; }
+[data-theme="light"] .theme-btn .i-sun { display: none; }
+[data-theme="light"] .theme-btn .i-moon { display: block; }
+
+
+html, body { background: var(--bg); transition: background 0.3s; }
 body {
   font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: var(--ink);
@@ -93,7 +144,7 @@ body {
   cursor: pointer; text-decoration: none;
   transition: background 0.15s, transform 0.15s;
 }
-.icon-btn:hover { background: #303035; }
+.icon-btn:hover { background: var(--hover); }
 .top-actions { display: flex; align-items: center; gap: 6px; }
 .pill {
   display: inline-flex; align-items: center; gap: 6px;
@@ -103,8 +154,19 @@ body {
   text-decoration: none; white-space: nowrap;
   transition: background 0.15s;
 }
-.pill:hover { background: #303035; }
+.pill:hover { background: var(--hover); }
 .pill svg { width: 15px; height: 15px; }
+/* Narrow phones: smaller logo, then an icon-only Blog button, so the top row fits. */
+@media (max-width: 440px) {
+  .logo { height: 18px; }
+}
+@media (max-width: 380px) {
+  .top-actions .pill { width: 40px; padding: 0; justify-content: center; }
+  .top-actions .pill span { display: none; }
+}
+@media (max-width: 340px) {
+  .logo { height: 15px; }
+}
 .icon-btn:active { transform: scale(0.94); }
 .icon-btn svg { width: 17px; height: 17px; }
 
@@ -191,7 +253,7 @@ body {
 .swipe-fill {
   position: absolute; top: 0; bottom: 0; right: 0; z-index: 2;
   width: 84px;
-  background: #333338;
+  background: var(--fill);
   border-radius: var(--radius);
   pointer-events: none;
   display: flex; align-items: center;
@@ -210,8 +272,8 @@ body {
   position: absolute; top: 10px; right: 10px; z-index: 3;
   width: 64px; height: 64px; border-radius: 50%;
   overflow: hidden;
-  border: 2px solid #3a3a3f;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.45);
+  border: 2px solid var(--ring);
+  box-shadow: var(--knob-shadow);
   pointer-events: none;
   transition: border-color 0.25s;
 }
@@ -221,13 +283,13 @@ body {
 }
 
 /* Past the threshold: trail turns light, text tells the user to let go. */
-.swipe.ready .swipe-fill { background: #ececed; }
-.swipe.ready .fill-text  { color: #0b0b0c; }
-.swipe.ready .knob       { border-color: #ececed; }
+.swipe.ready .swipe-fill { background: var(--ink); }
+.swipe.ready .fill-text  { color: var(--bg); }
+.swipe.ready .knob       { border-color: var(--ink); }
 
 /* Hover (mouse only): lift the card slightly and invite the drag. */
 @media (hover: hover) {
-  .swipe:hover { background: #242428; }
+  .swipe:hover { background: var(--card2-hover); }
   .swipe:hover .knob img { transform: scale(1.08); }
   .swipe:hover .swipe-hint { border-color: var(--ink3); color: var(--ink); }
   .swipe:hover .swipe-hint svg { animation-duration: 0.9s; }
@@ -258,8 +320,12 @@ body {
       <div class="top-actions">
         <a class="pill" href="/blog">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          Blog
+          <span>Blog</span>
         </a>
+        <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        </button>
         <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
         </button>
@@ -406,5 +472,6 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
   } catch (_) {}
 });
 </script>
+<script src="/assets/theme.js"></script>
 </body>
 </html>
