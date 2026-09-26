@@ -157,14 +157,14 @@ body {
 .pill:hover { background: var(--hover); }
 .pill svg { width: 15px; height: 15px; }
 /* Narrow phones: smaller logo, then an icon-only Blog button, so the top row fits. */
-@media (max-width: 440px) {
-  .logo { height: 16px; }
+/* Narrow phones: slightly smaller logo, then an icon-only Blog button. */
+@media (max-width: 370px) {
+  .logo { height: 19px; }
+}
+@media (max-width: 350px) {
+  .logo { height: 17px; }
   .top-actions .pill { width: 40px; padding: 0; justify-content: center; }
   .top-actions .pill span { display: none; }
-}
-@media (max-width: 380px) {
-  .logo { height: 15px; }
-  #shareBtn { display: none; }
 }
 .icon-btn:active { transform: scale(0.94); }
 .icon-btn svg { width: 17px; height: 17px; }
