@@ -68,7 +68,8 @@ async function parsePost(msg) {
     parsed = fromTelegram(msg.caption || '', msg.caption_entities);
     coverId = msg.photo[msg.photo.length - 1].file_id;
   } else {
-    parsed = fromTelegram(msg.text || '', msg.entities);
+    const found = findText(msg);
+    parsed = fromTelegram(found ? found.text : '', found ? found.entities : []);
   }
   if (!parsed.title) throw new UserError("Sarlavha topilmadi: birinchi qatorga sarlavha yozing.");
   if (parsed.title.length > 140) throw new UserError('Sarlavha juda uzun (140 belgigacha).');
@@ -84,6 +85,19 @@ async function parsePost(msg) {
 }
 
 class UserError extends Error {}
+
+/* Text of a message. Besides text/caption, looks one level deep for any
+   object shaped like { text, entities } in case Telegram delivers formatted
+   messages under a newer field. */
+function findText(msg) {
+  if (typeof msg.text === 'string') return { text: msg.text, entities: msg.entities || [] };
+  if (typeof msg.caption === 'string') return { text: msg.caption, entities: msg.caption_entities || [] };
+  for (const [k, v] of Object.entries(msg)) {
+    if (k === 'reply_to_message' || k === 'from' || k === 'chat' || !v || typeof v !== 'object') continue;
+    if (typeof v.text === 'string' && v.text.trim()) return { text: v.text, entities: v.entities || v.text_entities || [] };
+  }
+  return null;
+}
 
 /* ── Actions ── */
 async function sendPreview(chatId, msg) {
@@ -179,8 +193,17 @@ async function onMessage(msg) {
   if (text.startsWith('/')) {
     return tg('sendMessage', { chat_id: chatId, text: "Noma'lum buyruq. /help ni bosing.", reply_markup: KEYBOARD });
   }
-  if (msg.text || msg.photo || msg.document) return sendPreview(chatId, msg);
-  return tg('sendMessage', { chat_id: chatId, text: 'Maqolani matn, rasm+izoh yoki .md fayl qilib yuboring.', reply_markup: KEYBOARD });
+  if (msg.photo || msg.document || findText(msg)) return sendPreview(chatId, msg);
+
+  // Unknown message shape: log it (visible only in Vercel logs) and show the
+  // field names so the format can be supported.
+  const keys = Object.keys(msg).filter((k) => !['message_id', 'from', 'chat', 'date'].includes(k));
+  console.log('[blog-bot] unrecognized message', JSON.stringify(msg).slice(0, 4000));
+  return tg('sendMessage', {
+    chat_id: chatId,
+    text: "Bu xabar turini taniy olmadim (maydonlar: " + keys.join(', ') + ").\nMaqolani oddiy matn, rasm+izoh yoki .md fayl qilib yuboring.",
+    reply_markup: KEYBOARD,
+  });
 }
 
 async function onCallback(cq) {
