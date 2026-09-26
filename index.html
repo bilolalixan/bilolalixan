@@ -204,6 +204,10 @@ body {
 }
 .chip b { color: var(--ink); font-weight: 500; }
 .chip svg { width: 13px; height: 13px; flex-shrink: 0; }
+/* "Strategiya · Natija" opens /booking */
+.chip-link { text-decoration: none; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.15s; }
+.chip-link:hover { background: var(--card2-hover); border-color: var(--line2); }
+.chip-link:active { transform: scale(0.97); }
 .chips .icon-btn { margin-left: auto; flex-shrink: 0; background: var(--card2); border: 0.5px solid var(--line); }
 
 /* ── SWIPE CARD ── */
@@ -344,10 +348,10 @@ body {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <b data-i18n="city">Toshkent</b>
         </span>
-        <span class="chip">
+        <a class="chip chip-link" href="/booking">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           <span data-i18n-html="strategy">Strategiya · <b>Natija</b></span>
-        </span>
+        </a>
         <a class="icon-btn" href="/bilolalixan" aria-label="Bilolalixan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>

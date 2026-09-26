@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<script>
+/* Apply the saved (or system) theme before first paint. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('theme'); } catch (_) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = t === 'light' ? '#eeeef0' : '#0b0b0c';
+})();
+</script>
+<title>Bepul marketing konsultatsiyasi — Apelsin</title>
+<meta name="description" content="Apelsin'dan bepul marketing konsultatsiyasi: 8 ta qisqa savolga javob bering, mutaxassisimiz biznesingiz uchun strategiya bo'yicha siz bilan bog'lanadi.">
+<link rel="canonical" href="https://www.apelsin.asia/booking">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Apelsin">
+<meta property="og:locale" content="uz_UZ">
+<meta property="og:title" content="Bepul marketing konsultatsiyasi — Apelsin">
+<meta property="og:description" content="8 ta qisqa savol — atigi 2 daqiqa. Biznesingiz uchun marketing strategiyasi.">
+<meta property="og:url" content="https://www.apelsin.asia/booking">
+<meta property="og:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
+<link rel="stylesheet" href="/assets/blog.css">
+<style>
+.book-sub { margin-top: 14px; font-size: 14px; color: var(--ink2); }
+
+/* ── FORM CARD ── */
+.book { padding: 22px 20px 20px; }
+.progress { height: 4px; border-radius: 4px; background: var(--chip); overflow: hidden; }
+.progress span { display: block; height: 100%; width: 0; background: var(--ink); border-radius: 4px; transition: width 0.35s cubic-bezier(.2,.8,.2,1); }
+.step-count { margin-top: 12px; font-size: 12.5px; color: var(--ink3); font-variant-numeric: tabular-nums; }
+
+.step { display: none; padding-top: 16px; }
+.step.active { display: block; animation: stepIn 0.3s ease both; }
+.step.back-in { animation-name: stepBack; }
+@keyframes stepIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@keyframes stepBack { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+.q { font-size: 22px; line-height: 1.25; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+.hint { margin-top: 6px; font-size: 13px; color: var(--ink3); }
+.field { margin-top: 16px; }
+.field + .field { margin-top: 12px; }
+.field label { display: block; font-size: 12.5px; color: var(--ink2); margin: 0 0 6px 4px; }
+.input {
+  width: 100%;
+  font-family: inherit; font-size: 16px; color: var(--ink);
+  background: var(--card2);
+  border: 0.5px solid var(--line2); border-radius: 18px;
+  padding: 15px 16px; outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.input::placeholder { color: var(--ink3); }
+.input:focus { border-color: var(--ink3); background: var(--field); }
+textarea.input { min-height: 120px; resize: vertical; line-height: 1.55; }
+.at-wrap { position: relative; }
+.at-wrap span { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--ink3); font-size: 16px; pointer-events: none; }
+.at-wrap .input { padding-left: 32px; }
+.input.bad { border-color: var(--err); }
+
+.opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.opt {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 44px; padding: 0 16px;
+  background: var(--card2); border: 0.5px solid var(--line2); border-radius: 100px;
+  font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+}
+.opt:hover { background: var(--card2-hover); }
+.opt:active { transform: scale(0.97); }
+.opt[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.opts.multi .opt::before {
+  content: ''; width: 14px; height: 14px; border-radius: 5px; border: 1.5px solid currentColor; opacity: 0.5; flex-shrink: 0;
+}
+.opts.multi .opt[aria-pressed="true"]::before { opacity: 1; background: currentColor; box-shadow: inset 0 0 0 2px var(--ink); }
+.other-input { margin-top: 12px; display: none; }
+.other-input.show { display: block; }
+
+.err { min-height: 18px; margin-top: 12px; font-size: 13px; color: var(--err); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+.btn {
+  height: 48px; padding: 0 22px; border-radius: 100px; border: none;
+  font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: opacity 0.15s, transform 0.15s, background 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn svg { width: 16px; height: 16px; }
+.btn-primary { background: var(--ink); color: var(--bg); margin-left: auto; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.45; cursor: default; }
+.btn-ghost { background: var(--chip); color: var(--ink); }
+.btn-ghost:hover { background: var(--hover); }
+.btn-ghost[hidden] { display: none; }
+.consent { margin-top: 14px; font-size: 11.5px; line-height: 1.5; color: var(--ink3); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+/* ── DONE ── */
+.done { display: none; padding: 34px 22px 26px; text-align: center; }
+.done.show { display: block; animation: fadeUp 0.45s ease both; }
+.done-icon {
+  width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%;
+  background: var(--ink); color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.done-icon svg { width: 28px; height: 28px; }
+.done h2 { font-size: 24px; letter-spacing: -0.02em; line-height: 1.25; }
+.done p { margin-top: 10px; font-size: 14.5px; color: var(--ink2); }
+.done .nav { justify-content: center; margin-top: 22px; }
+.done .btn-primary { margin-left: 0; text-decoration: none; }
+.done .btn-ghost { text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="card hero">
+    <div class="top">
+      <div class="top-left">
+        <a class="icon-btn" href="/" aria-label="Bosh sahifa" data-i18n-aria="home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </a>
+        <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство"></a>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        </button>
+        <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-body">
+      <p class="eyebrow" data-i18n="bookEyebrow">Bepul konsultatsiya</p>
+      <h1 class="h1" data-i18n-html="bookTitle">Biznesingiz uchun <b>marketing strategiyasi</b></h1>
+      <p class="book-sub" data-i18n="bookSub">8 ta qisqa savol — atigi 2 daqiqa</p>
+    </div>
+  </header>
+
+  <!-- FORM -->
+  <section class="card book" id="bookCard">
+    <div class="progress"><span id="progressBar"></span></div>
+    <p class="step-count" id="stepCount">Savol 1 / 8</p>
+
+    <form id="leadForm" novalidate>
+      <div class="step" data-step="name">
+        <h2 class="q" data-i18n="q_name">Ismingiz nima?</h2>
+        <div class="field"><input class="input" id="f-name" name="name" maxlength="60" autocomplete="name" data-i18n-ph="ph_name" placeholder="Ismingiz"></div>
+      </div>
+
+      <div class="step" data-step="business">
+        <h2 class="q" data-i18n="q_business">Biznesingiz nomi?</h2>
+        <div class="field"><input class="input" id="f-business" name="business" maxlength="80" autocomplete="organization" data-i18n-ph="ph_business" placeholder="Masalan: Apelsin Studio"></div>
+      </div>
+
+      <div class="step" data-step="industry">
+        <h2 class="q" data-i18n="q_industry">Qaysi yo'nalishda ishlaysiz?</h2>
+        <div class="opts" data-name="industry">
+          <button type="button" class="opt" data-v="retail" data-i18n="o_retail">Savdo / do'kon</button>
+          <button type="button" class="opt" data-v="services" data-i18n="o_services">Xizmat ko'rsatish</button>
+          <button type="button" class="opt" data-v="food" data-i18n="o_food">Restoran / kafe</button>
+          <button type="button" class="opt" data-v="beauty" data-i18n="o_beauty">Go'zallik va salomatlik</button>
+          <button type="button" class="opt" data-v="education" data-i18n="o_education">Ta'lim</button>
+          <button type="button" class="opt" data-v="realestate" data-i18n="o_realestate">Qurilish / ko'chmas mulk</button>
+          <button type="button" class="opt" data-v="production" data-i18n="o_production">Ishlab chiqarish</button>
+          <button type="button" class="opt" data-v="it" data-i18n="o_it">IT / onlayn servis</button>
+          <button type="button" class="opt" data-v="other" data-i18n="o_other">Boshqa</button>
+        </div>
+        <div class="other-input" id="industryOtherWrap"><input class="input" id="f-industryOther" maxlength="60" data-i18n-ph="ph_other" placeholder="Yo'nalishingizni yozing"></div>
+      </div>
+
+      <div class="step" data-step="staff">
+        <h2 class="q" data-i18n="q_staff">Nechta xodimingiz bor?</h2>
+        <div class="opts" data-name="staff">
+          <button type="button" class="opt" data-v="s0" data-i18n="o_s0">Faqat o'zim</button>
+          <button type="button" class="opt" data-v="s1">1–5</button>
+          <button type="button" class="opt" data-v="s2">6–20</button>
+          <button type="button" class="opt" data-v="s3">21–50</button>
+          <button type="button" class="opt" data-v="s4">51–200</button>
+          <button type="button" class="opt" data-v="s5">200+</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="budget">
+        <h2 class="q" data-i18n="q_budget">Oyiga marketingga taxminan qancha sarflaysiz?</h2>
+        <div class="opts" data-name="budget">
+          <button type="button" class="opt" data-v="b0" data-i18n="o_b0">Hozircha yo'q</button>
+          <button type="button" class="opt" data-v="b1" data-i18n="o_b1">$500 gacha</button>
+          <button type="button" class="opt" data-v="b2">$500 – $2 000</button>
+          <button type="button" class="opt" data-v="b3">$2 000 – $5 000</button>
+          <button type="button" class="opt" data-v="b4">$5 000 – $10 000</button>
+          <button type="button" class="opt" data-v="b5">$10 000+</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="goals">
+        <h2 class="q" data-i18n="q_goals">Nima uchun ariza qoldiryapsiz?</h2>
+        <p class="hint" data-i18n="hint_multi">Bir nechtasini tanlash mumkin</p>
+        <div class="opts multi" data-name="goals" data-multi>
+          <button type="button" class="opt" data-v="sales" data-i18n="o_sales">Sotuvni oshirish</button>
+          <button type="button" class="opt" data-v="leads" data-i18n="o_leads">Ko'proq mijoz / lid olish</button>
+          <button type="button" class="opt" data-v="brand" data-i18n="o_brand">Brendni tanitish</button>
+          <button type="button" class="opt" data-v="ads" data-i18n="o_ads">Reklama samaradorligini oshirish</button>
+          <button type="button" class="opt" data-v="smm" data-i18n="o_smm">Ijtimoiy tarmoqlarni rivojlantirish</button>
+          <button type="button" class="opt" data-v="site" data-i18n="o_site">Sayt yoki savdo voronkasi</button>
+          <button type="button" class="opt" data-v="strategy" data-i18n="o_strategy">Marketing strategiyasi</button>
+          <button type="button" class="opt" data-v="audit" data-i18n="o_audit">Marketing auditi</button>
+          <button type="button" class="opt" data-v="other" data-i18n="o_other">Boshqa</button>
+        </div>
+        <div class="other-input" id="goalOtherWrap"><input class="input" id="f-goalOther" maxlength="80" data-i18n-ph="ph_goal_other" placeholder="Maqsadingizni yozing"></div>
+      </div>
+
+      <div class="step" data-step="problem">
+        <h2 class="q" data-i18n="q_problem">Asosiy muammoni qisqacha yozing</h2>
+        <p class="hint" data-i18n="hint_optional">Ixtiyoriy</p>
+        <div class="field"><textarea class="input" id="f-problem" maxlength="800" data-i18n-ph="ph_problem" placeholder="Masalan: reklamaga pul ketyapti, lekin sotuv oshmayapti…"></textarea></div>
+      </div>
+
+      <div class="step" data-step="contact">
+        <h2 class="q" data-i18n="q_contact">Siz bilan qanday bog'lanamiz?</h2>
+        <div class="field">
+          <label for="f-phone" data-i18n="l_phone">Telefon raqam</label>
+          <input class="input" id="f-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" value="+998 ">
+        </div>
+        <div class="field">
+          <label for="f-telegram" data-i18n="l_telegram">Telegram username (ixtiyoriy)</label>
+          <div class="at-wrap"><span>@</span><input class="input" id="f-telegram" maxlength="40" autocapitalize="off" autocomplete="off" spellcheck="false" data-i18n-ph="ph_telegram" placeholder="username"></div>
+        </div>
+        <p class="consent" data-i18n="consent">Ariza yuborish orqali ma'lumotlaringiz siz bilan bog'lanish uchun ishlatilishiga rozilik bildirasiz.</p>
+      </div>
+
+      <input class="hp" id="f-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <p class="err" id="formErr" role="alert"></p>
+
+      <div class="nav">
+        <button type="button" class="btn btn-ghost" id="backBtn" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span data-i18n="back">Orqaga</span>
+        </button>
+        <button type="submit" class="btn btn-primary" id="nextBtn">
+          <span id="nextLabel">Keyingi</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- DONE -->
+  <section class="card done" id="doneCard" aria-live="polite">
+    <div class="done-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h2 data-i18n="done_title">Rahmat, arizangiz qabul qilindi! 🎉</h2>
+    <p data-i18n="done_text">Mutaxassisimiz tez orada siz bilan bog'lanadi.</p>
+    <div class="nav">
+      <a class="btn btn-ghost" href="/blog" data-i18n="done_blog">Blogni o'qish</a>
+      <a class="btn btn-primary" href="/" data-i18n="done_home">Bosh sahifa</a>
+    </div>
+  </section>
+
+  <p class="foot"><a href="/">© Apelsin</a> · <a href="/blog">Blog</a></p>
+</div>
+
+<script src="/assets/i18n.js"></script>
+<script>
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const data = { title: document.title, url: location.href };
+  try {
+    if (navigator.share) { await navigator.share(data); return; }
+    await navigator.clipboard.writeText(data.url);
+    alert(window.I18N ? window.I18N.t('copied') : 'Havola nusxalandi');
+  } catch (_) {}
+});
+
+/* ── Step-by-step lead form → /api/lead (The Hub Robot) ── */
+(function () {
+  const T = (k, ...a) => (window.I18N ? window.I18N.t(k, ...a) : k);
+  const form = document.getElementById('leadForm');
+  const steps = [...form.querySelectorAll('.step')];
+  const bar = document.getElementById('progressBar');
+  const count = document.getElementById('stepCount');
+  const err = document.getElementById('formErr');
+  const backBtn = document.getElementById('backBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const nextLabel = document.getElementById('nextLabel');
+  const $ = (id) => document.getElementById(id);
+  const started = Date.now();
+  let i = 0, sending = false, lastErr = null;
+
+  const answers = { industry: null, staff: null, budget: null, goals: [] };
+
+  function show(n, dir = 1) {
+    steps[i].classList.remove('active', 'back-in');
+    i = n;
+    steps[i].classList.add('active');
+    steps[i].classList.toggle('back-in', dir < 0);
+    backBtn.hidden = i === 0;
+    labels();
+    setErr(null);
+    const focusable = steps[i].querySelector('input:not(.hp), textarea');
+    if (focusable && window.matchMedia('(hover: hover)').matches) focusable.focus({ preventScroll: true });
+  }
+
+  function labels() {
+    bar.style.width = ((i + 1) / steps.length * 100) + '%';
+    count.textContent = T('stepOf', i + 1, steps.length);
+    nextLabel.textContent = sending ? T('sending') : (i === steps.length - 1 ? T('send') : T('next'));
+    if (lastErr) err.textContent = T(lastErr);
+  }
+
+  function setErr(key, input) {
+    lastErr = key;
+    err.textContent = key ? T(key) : '';
+    form.querySelectorAll('.bad').forEach((el) => el.classList.remove('bad'));
+    if (input) { input.classList.add('bad'); input.focus(); }
+  }
+
+  /* Option buttons: single choice auto-advances, multi toggles. */
+  form.querySelectorAll('.opts').forEach((group) => {
+    const name = group.dataset.name;
+    const multi = group.hasAttribute('data-multi');
+    group.querySelectorAll('.opt').forEach((btn) => {
+      btn.setAttribute('aria-pressed', 'false');
+      btn.addEventListener('click', () => {
+        const v = btn.dataset.v;
+        if (multi) {
+          const on = btn.getAttribute('aria-pressed') !== 'true';
+          btn.setAttribute('aria-pressed', String(on));
+          answers[name] = on ? [...answers[name], v] : answers[name].filter((x) => x !== v);
+          if (name === 'goals') $('goalOtherWrap').classList.toggle('show', answers.goals.includes('other'));
+          setErr(null);
+          return;
+        }
+        group.querySelectorAll('.opt').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+        answers[name] = v;
+        setErr(null);
+        if (name === 'industry' && v === 'other') {
+          $('industryOtherWrap').classList.add('show');
+          $('f-industryOther').focus();
+          return;
+        }
+        if (name === 'industry') $('industryOtherWrap').classList.remove('show');
+        setTimeout(() => { if (steps[i].contains(btn)) next(); }, 220);
+      });
+    });
+  });
+
+  /* Phone: keep a +998 prefix and group digits as +998 90 123 45 67. */
+  const phone = $('f-phone');
+  phone.addEventListener('input', () => {
+    let d = phone.value.replace(/\D/g, '');
+    if (!phone.value.trim().startsWith('+') && d && !d.startsWith('998')) d = '998' + d;
+    if (d.startsWith('998')) {
+      const r = d.slice(3, 12);
+      const parts = [r.slice(0, 2), r.slice(2, 5), r.slice(5, 7), r.slice(7, 9)].filter(Boolean);
+      phone.value = '+998 ' + parts.join(' ');
+    } else {
+      phone.value = '+' + d.slice(0, 15);
+    }
+  });
+  // The field already shows "@", so drop one typed or pasted by the user.
+  const tgInput = $('f-telegram');
+  tgInput.addEventListener('input', () => {
+    const v = tgInput.value.replace(/^\s*(https?:\/\/)?t\.me\//i, '').replace(/^@+/, '');
+    if (v !== tgInput.value) tgInput.value = v;
+  });
+
+  const phoneOk = () => {
+    const d = phone.value.replace(/\D/g, '');
+    return d.startsWith('998') ? d.length === 12 : d.length >= 9 && d.length <= 15;
+  };
+
+  function check() {
+    const step = steps[i].dataset.step;
+    if (step === 'name' && $('f-name').value.trim().length < 2) return setErr('err_required', $('f-name')), false;
+    if (step === 'business' && $('f-business').value.trim().length < 2) return setErr('err_required', $('f-business')), false;
+    if (step === 'industry') {
+      if (!answers.industry) return setErr('err_choose'), false;
+      if (answers.industry === 'other' && $('f-industryOther').value.trim().length < 2) return setErr('err_required', $('f-industryOther')), false;
+    }
+    if (step === 'staff' && !answers.staff) return setErr('err_choose'), false;
+    if (step === 'budget' && !answers.budget) return setErr('err_choose'), false;
+    if (step === 'goals' && !answers.goals.length) return setErr('err_choose'), false;
+    if (step === 'contact') {
+      if (!phoneOk()) return setErr('err_phone', phone), false;
+      const tg = $('f-telegram').value.trim().replace(/^@+/, '');
+      if (tg && !/^[A-Za-z0-9_]{4,32}$/.test(tg)) return setErr('err_telegram', $('f-telegram')), false;
+    }
+    return true;
+  }
+
+  function source() {
+    const q = new URLSearchParams(location.search);
+    const utm = ['utm_source', 'utm_medium', 'utm_campaign'].map((k) => q.get(k)).filter(Boolean).join(' / ');
+    if (utm) return utm;
+    try { const r = document.referrer && new URL(document.referrer); if (r && r.host !== location.host) return r.host; } catch (_) {}
+    return '';
+  }
+
+  async function submit() {
+    sending = true; nextBtn.disabled = true; labels();
+    const body = {
+      name: $('f-name').value, business: $('f-business').value,
+      industry: answers.industry, industryOther: $('f-industryOther').value,
+      staff: answers.staff, budget: answers.budget,
+      goals: answers.goals, goalOther: $('f-goalOther').value,
+      problem: $('f-problem').value,
+      phone: phone.value, telegram: $('f-telegram').value,
+      lang: window.I18N ? window.I18N.lang : 'uz',
+      source: source(), hp: $('f-hp').value, elapsed: Date.now() - started,
+    };
+    try {
+      const res = await fetch('/api/lead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'failed');
+      $('bookCard').style.display = 'none';
+      $('doneCard').classList.add('show');
+      $('doneCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (_) {
+      setErr('err_network');
+    } finally {
+      sending = false; nextBtn.disabled = false; labels();
+    }
+  }
+
+  function next() {
+    if (sending || !check()) return;
+    if (i < steps.length - 1) show(i + 1, 1);
+    else submit();
+  }
+
+  form.addEventListener('submit', (e) => { e.preventDefault(); next(); });
+  backBtn.addEventListener('click', () => { if (i > 0) show(i - 1, -1); });
+  form.addEventListener('keydown', (e) => {
+    // Let Enter work natively in the textarea and on buttons (options, back, submit).
+    if (e.key === 'Enter' && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON')) return;
+    if (e.key === 'Enter') { e.preventDefault(); next(); }
+  });
+  document.addEventListener('langchange', labels);
+
+  show(0);
+})();
+</script>
+<script src="/assets/theme.js"></script>
+</body>
+</html>
