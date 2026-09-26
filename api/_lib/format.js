@@ -205,6 +205,110 @@ function fromMarkdown(src) {
   return { title, tag, html: html.join('\n'), plain: plain.join('\n\n'), lead: leadOf(paras, plain) };
 }
 
+/* ── Telegram rich messages (message.rich_message.blocks) ──
+   Newer Telegram clients send formatted posts as blocks, e.g.
+   { type: 'paragraph', text: 'Hi' } or { type: 'list', items: [{ label: '•', blocks: [...] }] }.
+   Inline text is a string, an array, or an object like { type: 'bold', text: ... }.
+   Unknown types keep their text, and are reported via onUnknown for follow-up. */
+const INLINE_TAGS = { bold: 'strong', italic: 'em', underline: 'u', strikethrough: 's', strike: 's', code: 'code', fixed: 'code', monospace: 'code', spoiler: 'span' };
+const LINK_TYPES = ['url', 'text_url', 'text_link', 'link', 'anchor'];
+
+function richInline(t, onUnknown) {
+  if (t == null) return '';
+  if (typeof t === 'string') return esc(t);
+  if (Array.isArray(t)) return t.map((x) => richInline(x, onUnknown)).join('');
+  if (typeof t !== 'object') return esc(String(t));
+  const inner = richInline(t.text != null ? t.text : t.texts, onUnknown);
+  const type = t.type || t['@type'] || '';
+  if (INLINE_TAGS[type]) return `<${INLINE_TAGS[type]}>${inner}</${INLINE_TAGS[type]}>`;
+  if (LINK_TYPES.includes(type)) {
+    const u = safeUrl(t.url || t.href || richPlain(t.text));
+    return u ? `<a href="${esc(u)}" rel="noopener">${inner}</a>` : inner;
+  }
+  if (!['plain', 'hashtag', 'cashtag', 'mention', 'email', 'phone', 'phone_number', 'text', 'concat', 'custom_emoji', ''].includes(type)) onUnknown && onUnknown('inline:' + type);
+  return inner;
+}
+
+function richPlain(t) {
+  if (t == null) return '';
+  if (typeof t === 'string') return t;
+  if (Array.isArray(t)) return t.map(richPlain).join('');
+  if (typeof t === 'object') return richPlain(t.text != null ? t.text : t.texts);
+  return String(t);
+}
+
+const isAllBold = (t) => t && typeof t === 'object' && !Array.isArray(t) && (t.type === 'bold');
+
+function fromRichMessage(rich, onUnknown) {
+  const blocks = (rich && (rich.blocks || rich.content)) || [];
+  const html = [], plain = [], paras = [];
+  let title = '', tag = null;
+
+  // Title: first text block; tag: trailing block made only of hashtags.
+  const list = blocks.slice();
+  if (list.length && list[0].text != null) title = richPlain(list.shift().text).trim();
+  if (list.length) {
+    const last = list[list.length - 1];
+    const lp = last && last.text != null ? richPlain(last.text).trim() : '';
+    if (lp && /^(#[\p{L}\p{N}_]+\s*)+$/u.test(lp)) { tag = lp.split(/\s+/)[0].slice(1).replace(/_/g, ' '); list.pop(); }
+  }
+
+  const renderBlock = (b, depth = 0) => {
+    const type = (b && (b.type || b['@type'])) || '';
+    const txt = b.text != null ? b.text : b.texts;
+    const p = richPlain(txt).trim();
+    switch (type) {
+      case 'paragraph': case 'text': case 'plain': case '':
+        if (!p && !b.blocks) return '';
+        if (b.blocks && txt == null) return b.blocks.map((x) => renderBlock(x, depth)).join('\n');
+        plain.push(p);
+        if (depth === 0 && p.length <= 90 && isAllBold(txt)) return `<h2>${esc(p)}</h2>`;
+        if (depth === 0) paras.push(p);
+        return `<p>${richInline(txt, onUnknown).replace(/\n/g, '<br>')}</p>`;
+      case 'heading': case 'header': case 'title': case 'subtitle': case 'subheader': case 'subheading': {
+        plain.push(p);
+        const lvl = (b.level || (type.startsWith('sub') ? 3 : 2)) >= 3 ? 'h3' : 'h2';
+        return `<${lvl}>${richInline(txt, onUnknown)}</${lvl}>`;
+      }
+      case 'quote': case 'blockquote': case 'pullquote': case 'block_quote': {
+        const inner = b.blocks ? b.blocks.map((x) => richPlainBlock(x)).join('\n') : p;
+        plain.push(inner);
+        const body = b.blocks ? b.blocks.map((x) => richInline(x.text != null ? x.text : x.texts, onUnknown)).join('<br>') : richInline(txt, onUnknown);
+        return `<blockquote>${body}</blockquote>`;
+      }
+      case 'list': case 'bullet_list': case 'ordered_list': case 'numbered_list': {
+        const items = b.items || b.children || [];
+        const ordered = /ordered|numbered/.test(type) || b.ordered === true ||
+          (items.length && items.every((it) => /^\d+[.)]?$/.test(String(it.label || '').trim())));
+        const lis = items.map((it) => {
+          const inner = it.blocks
+            ? it.blocks.map((x, i) => (i === 0 && ['paragraph', 'text', 'plain', ''].includes(x.type || '')
+              ? richInline(x.text != null ? x.text : x.texts, onUnknown) : renderBlock(x, depth + 1))).join('')
+            : richInline(it.text != null ? it.text : it.texts, onUnknown);
+          plain.push(it.blocks ? it.blocks.map(richPlainBlock).join(' ') : richPlain(it.text));
+          return `<li>${inner}</li>`;
+        });
+        return `<${ordered ? 'ol' : 'ul'}>${lis.join('')}</${ordered ? 'ol' : 'ul'}>`;
+      }
+      case 'preformatted': case 'pre': case 'code': case 'code_block':
+        plain.push(p);
+        return `<p><code>${esc(p)}</code></p>`;
+      case 'divider': case 'hr': case 'separator':
+        return '<hr>';
+      default:
+        onUnknown && onUnknown('block:' + type);
+        if (b.blocks) return b.blocks.map((x) => renderBlock(x, depth)).join('\n');
+        if (p) { plain.push(p); if (depth === 0) paras.push(p); return `<p>${richInline(txt, onUnknown)}</p>`; }
+        return '';
+    }
+  };
+  const richPlainBlock = (b) => (b.text != null || b.texts != null) ? richPlain(b.text != null ? b.text : b.texts)
+    : (b.blocks ? b.blocks.map(richPlainBlock).join(' ') : (b.items || []).map(richPlainBlock).join(' '));
+
+  for (const b of list) { const h = renderBlock(b); if (h) html.push(h); }
+  return { title, tag, html: html.join('\n'), plain: plain.join('\n\n'), lead: leadOf(paras, plain) };
+}
+
 /* Text for the post description: the first paragraphs, not headings or lists. */
 function leadOf(paras, plain) {
   const src = paras.length ? paras : plain;
@@ -241,4 +345,4 @@ function excerpt(plain, max = 160) {
   return s.slice(0, max).replace(/\s+\S*$/, '') + '…';
 }
 
-module.exports = { esc, fromTelegram, fromMarkdown, slugify, readingMinutes, tashkentDate, excerpt };
+module.exports = { esc, fromTelegram, fromMarkdown, fromRichMessage, slugify, readingMinutes, tashkentDate, excerpt };
