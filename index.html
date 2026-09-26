@@ -114,7 +114,9 @@ body {
 .chips .icon-btn { margin-left: auto; flex-shrink: 0; background: var(--card2); border: 0.5px solid var(--line); }
 
 /* ── SWIPE CARD ── */
+/* --p (0…1) is how far the knob has travelled; set from JS. */
 .swipe {
+  --p: 0;
   position: relative;
   background: var(--card2);
   height: 84px;
@@ -124,24 +126,19 @@ body {
   cursor: grab;
   animation-delay: 0.08s;
   outline: none;
+  transition: background 0.2s;
 }
 .swipe:focus-visible { box-shadow: 0 0 0 2px var(--ink3); }
 .swipe.dragging { cursor: grabbing; }
 
-/* Trail that grows behind the knob as it moves left. */
-.swipe-fill {
-  position: absolute; top: 0; bottom: 0; right: 0;
-  width: 84px;
-  background: #2a2a2e;
-  border-radius: var(--radius);
-  pointer-events: none;
-}
-
+/* Label sits at the bottom layer: it fades and drifts as the trail covers it. */
 .swipe-label {
-  position: absolute; inset: 0;
+  position: absolute; inset: 0; z-index: 1;
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 104px 0 22px;
   pointer-events: none;
+  opacity: max(0, calc(1 - var(--p) * 2.2));
+  transform: translateX(calc(var(--p) * -28px));
 }
 .swipe-text { font-size: 14.5px; font-weight: 500; color: var(--ink); line-height: 1.3; }
 .swipe-text span { color: var(--ink3); font-weight: 400; }
@@ -150,6 +147,7 @@ body {
   border: 1px dashed var(--line2);
   display: flex; align-items: center; justify-content: center;
   color: var(--ink2); flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
 }
 .swipe-hint svg { width: 16px; height: 16px; animation: nudge 1.8s ease-in-out infinite; }
 @keyframes nudge {
@@ -157,18 +155,59 @@ body {
   50% { transform: translateX(-4px); }
 }
 
+/* Trail grows from the right edge behind the knob and covers the label. */
+.swipe-fill {
+  position: absolute; top: 0; bottom: 0; right: 0; z-index: 2;
+  width: 84px;
+  background: #333338;
+  border-radius: var(--radius);
+  pointer-events: none;
+  display: flex; align-items: center;
+  overflow: hidden;
+  transition: background 0.25s;
+}
+.fill-text {
+  padding-left: 88px;
+  font-size: 14.5px; font-weight: 500; white-space: nowrap;
+  color: var(--ink2);
+  opacity: clamp(0, calc((var(--p) - 0.25) * 3), 1);
+  transition: color 0.25s;
+}
+
 .knob {
-  position: absolute; top: 10px; right: 10px;
+  position: absolute; top: 10px; right: 10px; z-index: 3;
   width: 64px; height: 64px; border-radius: 50%;
   overflow: hidden;
   border: 2px solid #3a3a3f;
   box-shadow: 0 4px 16px rgba(0,0,0,0.45);
   pointer-events: none;
+  transition: border-color 0.25s;
 }
-.knob img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.knob img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.25s ease;
+}
 
-.swipe.snap .knob, .swipe.snap .swipe-fill { transition: transform 0.35s cubic-bezier(.2,.8,.2,1), width 0.35s cubic-bezier(.2,.8,.2,1); }
-.swipe.done .swipe-label { opacity: 0; transition: opacity 0.2s; }
+/* Past the threshold: trail turns light, text tells the user to let go. */
+.swipe.ready .swipe-fill { background: #ececed; }
+.swipe.ready .fill-text  { color: #0b0b0c; }
+.swipe.ready .knob       { border-color: #ececed; }
+
+/* Hover (mouse only): lift the card slightly and invite the drag. */
+@media (hover: hover) {
+  .swipe:hover { background: #242428; }
+  .swipe:hover .knob img { transform: scale(1.08); }
+  .swipe:hover .swipe-hint { border-color: var(--ink3); color: var(--ink); }
+  .swipe:hover .swipe-hint svg { animation-duration: 0.9s; }
+}
+.swipe.dragging .knob img { transform: scale(1.08); }
+
+.swipe.snap .knob, .swipe.snap .swipe-fill {
+  transition: transform 0.35s cubic-bezier(.2,.8,.2,1), width 0.35s cubic-bezier(.2,.8,.2,1), background 0.25s, border-color 0.25s;
+}
+.swipe.snap .swipe-label, .swipe.snap .fill-text {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.8,.2,1), color 0.25s;
+}
 
 .foot {
   text-align: center; font-size: 11px; color: var(--ink3);
@@ -216,13 +255,13 @@ body {
   <!-- SWIPE TO CONTACT -->
   <div class="card swipe" id="swipe" role="link" tabindex="0"
        aria-label="Bilolalixan bilan bog'lanish: chapga suring yoki Enter bosing">
-    <div class="swipe-fill" id="swipeFill"></div>
     <div class="swipe-label">
       <p class="swipe-text">Contact Bilolalixan<br><span>chapga suring</span></p>
       <div class="swipe-hint">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
       </div>
     </div>
+    <div class="swipe-fill" id="swipeFill"><span class="fill-text" id="fillText">Davom eting</span></div>
     <div class="knob" id="knob"><img src="/assets/bilolalixan.jpg" alt="Bilol alixan"></div>
   </div>
 
@@ -233,24 +272,38 @@ body {
 /* ── SWIPE LEFT → /bilolalixan ── */
 (function () {
   const TARGET = '/bilolalixan';
-  const swipe = document.getElementById('swipe');
-  const knob  = document.getElementById('knob');
-  const fill  = document.getElementById('swipeFill');
+  const swipe    = document.getElementById('swipe');
+  const knob     = document.getElementById('knob');
+  const fill     = document.getElementById('swipeFill');
+  const fillText = document.getElementById('fillText');
   const KNOB_W = 84;         // knob + its right gap; the fill starts this wide
   const THRESHOLD = 0.6;     // share of the track needed to trigger
 
-  let startX = 0, dx = 0, max = 0, dragging = false, moved = false, done = false;
+  let startX = 0, dx = 0, max = 0, dragging = false, moved = false, done = false, ready = false;
 
   function render(x) {
+    const p = max ? x / max : 0;
     knob.style.transform = 'translateX(' + (-x) + 'px)';
     fill.style.width = (KNOB_W + x) + 'px';
+    swipe.style.setProperty('--p', p.toFixed(3));
+    setReady(p >= THRESHOLD);
+  }
+
+  function setReady(on) {
+    if (on === ready) return;
+    ready = on;
+    swipe.classList.toggle('ready', on);
+    fillText.textContent = on ? "Qo'yib yuboring" : 'Davom eting';
+    if (on && navigator.vibrate) navigator.vibrate(12);
   }
 
   function go() {
     done = true;
-    swipe.classList.add('snap', 'done');
+    max = swipe.clientWidth - KNOB_W;
+    swipe.classList.add('snap');
     render(max);
-    setTimeout(() => { location.href = TARGET; }, 280);
+    fillText.textContent = 'Ochilmoqda...';
+    setTimeout(() => { location.href = TARGET; }, 320);
   }
 
   function reset() {
@@ -289,8 +342,8 @@ body {
   /* A plain tap nudges the knob to show it should be swiped. */
   function hint() {
     swipe.classList.add('snap');
-    render(36);
-    setTimeout(reset, 260);
+    render(40);
+    setTimeout(reset, 280);
   }
 
   swipe.addEventListener('keydown', (e) => {
@@ -300,7 +353,7 @@ body {
   /* Coming back via the browser's back button restores the page from cache. */
   window.addEventListener('pageshow', () => {
     done = false;
-    swipe.classList.remove('done', 'snap');
+    swipe.classList.remove('snap');
     render(0);
   });
 })();
