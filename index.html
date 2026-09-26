@@ -334,6 +334,38 @@ body {
 .s-name { font-size: 13.5px; font-weight: 500; color: var(--ink); flex: 1; transition: color 0.3s; }
 .s-arrow { color: var(--ink3); }
 .s-arrow svg { width:13px; height:13px; stroke: var(--ink3); transition: stroke 0.3s; }
+
+/* FEEDBACK */
+.feedback { margin-top: 20px; }
+.fb-form { display: flex; flex-direction: column; gap: 8px; }
+.fb-input, .fb-text {
+  width: 100%;
+  font-family: inherit; font-size: 13px; color: var(--ink);
+  background: var(--social-bg);
+  border: 0.5px solid var(--border2); border-radius: 13px;
+  padding: 11px 13px;
+  outline: none;
+  transition: background 0.3s, border-color 0.15s, color 0.3s;
+}
+.fb-input::placeholder, .fb-text::placeholder { color: var(--ink3); }
+.fb-input:focus, .fb-text:focus { border-color: var(--ink3); }
+.fb-text { min-height: 96px; resize: vertical; line-height: 1.55; }
+.fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.fb-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fb-count { font-size: 11px; color: var(--ink3); font-variant-numeric: tabular-nums; }
+.fb-send {
+  background: var(--ink); color: var(--card);
+  border: none; border-radius: 9px;
+  padding: 0 18px; height: 36px;
+  font-size: 12.5px; font-weight: 500; cursor: pointer;
+  font-family: inherit; letter-spacing: 0.02em;
+  transition: opacity 0.15s;
+}
+.fb-send:hover { opacity: 0.82; }
+.fb-send:disabled { opacity: 0.45; cursor: default; }
+.fb-status { font-size: 12px; min-height: 16px; color: var(--ink2); }
+.fb-status.ok { color: #1f9d55; }
+.fb-status.err { color: #d64545; }
 </style>
 </head>
 <body>
@@ -452,6 +484,22 @@ body {
       </a>
     </div>
 
+    <!-- FEEDBACK -->
+    <div class="feedback">
+      <div class="sep"></div>
+      <p class="section-title" id="fbTitle">Fikr qoldiring</p>
+      <form class="fb-form" id="fbForm" novalidate>
+        <input class="fb-input" id="fbName" type="text" maxlength="60" autocomplete="name" placeholder="Ismingiz (ixtiyoriy)">
+        <input class="fb-hp" id="fbHp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <textarea class="fb-text" id="fbText" maxlength="1000" placeholder="Fikringizni yozing..."></textarea>
+        <div class="fb-bottom">
+          <span class="fb-count" id="fbCount">0 / 1000</span>
+          <button class="fb-send" id="fbSend" type="submit">Yuborish</button>
+        </div>
+        <p class="fb-status" id="fbStatus" role="status"></p>
+      </form>
+    </div>
+
   </div>
 </div>
 
@@ -510,7 +558,16 @@ const T = {
     quote: '"Biznes — odamlarning ehtiyojlariga yechim berish va shu orqali daromad olish san\'ati."',
     desc: "Biz ehtiyojlarga — qiymatli yechimlarni tahlil, resurslar va strategiya orqali ishlab chiqib taqdim qilamiz!",
     contact: "Aloqa",
-    label: "UZ"
+    label: "UZ",
+    fbTitle: "Fikr qoldiring",
+    fbName: "Ismingiz (ixtiyoriy)",
+    fbText: "Fikringizni yozing...",
+    fbSend: "Yuborish",
+    fbSending: "Yuborilmoqda...",
+    fbOk: "Rahmat! Fikringiz yuborildi.",
+    fbErr: "Xatolik yuz berdi. Keyinroq urinib ko'ring.",
+    fbEmpty: "Iltimos, fikringizni yozing.",
+    fbWait: "Iltimos, biroz kutib qayta yuboring."
   },
   ru: {
     role: "Основатель · Kingdom Group",
@@ -518,7 +575,16 @@ const T = {
     quote: '"Бизнес — это искусство давать решения на потребности людей и получать доход через это."',
     desc: "Мы разрабатываем и предоставляем ценные решения на потребности через анализ, ресурсы и стратегию!",
     contact: "Для связи",
-    label: "RU"
+    label: "RU",
+    fbTitle: "Оставьте отзыв",
+    fbName: "Ваше имя (необязательно)",
+    fbText: "Напишите ваше мнение...",
+    fbSend: "Отправить",
+    fbSending: "Отправка...",
+    fbOk: "Спасибо! Ваш отзыв отправлен.",
+    fbErr: "Произошла ошибка. Попробуйте позже.",
+    fbEmpty: "Пожалуйста, напишите ваше мнение.",
+    fbWait: "Пожалуйста, подождите немного и отправьте снова."
   },
   en: {
     role: "Founder · Kingdom Group",
@@ -526,7 +592,16 @@ const T = {
     quote: '"Business is the art of solving people\'s needs and earning through that value."',
     desc: "We develop and deliver valuable solutions to needs through analysis, resources and strategy!",
     contact: "Contact",
-    label: "EN"
+    label: "EN",
+    fbTitle: "Leave feedback",
+    fbName: "Your name (optional)",
+    fbText: "Write your thoughts...",
+    fbSend: "Send",
+    fbSending: "Sending...",
+    fbOk: "Thank you! Your feedback has been sent.",
+    fbErr: "Something went wrong. Please try again later.",
+    fbEmpty: "Please write your feedback.",
+    fbWait: "Please wait a moment before sending again."
   }
 };
 
@@ -549,7 +624,68 @@ function setLang(lang) {
   document.getElementById('bioQuote').textContent = t.quote;
   document.getElementById('bioDesc').textContent = t.desc;
   document.getElementById('followBtn').textContent = t.contact;
+  document.getElementById('fbTitle').textContent = t.fbTitle;
+  document.getElementById('fbName').placeholder = t.fbName;
+  document.getElementById('fbText').placeholder = t.fbText;
+  document.getElementById('fbSend').textContent = t.fbSend;
+  document.getElementById('fbStatus').textContent = '';
 }
+
+/* ── FEEDBACK → TELEGRAM (via Vercel function, token stays server-side) ── */
+const FB_API = 'https://bilolalixan.vercel.app/api/feedback';
+const FB_COOLDOWN = 30000;
+
+const fbForm   = document.getElementById('fbForm');
+const fbName   = document.getElementById('fbName');
+const fbText   = document.getElementById('fbText');
+const fbHp     = document.getElementById('fbHp');
+const fbSend   = document.getElementById('fbSend');
+const fbStatus = document.getElementById('fbStatus');
+const fbCount  = document.getElementById('fbCount');
+
+function fbShow(key, cls) {
+  fbStatus.textContent = T[html.dataset.lang][key];
+  fbStatus.className = 'fb-status' + (cls ? ' ' + cls : '');
+}
+
+fbText.addEventListener('input', () => {
+  fbCount.textContent = fbText.value.length + ' / 1000';
+});
+
+fbForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = fbText.value.trim();
+  if (!text) { fbShow('fbEmpty', 'err'); return; }
+  if (fbHp.value) return;
+
+  let last = 0;
+  try { last = Number(localStorage.getItem('fbLast')) || 0; } catch (_) {}
+  if (Date.now() - last < FB_COOLDOWN) { fbShow('fbWait', 'err'); return; }
+
+  fbSend.disabled = true;
+  fbSend.textContent = T[html.dataset.lang].fbSending;
+  fbStatus.textContent = '';
+  fbStatus.className = 'fb-status';
+
+  try {
+    const res = await fetch(FB_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: fbName.value.trim(), text: text, lang: html.dataset.lang, hp: fbHp.value })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    try { localStorage.setItem('fbLast', String(Date.now())); } catch (_) {}
+    fbForm.reset();
+    fbCount.textContent = '0 / 1000';
+    fbShow('fbOk', 'ok');
+  } catch (err) {
+    fbShow('fbErr', 'err');
+  } finally {
+    fbSend.disabled = false;
+    fbSend.textContent = T[html.dataset.lang].fbSend;
+  }
+});
 </script>
 </body>
 </html>
