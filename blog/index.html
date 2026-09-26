@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<title>Blog — Apelsin</title>
+<meta name="description" content="Apelsin blogi: marketing, biznes, strategiya va g'oyalar haqida maqolalar. Muallif — Bilol alixan.">
+<link rel="canonical" href="https://www.apelsin.asia/blog">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Apelsin">
+<meta property="og:locale" content="uz_UZ">
+<meta property="og:title" content="Blog — Apelsin">
+<meta property="og:description" content="Apelsin blogi: marketing, biznes, strategiya va g'oyalar haqida maqolalar.">
+<meta property="og:url" content="https://www.apelsin.asia/blog">
+<meta property="og:image" content="https://www.apelsin.asia/assets/og-blog.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.apelsin.asia/assets/og-blog.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Apelsin blogi","url":"https://www.apelsin.asia/blog","inLanguage":"uz","publisher":{"@type":"Organization","name":"Apelsin","logo":"https://www.apelsin.asia/assets/icon-512.png"}}</script>
+<link rel="stylesheet" href="/assets/blog.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="card hero">
+    <div class="top">
+      <div class="top-left">
+        <a class="icon-btn" href="/" aria-label="Bosh sahifa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </a>
+        <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство"></a>
+      </div>
+      <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+      </button>
+    </div>
+
+    <div class="hero-body">
+      <p class="eyebrow">Apelsin blogi</p>
+      <h1 class="h1">Marketing, biznes va <b>g'oyalar</b> haqida yozamiz</h1>
+      <div class="chips">
+        <span class="chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <b id="postCount">1</b>ta maqola
+        </span>
+        <a class="chip" href="/bilolalixan" style="text-decoration:none">
+          <img src="/assets/bilolalixan.jpg" alt="" style="width:20px;height:20px;border-radius:50%;object-fit:cover;margin-left:-6px">
+          Muallif: <b>Bilol alixan</b>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- POSTS (newest first; the first one is .featured) -->
+  <main id="posts" style="display:flex;flex-direction:column;gap:8px">
+
+    <a class="card post-card featured" href="/blog/apelsin-blogi-ishga-tushdi">
+      <div class="post-meta">
+        <span class="post-tag">Yangilik</span>
+        <time datetime="2026-09-27">27-sentabr, 2026</time>
+        <span class="dot"></span>
+        <span>2 daqiqa</span>
+      </div>
+      <h2 class="post-title">Apelsin blogi ishga tushdi</h2>
+      <p class="post-excerpt">Bu yerda marketing, biznes strategiyasi va g'oyalarni natijaga aylantirish haqida amaliy tajribalarimizni bo'lishamiz.</p>
+      <div class="post-foot">
+        <span class="author"><img src="/assets/bilolalixan.jpg" alt=""><span><b>Bilol alixan</b></span></span>
+        <span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div>
+    </a>
+
+  </main>
+
+  <p class="foot"><a href="/">© Apelsin</a> · <a href="/bilolalixan">Bilol alixan</a></p>
+</div>
+
+<script>
+document.getElementById('postCount').textContent = document.querySelectorAll('#posts .post-card').length;
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const data = { title: document.title, url: location.href };
+  try {
+    if (navigator.share) { await navigator.share(data); return; }
+    await navigator.clipboard.writeText(data.url);
+    alert('Havola nusxalandi');
+  } catch (_) {}
+});
+</script>
+</body>
+</html>
