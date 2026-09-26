@@ -21,12 +21,14 @@
   --ink:    #0a0a0a;
   --card:   #ffffff;
   --shadow: 0 4px 24px rgba(0,0,0,0.10);
+  --border: rgba(0,0,0,0.08);
 }
 [data-theme="dark"] {
   --bg:     #0a0a0a;
   --ink:    #f5f5f5;
   --card:   #141414;
   --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --border: rgba(255,255,255,0.08);
 }
 
 body {
@@ -35,10 +37,33 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 0.5px solid var(--border);
+}
+.navbar a { display: inline-flex; }
+.logo { height: 30px; width: auto; display: block; }
+/* The logo file is white; show it black on the light theme. */
+[data-theme="light"] .logo { filter: invert(1); }
+@media (max-width: 480px) {
+  .navbar { padding: 14px 16px; }
+  .logo { height: 24px; }
+}
+
+main {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
-  -webkit-font-smoothing: antialiased;
 }
 
 .contact-btn {
@@ -64,10 +89,18 @@ body {
 </head>
 <body>
 
+<nav class="navbar">
+  <a href="/" aria-label="Apelsin">
+    <img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство">
+  </a>
+</nav>
+
+<main>
 <a class="contact-btn" href="/bilolalixan">
   Contact Bilolalixan
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 </a>
+</main>
 
 </body>
 </html>
