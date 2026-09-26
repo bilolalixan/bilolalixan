@@ -94,6 +94,20 @@ body {
 .clock b { color: var(--ink); font-weight: 500; }
 .clock .sec { opacity: 0.45; }
 
+/* Back to Apelsin (top-left) */
+.home-btn {
+  height: 40px; padding: 0 14px 0 12px; border-radius: 100px;
+  background: var(--chip); color: var(--ink); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0;
+  font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+  transition: background 0.15s, transform 0.15s;
+}
+.home-btn:hover { background: #303035; }
+.home-btn:active { transform: scale(0.96); }
+.home-btn svg { width: 15px; height: 15px; color: var(--ink2); transition: transform 0.2s; }
+.home-btn:hover svg { transform: translateX(-2px); }
+.home-btn img { width: 18px; height: 18px; display: block; }
+
 /* Language dropdown */
 .lang-wrap { position: relative; }
 .lang-btn {
@@ -231,8 +245,11 @@ body {
 .foot a { color: inherit; text-decoration: none; }
 .foot a:hover { color: var(--ink2); }
 
-@media (max-width: 370px) {
+@media (max-width: 400px) {
   .clock .date { display: none; }
+}
+@media (max-width: 370px) {
+  .home-btn span { display: none; }
   .chip.loc { display: none; }
 }
 </style>
@@ -244,8 +261,10 @@ body {
   <!-- HERO -->
   <header class="card hero">
     <div class="top">
-      <a class="icon-btn" href="/" aria-label="Apelsin">
+      <a class="home-btn" href="/" aria-label="Apelsin — bosh sahifa">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <img src="/assets/apelsin-mark.png" alt="">
+        <span>Apelsin</span>
       </a>
       <div class="top-right">
         <span class="clock"><span class="date" id="tDate"></span><b><span id="tH">00</span>:<span id="tM">00</span></b><span class="sec">:<span id="tS">00</span></span></span>
