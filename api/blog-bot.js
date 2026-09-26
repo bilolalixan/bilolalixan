@@ -12,7 +12,7 @@
 //
 // One-time setup: open https://www.apelsin.asia/api/blog-bot?setup=<BLOG_WEBHOOK_SECRET>
 
-const { fromTelegram, fromMarkdown, slugify, readingMinutes, tashkentDate, excerpt, esc } = require('./_lib/format');
+const { fromTelegram, fromMarkdown, fromRichMessage, slugify, readingMinutes, tashkentDate, excerpt, esc } = require('./_lib/format');
 const T = require('./_lib/templates');
 const gh = require('./_lib/github');
 const { tg, download } = require('./_lib/telegram');
@@ -64,6 +64,10 @@ async function parsePost(msg) {
     if (msg.document.file_size > MAX_DOC_BYTES) throw new UserError('Fayl juda katta (200 KB dan kichik bo\'lsin).');
     const buf = await download(msg.document.file_id);
     parsed = fromMarkdown(buf.toString('utf8'));
+  } else if (msg.rich_message) {
+    const unknown = new Set();
+    parsed = fromRichMessage(msg.rich_message, (t) => unknown.add(t));
+    if (unknown.size) console.log('[blog-bot] rich_message unknown types', [...unknown].join(', '), JSON.stringify(msg.rich_message).slice(0, 4000));
   } else if (msg.photo) {
     parsed = fromTelegram(msg.caption || '', msg.caption_entities);
     coverId = msg.photo[msg.photo.length - 1].file_id;
@@ -193,7 +197,7 @@ async function onMessage(msg) {
   if (text.startsWith('/')) {
     return tg('sendMessage', { chat_id: chatId, text: "Noma'lum buyruq. /help ni bosing.", reply_markup: KEYBOARD });
   }
-  if (msg.photo || msg.document || findText(msg)) return sendPreview(chatId, msg);
+  if (msg.rich_message || msg.photo || msg.document || findText(msg)) return sendPreview(chatId, msg);
 
   // Unknown message shape: log it (visible only in Vercel logs) and show the
   // field names so the format can be supported.
