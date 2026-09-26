@@ -1,0 +1,288 @@
+// Telegram blog bot (webhook). Lets the site owner publish and delete blog
+// posts from Telegram: each action becomes one commit on GitHub, and Vercel
+// redeploys the site automatically.
+//
+// Env (Vercel → Settings → Environment Variables):
+//   BLOG_BOT_TOKEN        token of the blog bot from @BotFather
+//   BLOG_ADMIN_ID         the owner's Telegram user id (only this user is served)
+//   BLOG_WEBHOOK_SECRET   random string; checks that requests come from Telegram
+//   GITHUB_TOKEN          fine-grained token, Contents read/write on the repo
+//   GITHUB_REPO           optional, default bilolalixan/bilolalixan
+//   GITHUB_BRANCH         optional, default main
+//
+// One-time setup: open https://www.apelsin.asia/api/blog-bot?setup=<BLOG_WEBHOOK_SECRET>
+
+const { fromTelegram, fromMarkdown, slugify, readingMinutes, tashkentDate, excerpt, esc } = require('./_lib/format');
+const T = require('./_lib/templates');
+const gh = require('./_lib/github');
+const { tg, download } = require('./_lib/telegram');
+
+const BTN_NEW = '📝 Yangi maqola';
+const BTN_LIST = '📚 Maqolalar';
+const BTN_HELP = 'ℹ️ Yordam';
+const KEYBOARD = { keyboard: [[{ text: BTN_NEW }, { text: BTN_LIST }], [{ text: BTN_HELP }]], resize_keyboard: true, is_persistent: true };
+const MAX_DOC_BYTES = 200 * 1024;
+
+const HELP = [
+  '<b>Apelsin blog boti</b>',
+  '',
+  'Maqola chop etish uchun uni shu yerga yuboring:',
+  '• <b>1-qator</b> — sarlavha',
+  "• keyingi qatorlar — matn. Bo'sh qator yangi xatboshini boshlaydi",
+  "• <b>qalin</b>, <i>kursiv</i>, havolalar va iqtibos saytda ham saqlanadi",
+  "• alohida qatordagi qisqa <b>qalin</b> matn — kichik sarlavha bo'ladi",
+  "• <code>- </code> bilan boshlangan qatorlar — ro'yxat",
+  '• oxirgi qatorga <code>#Marketing</code> kabi teg yozish mumkin',
+  '',
+  "🖼 Muqova rasm kerak bo'lsa — rasmni izoh (caption) bilan yuboring.",
+  "📄 Uzun maqola (4096 belgidan ko'p) — <code>.md</code> yoki <code>.txt</code> fayl qilib yuboring (Markdown: <code>## sarlavha</code>, <code>**qalin**</code>, <code>- ro'yxat</code>).",
+  '',
+  "Yuborganingizdan so'ng ko'rinishini ko'rsataman va «Chop etish»ni bosasiz.",
+].join('\n');
+
+const NEW_HINT = [
+  "Maqolani bitta xabar qilib yuboring 👇",
+  '',
+  '<i>Namuna:</i>',
+  '<code>Marketingda 3 ta asosiy xato',
+  '',
+  'Birinchi xatboshi matni...',
+  '',
+  '- birinchi punkt',
+  '- ikkinchi punkt',
+  '',
+  '#Marketing</code>',
+].join('\n');
+
+/* ── Parsing the owner's message into a post ── */
+async function parsePost(msg) {
+  let parsed, coverId = null;
+  if (msg.document) {
+    const name = msg.document.file_name || '';
+    const isText = /\.(md|markdown|txt)$/i.test(name) || /^text\//.test(msg.document.mime_type || '');
+    if (!isText) throw new UserError("Faqat .md yoki .txt fayl qabul qilinadi.");
+    if (msg.document.file_size > MAX_DOC_BYTES) throw new UserError('Fayl juda katta (200 KB dan kichik bo\'lsin).');
+    const buf = await download(msg.document.file_id);
+    parsed = fromMarkdown(buf.toString('utf8'));
+  } else if (msg.photo) {
+    parsed = fromTelegram(msg.caption || '', msg.caption_entities);
+    coverId = msg.photo[msg.photo.length - 1].file_id;
+  } else {
+    parsed = fromTelegram(msg.text || '', msg.entities);
+  }
+  if (!parsed.title) throw new UserError("Sarlavha topilmadi: birinchi qatorga sarlavha yozing.");
+  if (parsed.title.length > 140) throw new UserError('Sarlavha juda uzun (140 belgigacha).');
+  if (!parsed.html.trim()) throw new UserError("Maqola matni bo'sh: sarlavhadan keyin matn yozing.");
+  return {
+    title: parsed.title,
+    tag: parsed.tag || 'Maqola',
+    bodyHtml: parsed.html,
+    description: excerpt(parsed.lead),
+    minutes: readingMinutes(parsed.plain),
+    coverId,
+  };
+}
+
+class UserError extends Error {}
+
+/* ── Actions ── */
+async function sendPreview(chatId, msg) {
+  const post = await parsePost(msg);
+  const text = [
+    "👀 <b>Ko'rib chiqish</b>",
+    '',
+    `<b>${esc(post.title)}</b>`,
+    `🏷 ${esc(post.tag)} · ⏱ ${post.minutes} daqiqa${post.coverId ? ' · 🖼 muqova bor' : ''}`,
+    `🔗 apelsin.asia/blog/${slugify(post.title)}`,
+    '',
+    `<i>${esc(post.description)}</i>`,
+    '',
+    'Chop etilsinmi?',
+  ].join('\n');
+  await tg('sendMessage', {
+    chat_id: chatId, text, parse_mode: 'HTML',
+    reply_parameters: { message_id: msg.message_id },
+    reply_markup: { inline_keyboard: [[{ text: '✅ Chop etish', callback_data: 'pub' }, { text: '❌ Bekor qilish', callback_data: 'cancel' }]] },
+  });
+}
+
+async function uniqueSlug(base) {
+  for (let i = 1; i < 20; i++) {
+    const slug = i === 1 ? base : `${base}-${i}`;
+    if (!(await gh.exists(`blog/${slug}.html`))) return slug;
+  }
+  return `${base}-${Date.now().toString(36)}`;
+}
+
+async function publish(original) {
+  const post = await parsePost(original);
+  const slug = await uniqueSlug(slugify(post.title));
+  const date = tashkentDate(new Date(original.date * 1000));
+  const changes = [];
+
+  let cover = null;
+  if (post.coverId) {
+    const img = await download(post.coverId);
+    cover = `/assets/blog/${slug}.jpg`;
+    changes.push({ path: cover.slice(1), base64: img.toString('base64') });
+  }
+
+  const data = { ...post, slug, date, cover };
+  const [index, sitemap] = await Promise.all([gh.readFile('blog/index.html'), gh.readFile('sitemap.xml')]);
+  if (index == null) throw new Error('blog/index.html not found');
+
+  changes.push({ path: `blog/${slug}.html`, text: T.postPage(data) });
+  changes.push({ path: 'blog/index.html', text: T.addCard(index, T.postCard(data)) });
+  if (sitemap != null) changes.push({ path: 'sitemap.xml', text: T.addToSitemap(sitemap, slug, date.iso) });
+
+  await gh.commit(changes, `Blog: publish "${post.title}"`);
+  return { slug, title: post.title };
+}
+
+async function removePost(slug) {
+  const [index, sitemap] = await Promise.all([gh.readFile('blog/index.html'), gh.readFile('sitemap.xml')]);
+  const newIndex = index && T.removeCard(index, slug);
+  if (!newIndex) throw new UserError('Bu maqola topilmadi (ehtimol allaqachon o\'chirilgan).');
+  const changes = [{ path: 'blog/index.html', text: newIndex }];
+  if (await gh.exists(`blog/${slug}.html`)) changes.push({ path: `blog/${slug}.html`, delete: true });
+  if (await gh.exists(`assets/blog/${slug}.jpg`)) changes.push({ path: `assets/blog/${slug}.jpg`, delete: true });
+  if (sitemap != null) changes.push({ path: 'sitemap.xml', text: T.removeFromSitemap(sitemap, slug) });
+  await gh.commit(changes, `Blog: delete ${slug}`);
+}
+
+async function sendList(chatId) {
+  const index = await gh.readFile('blog/index.html');
+  const posts = index ? T.listCards(index) : [];
+  if (!posts.length) return tg('sendMessage', { chat_id: chatId, text: "Hozircha maqolalar yo'q.", reply_markup: KEYBOARD });
+  const lines = posts.map((p, i) => `${i + 1}. <a href="${T.SITE}/blog/${p.slug}">${esc(p.title)}</a> · ${p.date}`);
+  await tg('sendMessage', {
+    chat_id: chatId,
+    text: `📚 <b>Maqolalar (${posts.length})</b>\n\n${lines.join('\n')}\n\nO'chirish uchun tanlang:`,
+    parse_mode: 'HTML',
+    link_preview_options: { is_disabled: true },
+    reply_markup: { inline_keyboard: posts.slice(0, 30).map((p) => [{ text: '🗑 ' + p.title.slice(0, 40), callback_data: 'del:' + p.slug }]) },
+  });
+}
+
+/* ── Update handlers ── */
+async function onMessage(msg) {
+  const chatId = msg.chat.id;
+  const text = (msg.text || '').trim();
+
+  if (text === '/start' || text === '/help' || text === BTN_HELP) {
+    return tg('sendMessage', { chat_id: chatId, text: HELP, parse_mode: 'HTML', reply_markup: KEYBOARD });
+  }
+  if (text === '/new' || text === BTN_NEW) {
+    return tg('sendMessage', { chat_id: chatId, text: NEW_HINT, parse_mode: 'HTML', reply_markup: KEYBOARD });
+  }
+  if (text === '/list' || text === BTN_LIST) return sendList(chatId);
+  if (text.startsWith('/')) {
+    return tg('sendMessage', { chat_id: chatId, text: "Noma'lum buyruq. /help ni bosing.", reply_markup: KEYBOARD });
+  }
+  if (msg.text || msg.photo || msg.document) return sendPreview(chatId, msg);
+  return tg('sendMessage', { chat_id: chatId, text: 'Maqolani matn, rasm+izoh yoki .md fayl qilib yuboring.', reply_markup: KEYBOARD });
+}
+
+async function onCallback(cq) {
+  const chatId = cq.message.chat.id;
+  const messageId = cq.message.message_id;
+  const data = cq.data || '';
+  const edit = (text, extra = {}) => tg('editMessageText', { chat_id: chatId, message_id: messageId, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true }, ...extra });
+
+  if (data === 'pub') {
+    const original = cq.message.reply_to_message;
+    if (!original) {
+      await tg('answerCallbackQuery', { callback_query_id: cq.id });
+      return edit('⚠️ Asl xabar topilmadi. Maqolani qaytadan yuboring.');
+    }
+    // Drop the buttons first so a double tap cannot publish twice.
+    await tg('editMessageReplyMarkup', { chat_id: chatId, message_id: messageId, reply_markup: { inline_keyboard: [] } });
+    await tg('answerCallbackQuery', { callback_query_id: cq.id, text: 'Chop etilmoqda…' });
+    const { slug, title } = await publish(original);
+    const url = `${T.SITE}/blog/${slug}`;
+    return edit(`✅ <b>Chop etildi!</b>\n\n<b>${esc(title)}</b>\n${url}\n\nSayt taxminan 1 daqiqada yangilanadi.`);
+  }
+
+  if (data === 'cancel') {
+    await tg('answerCallbackQuery', { callback_query_id: cq.id });
+    return edit('❌ Bekor qilindi.');
+  }
+
+  if (data.startsWith('del:')) {
+    const slug = data.slice(4);
+    await tg('answerCallbackQuery', { callback_query_id: cq.id });
+    return tg('sendMessage', {
+      chat_id: chatId,
+      text: `🗑 <b>/blog/${esc(slug)}</b> o'chirilsinmi? Buni qaytarib bo'lmaydi.`,
+      parse_mode: 'HTML',
+      reply_markup: { inline_keyboard: [[{ text: "Ha, o'chirish", callback_data: 'delok:' + slug }, { text: "Yo'q", callback_data: 'cancel' }]] },
+    });
+  }
+
+  if (data.startsWith('delok:')) {
+    const slug = data.slice(6);
+    await tg('editMessageReplyMarkup', { chat_id: chatId, message_id: messageId, reply_markup: { inline_keyboard: [] } });
+    await tg('answerCallbackQuery', { callback_query_id: cq.id, text: "O'chirilmoqda…" });
+    await removePost(slug);
+    return edit(`🗑 <b>/blog/${esc(slug)}</b> o'chirildi. Sayt taxminan 1 daqiqada yangilanadi.`);
+  }
+
+  return tg('answerCallbackQuery', { callback_query_id: cq.id });
+}
+
+/* ── One-time webhook setup (GET ?setup=<secret>) ── */
+async function setup(req, res) {
+  const url = `https://${req.headers['x-forwarded-host'] || req.headers.host}/api/blog-bot`;
+  await tg('setWebhook', {
+    url, secret_token: process.env.BLOG_WEBHOOK_SECRET,
+    allowed_updates: ['message', 'callback_query'], drop_pending_updates: true,
+  });
+  await tg('setMyCommands', {
+    commands: [
+      { command: 'new', description: 'Yangi maqola' },
+      { command: 'list', description: "Maqolalar ro'yxati / o'chirish" },
+      { command: 'help', description: 'Yordam' },
+    ],
+  });
+  const me = await tg('getMe');
+  return res.status(200).json({ ok: true, bot: '@' + me.username, webhook: url });
+}
+
+module.exports = async (req, res) => {
+  const secret = process.env.BLOG_WEBHOOK_SECRET;
+  const admin = String(process.env.BLOG_ADMIN_ID || '');
+
+  if (req.method === 'GET') {
+    if (secret && req.query && req.query.setup === secret) {
+      try { return await setup(req, res); } catch (e) { return res.status(500).json({ ok: false, error: e.message }); }
+    }
+    return res.status(404).end();
+  }
+  if (req.method !== 'POST') return res.status(405).end();
+  if (!secret || req.headers['x-telegram-bot-api-secret-token'] !== secret) return res.status(401).end();
+
+  let update = req.body;
+  if (typeof update === 'string') { try { update = JSON.parse(update); } catch (_) { update = {}; } }
+  update = update || {};
+
+  const from = (update.message && update.message.from) || (update.callback_query && update.callback_query.from);
+  const chatId = (update.message && update.message.chat.id) || (update.callback_query && update.callback_query.message.chat.id);
+  if (!from || !chatId) return res.status(200).json({ ok: true });
+
+  try {
+    if (!admin || String(from.id) !== admin) {
+      if (update.message) await tg('sendMessage', { chat_id: chatId, text: "Bu bot faqat Apelsin sayti administratori uchun. apelsin.asia/blog" });
+      else await tg('answerCallbackQuery', { callback_query_id: update.callback_query.id });
+    } else if (update.callback_query) {
+      await onCallback(update.callback_query);
+    } else if (update.message) {
+      await onMessage(update.message);
+    }
+  } catch (e) {
+    const text = e instanceof UserError ? '⚠️ ' + e.message : '⚠️ Xatolik yuz berdi: ' + e.message;
+    try { await tg('sendMessage', { chat_id: chatId, text }); } catch (_) {}
+    if (!(e instanceof UserError)) console.error(e);
+  }
+  // Always 200 so Telegram does not retry the same update.
+  return res.status(200).json({ ok: true });
+};
