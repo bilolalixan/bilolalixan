@@ -36,6 +36,9 @@
 <link rel="stylesheet" href="/assets/blog.css">
 <style>
 .book-sub { margin-top: 14px; font-size: 14px; color: var(--ink2); }
+.book-svc { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; height: 34px; padding: 0 14px; border-radius: 100px; background: var(--card2); border: 0.5px solid var(--line); font-size: 13px; color: var(--ink2); }
+.book-svc[hidden] { display: none; }
+.book-svc b { color: var(--ink); font-weight: 600; }
 
 /* ── FORM CARD ── */
 .book { padding: 22px 20px 20px; }
@@ -150,6 +153,7 @@ textarea.input { min-height: 120px; resize: vertical; line-height: 1.55; }
       <p class="eyebrow" data-i18n="bookEyebrow">Bepul konsultatsiya</p>
       <h1 class="h1" data-i18n-html="bookTitle">Biznesingiz uchun <b>marketing strategiyasi</b></h1>
       <p class="book-sub" data-i18n="bookSub">8 ta qisqa savol — atigi 2 daqiqa</p>
+      <p class="book-svc" id="bookSvc" hidden><span data-i18n="svcPicked">Xizmat:</span> <b id="bookSvcName"></b></p>
     </div>
   </header>
 
@@ -299,6 +303,16 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
   const nextLabel = document.getElementById('nextLabel');
   const $ = (id) => document.getElementById(id);
   const started = Date.now();
+
+  // Coming from /services/<slug>: show the chosen service and send it with the lead.
+  const service = (new URLSearchParams(location.search).get('service') || '').toLowerCase();
+  const serviceName = () => (window.I18N ? window.I18N.t('sn:' + service) : null);
+  if (/^[a-z-]{2,40}$/.test(service) && serviceName()) {
+    $('bookSvc').hidden = false;
+    const showSvc = () => { $('bookSvcName').textContent = serviceName(); };
+    showSvc();
+    document.addEventListener('langchange', showSvc);
+  }
   let i = 0, sending = false, lastErr = null;
 
   const answers = { industry: null, staff: null, budget: null, goals: [] };
@@ -420,7 +434,7 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
       goals: answers.goals, goalOther: $('f-goalOther').value,
       problem: $('f-problem').value,
       phone: phone.value, telegram: $('f-telegram').value,
-      lang: window.I18N ? window.I18N.lang : 'uz',
+      lang: window.I18N ? window.I18N.lang : 'uz', service,
       source: source(), hp: $('f-hp').value, elapsed: Date.now() - started,
     };
     try {

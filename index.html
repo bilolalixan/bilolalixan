@@ -322,6 +322,26 @@ body {
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.8,.2,1), color 0.25s;
 }
 
+/* ── SERVICES ── */
+.svcs { padding: 22px 20px 20px; }
+.svc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.svc-tile {
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+  min-height: 112px; padding: 14px;
+  background: var(--card2); border: 0.5px solid var(--line); border-radius: 22px;
+  text-decoration: none; color: var(--ink);
+  transition: background 0.2s, transform 0.15s;
+}
+.svc-tile:hover { background: var(--card2-hover); }
+.svc-tile:active { transform: scale(0.97); }
+.svc-tile-ico {
+  width: 38px; height: 38px; border-radius: 13px; background: var(--chip);
+  display: flex; align-items: center; justify-content: center;
+}
+.svc-tile-ico svg { width: 18px; height: 18px; }
+.svc-tile-name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+@media (min-width: 560px) { .svc-tiles { grid-template-columns: repeat(4, 1fr); } }
+
 /* ── LATEST POSTS: swipeable card stack ── */
 .blogs { padding: 22px 20px 18px; }
 .blogs[hidden] { display: none; }
@@ -434,6 +454,29 @@ body {
   </div>
 
  </div>
+
+  <!-- SERVICES -->
+  <section class="card svcs" id="services">
+    <div class="blogs-head">
+      <div>
+        <p class="eyebrow" data-i18n="svcHomeEyebrow">Nima qilamiz</p>
+        <h2 class="blogs-title" data-i18n="svcHomeTitle">Xizmatlarimiz</h2>
+      </div>
+      <a class="pill" href="/services"><span data-i18n="allPosts">Barchasi</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <nav class="svc-tiles">
+      <a class="svc-tile" href="/services/performance-marketing"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span class="svc-tile-name" data-i18n="sn:performance-marketing">Performance Marketing</span></a>
+      <a class="svc-tile" href="/services/lead-generation"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:lead-generation">Lead Generation</span></a>
+      <a class="svc-tile" href="/services/google-ads"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="svc-tile-name" data-i18n="sn:google-ads">Google Ads</span></a>
+      <a class="svc-tile" href="/services/web-development"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span><span class="svc-tile-name" data-i18n="sn:web-development">Web-sayt yaratish</span></a>
+      <a class="svc-tile" href="/services/influencer-marketing"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="svc-tile-name" data-i18n="sn:influencer-marketing">Influencer Marketing</span></a>
+      <a class="svc-tile" href="/services/reels-production"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:reels-production">Reels Production</span></a>
+      <a class="svc-tile" href="/services/logo-design"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:logo-design">Logo & Design</span></a>
+      <a class="svc-tile" href="/services/branding"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="svc-tile-name" data-i18n="sn:branding">Branding</span></a>
+    </nav>
+  </section>
 
   <!-- LATEST POSTS (filled from /blog; hidden if there are none) -->
   <section class="card blogs" id="blogs" hidden>

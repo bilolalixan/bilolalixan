@@ -22,6 +22,17 @@ const OPTIONS = {
     other: 'Boshqa',
   },
 };
+// /services/<slug> pages link to /booking?service=<slug>.
+const SERVICES = {
+  'performance-marketing': 'Performance Marketing',
+  'lead-generation': 'Lead Generation',
+  'google-ads': 'Google Ads',
+  'web-development': 'Web-sayt yaratish',
+  'influencer-marketing': 'Influencer Marketing',
+  'reels-production': 'Reels Production',
+  'logo-design': 'Logo & Design',
+  'branding': 'Branding',
+};
 const LANGS = { uz: "O'zbek", ru: 'Rus', en: 'Ingliz' };
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -42,6 +53,7 @@ function validate(b) {
     telegram: str(b.telegram, 40).replace(/^@+/, '').replace(/^https?:\/\/t\.me\//i, ''),
     lang: LANGS[b.lang] ? b.lang : 'uz',
     source: str(b.source, 200),
+    service: SERVICES[b.service] ? b.service : null,
   };
   const errors = [];
   if (lead.name.length < 2) errors.push('name');
@@ -66,6 +78,7 @@ function card(l) {
   const lines = [
     '🔥 <b>Yangi lid — konsultatsiya</b>',
     '',
+    ...(l.service ? [`🧩 <b>Xizmat:</b> ${esc(SERVICES[l.service])}`] : []),
     `👤 <b>Ism:</b> ${esc(l.name)}`,
     `🏢 <b>Biznes:</b> ${esc(l.business)}`,
     `🧭 <b>Yo'nalish:</b> ${esc(industry)}`,

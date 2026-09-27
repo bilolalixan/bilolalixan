@@ -178,12 +178,67 @@
     },
   };
 
+  /* /services: shared labels, plus each service's name (sn:), tag (st:) and
+     one-line summary (ss:). Page-specific texts come from window.I18N_PAGE. */
+  Object.assign(D.uz, {
+    services: 'Xizmatlar',
+    svcListEyebrow: 'Apelsin xizmatlari',
+    svcListTitle: "Biznesingiz o'sishi uchun <b>to'liq marketing</b>",
+    svcListLead: "Strategiyadan reklamagacha, saytdan brendgacha — barchasi bir jamoada. Kerakli xizmatni tanlang yoki bepul konsultatsiyada birga aniqlaymiz.",
+    svcCount: '<b>8</b>&nbsp;ta xizmat',
+    svcIncluded: 'Nimalar kiradi', svcProcess: 'Qanday ishlaymiz', svcGains: 'Natijada nima olasiz',
+    svcOther: 'Boshqa xizmatlar', svcAll: 'Barcha xizmatlar',
+    svcCtaTitle: 'Loyihangizni muhokama qilamiz',
+    svcCtaText: "8 ta qisqa savolga javob bering — mutaxassisimiz siz bilan bog'lanadi va biznesingizga mos yechim taklif qiladi.",
+    svcCtaBtn: 'Bepul konsultatsiya',
+    svcHomeEyebrow: 'Nima qilamiz', svcHomeTitle: 'Xizmatlarimiz',
+    svcPicked: 'Xizmat:',
+  });
+  Object.assign(D.ru, {
+    services: 'Услуги',
+    svcListEyebrow: 'Услуги Apelsin',
+    svcListTitle: 'Полный <b>маркетинг</b> для роста вашего бизнеса',
+    svcListLead: 'От стратегии до рекламы, от сайта до бренда — всё в одной команде. Выберите услугу или определим вместе на бесплатной консультации.',
+    svcCount: '<b>8</b>&nbsp;услуг',
+    svcIncluded: 'Что входит', svcProcess: 'Как мы работаем', svcGains: 'Что вы получите',
+    svcOther: 'Другие услуги', svcAll: 'Все услуги',
+    svcCtaTitle: 'Обсудим ваш проект',
+    svcCtaText: 'Ответьте на 8 коротких вопросов — наш специалист свяжется с вами и предложит решение под ваш бизнес.',
+    svcCtaBtn: 'Бесплатная консультация',
+    svcHomeEyebrow: 'Что мы делаем', svcHomeTitle: 'Наши услуги',
+    svcPicked: 'Услуга:',
+  });
+  Object.assign(D.en, {
+    services: 'Services',
+    svcListEyebrow: 'Apelsin services',
+    svcListTitle: '<b>Full-cycle marketing</b> to grow your business',
+    svcListLead: 'From strategy to ads, from website to brand — all in one team. Pick a service, or we’ll figure it out together in a free consultation.',
+    svcCount: '<b>8</b>&nbsp;services',
+    svcIncluded: "What's included", svcProcess: 'How we work', svcGains: 'What you get',
+    svcOther: 'Other services', svcAll: 'All services',
+    svcCtaTitle: "Let's talk about your project",
+    svcCtaText: 'Answer 8 short questions and our specialist will get in touch with a solution for your business.',
+    svcCtaBtn: 'Free consultation',
+    svcHomeEyebrow: 'What we do', svcHomeTitle: 'Our services',
+    svcPicked: 'Service:',
+  });
+  const SVC = {
+    uz: {"performance-marketing": ["Performance Marketing", "Natijaga yo'naltirilgan reklama", "Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz."], "lead-generation": ["Lead Generation", "Target reklama", "Instagram va Facebook target reklamasi orqali sifatli, sotuvga tayyor lidlar."], "google-ads": ["Google Ads", "Qidiruv va YouTube reklamasi", "Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining."], "web-development": ["Web-sayt yaratish", "Web razrabotka", "Tez ishlaydigan, chiroyli va sotadigan saytlar, landinglar va onlayn do'konlar."], "influencer-marketing": ["Influencer Marketing", "Blogerlar bilan reklama", "Auditoriyangiz ishonadigan blogerlar orqali brendingizni tanitamiz."], "reels-production": ["Reels Production", "Qisqa videolar", "Ko'rishadigan, saqlashadigan va sotadigan Reels, Shorts va TikTok videolar."], "logo-design": ["Logo & Design", "Logotip va grafik dizayn", "Esda qoladigan logotip va biznesingiz uchun barcha grafik dizayn."], "branding": ["Branding", "Brend yaratish va rivojlantirish", "Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend."]},
+    ru: {"performance-marketing": ["Performance Marketing", "Реклама с оплатой за результат", "Считаем каждый сум: работаем на продажи и выручку, а не на показы."], "lead-generation": ["Lead Generation", "Таргетированная реклама", "Качественные, готовые к покупке лиды через таргет в Instagram и Facebook."], "google-ads": ["Google Ads", "Поиск и YouTube", "Показывайтесь клиентам, которые ищут вас прямо сейчас, в Google и на YouTube."], "web-development": ["Веб-разработка", "Сайты и лендинги", "Быстрые, красивые и продающие сайты, лендинги и интернет-магазины."], "influencer-marketing": ["Influencer Marketing", "Реклама у блогеров", "Продвигаем бренд через блогеров, которым доверяет ваша аудитория."], "reels-production": ["Reels Production", "Короткие видео", "Reels, Shorts и TikTok, которые смотрят, сохраняют и которые продают."], "logo-design": ["Logo & Design", "Логотип и графический дизайн", "Запоминающийся логотип и весь графический дизайн для вашего бизнеса."], "branding": ["Branding", "Создание и развитие бренда", "От позиционирования до брендбука: бренд, который выделяет вас среди конкурентов."]},
+    en: {"performance-marketing": ["Performance Marketing", "Results-driven advertising", "We measure every penny and optimise for sales and revenue, not impressions."], "lead-generation": ["Lead Generation", "Targeted ads", "Qualified, ready-to-buy leads from Instagram and Facebook targeted ads."], "google-ads": ["Google Ads", "Search & YouTube", "Show up on Google and YouTube for customers who are searching for you right now."], "web-development": ["Web Development", "Websites & landing pages", "Fast, good-looking websites, landing pages and online stores that sell."], "influencer-marketing": ["Influencer Marketing", "Creator partnerships", "We promote your brand through creators your audience already trusts."], "reels-production": ["Reels Production", "Short-form video", "Reels, Shorts and TikToks that people watch, save and buy from."], "logo-design": ["Logo & Design", "Logo & graphic design", "A memorable logo and all the graphic design your business needs."], "branding": ["Branding", "Brand creation & growth", "From positioning to brand book: a brand that sets you apart from competitors."]},
+  };
+  LANGS.forEach((l) => Object.entries(SVC[l]).forEach(([slug, [name, tag, short]]) => {
+    D[l]['sn:' + slug] = name; D[l]['st:' + slug] = tag; D[l]['ss:' + slug] = short;
+  }));
+
   let lang = 'uz';
   try { lang = localStorage.getItem('lang') || 'uz'; } catch (_) {}
   if (!LANGS.includes(lang)) lang = 'uz';
 
+  // Page-specific texts (window.I18N_PAGE = { uz: {...}, ru: {...}, en: {...} }) win over D.
+  const P = window.I18N_PAGE || {};
   const t = (key, ...args) => {
-    const v = (D[lang] && D[lang][key]) ?? D.uz[key];
+    const v = (P[lang] && P[lang][key]) ?? (D[lang] && D[lang][key]) ?? (P.uz && P.uz[key]) ?? D.uz[key];
     return typeof v === 'function' ? v(...args) : v;
   };
   window.I18N = { t, get lang() { return lang; } };
@@ -302,6 +357,8 @@
     '<svg class="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
   const ICON_GLOBE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
   const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+  const ICON_CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+  const ICON_GRID = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>';
   const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>';
 
   let menu = null;
@@ -309,6 +366,7 @@
   function updateMenu() {
     if (!menu) return;
     menu.querySelector('.menu-toggle').setAttribute('aria-label', t('menu'));
+    menu.querySelector('[data-t="services"]').textContent = t('services');
     menu.querySelector('[data-t="language"]').textContent = t('language');
     menu.querySelector('[data-t="lightMode"]').textContent = t('lightMode');
     menu.querySelector('[data-t="share"]').textContent = t('share');
@@ -338,6 +396,8 @@
     menu.innerHTML =
       '<button class="icon-btn menu-toggle" type="button" aria-haspopup="true" aria-expanded="false">' + ICON_MENU + '</button>' +
       '<div class="menu-panel" role="menu">' +
+        '<a class="menu-row" href="/services"><span class="menu-ico">' + ICON_GRID + '</span><span class="menu-label" data-t="services"></span>' +
+          '<span class="menu-chev">' + ICON_CHEV + '</span></a>' +
         '<div class="menu-row menu-lang"><span class="menu-ico">' + ICON_GLOBE + '</span><span class="menu-label" data-t="language"></span>' +
           '<div class="seg" role="group">' + LANGS.map((l) => `<button type="button" data-lang="${l}">${l.toUpperCase()}</button>`).join('') + '</div></div>' +
         '<button class="menu-row" type="button" data-act="theme"><span class="menu-ico">' + ICON_SUN + '</span><span class="menu-label" data-t="lightMode"></span>' +
@@ -388,7 +448,10 @@
   font-weight: 500; font-size: 14px; font-family: inherit;
   transition: background 0.15s;
 }
-button.menu-row:hover { background: var(--chip); }
+button.menu-row:hover, a.menu-row:hover { background: var(--chip); }
+a.menu-row { text-decoration: none; }
+.menu-chev { color: var(--ink3); display: flex; }
+.menu-chev svg { width: 16px; height: 16px; }
 .menu-row + .menu-row { margin-top: 2px; }
 .menu-lang { cursor: default; flex-wrap: wrap; }
 .menu-ico {
