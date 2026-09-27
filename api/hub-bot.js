@@ -1,5 +1,7 @@
 // The Hub Robot (TG_TOKEN) webhook: public subscriber bot.
-//   Everyone:  /start subscribes and shows the latest posts; /stop unsubscribes;
+//   Everyone:  /start asks for a language (UZ/RU/EN) the first time, then
+//              subscribes and shows the latest posts; /lang changes the
+//              language; /stop unsubscribes;
 //              any other message is forwarded to the group (TG_CHAT_ID).
 //   Admin (BLOG_ADMIN_ID): any message becomes a broadcast draft
 //              ("send to all?"); /stats shows the subscriber count.
@@ -28,7 +30,8 @@ const L = {
     again: (n) => `Qaytganingizdan xursandmiz, ${n}! Siz obunachisiz ✅`,
     latest: "📚 <b>So'nggi maqolalar</b>",
     noPosts: "Hozircha maqolalar yo'q.",
-    btnPosts: '📚 Maqolalar', btnConsult: '💬 Bepul konsultatsiya', btnSite: '🌐 Sayt', btnStop: "🔕 Obunani to'xtatish", btnAll: 'Barcha maqolalar',
+    btnPosts: '📚 Maqolalar', btnConsult: '💬 Bepul konsultatsiya', btnSite: '🌐 Sayt', btnStop: "🔕 Obunani to'xtatish", btnAll: 'Barcha maqolalar', btnLang: '🇺🇿 Til',
+    langSaved: "✅ Til: O'zbekcha",
     stopped: "🔕 Obuna to'xtatildi. Qaytish uchun /start bosing.",
     notSub: "Siz obunachi emassiz. Obuna bo'lish uchun /start bosing.",
     thanks: 'Rahmat! Xabaringiz jamoamizga yetkazildi 🙌',
@@ -38,7 +41,8 @@ const L = {
     again: (n) => `Рады, что вы вернулись, ${n}! Вы подписаны ✅`,
     latest: '📚 <b>Последние статьи</b>',
     noPosts: 'Пока статей нет.',
-    btnPosts: '📚 Статьи', btnConsult: '💬 Бесплатная консультация', btnSite: '🌐 Сайт', btnStop: '🔕 Отписаться', btnAll: 'Все статьи',
+    btnPosts: '📚 Статьи', btnConsult: '💬 Бесплатная консультация', btnSite: '🌐 Сайт', btnStop: '🔕 Отписаться', btnAll: 'Все статьи', btnLang: '🇷🇺 Язык',
+    langSaved: '✅ Язык: русский',
     stopped: '🔕 Подписка отключена. Чтобы вернуться, нажмите /start.',
     notSub: 'Вы не подписаны. Нажмите /start, чтобы подписаться.',
     thanks: 'Спасибо! Ваше сообщение передано команде 🙌',
@@ -48,18 +52,31 @@ const L = {
     again: (n) => `Welcome back, ${n}! You're subscribed ✅`,
     latest: '📚 <b>Latest posts</b>',
     noPosts: 'No posts yet.',
-    btnPosts: '📚 Posts', btnConsult: '💬 Free consultation', btnSite: '🌐 Website', btnStop: '🔕 Unsubscribe', btnAll: 'All posts',
+    btnPosts: '📚 Posts', btnConsult: '💬 Free consultation', btnSite: '🌐 Website', btnStop: '🔕 Unsubscribe', btnAll: 'All posts', btnLang: '🇬🇧 Language',
+    langSaved: '✅ Language: English',
     stopped: '🔕 Unsubscribed. Press /start to come back.',
     notSub: "You're not subscribed. Press /start to subscribe.",
     thanks: 'Thank you! Your message was passed to our team 🙌',
   },
 };
-const langOf = (user) => (/^ru|^uk|^be|^kk/.test(user.language_code || '') ? 'ru' : /^en/.test(user.language_code || '') ? 'en' : 'uz');
+// The bot speaks the language the user picked (not the phone's language).
+const texts = async (id) => L[(await subs.getLang(id)) || 'uz'];
+
+const PICK_TEXT = "🌐 Tilni tanlang · Выберите язык · Choose your language";
+const pickKeyboard = (prefix) => ({
+  inline_keyboard: [[
+    { text: "🇺🇿 O'zbekcha", callback_data: prefix + 'uz' },
+    { text: '🇷🇺 Русский', callback_data: prefix + 'ru' },
+    { text: '🇬🇧 English', callback_data: prefix + 'en' },
+  ]],
+});
+const askLang = (chatId, prefix = 'lang:') => tg('sendMessage', { chat_id: chatId, text: PICK_TEXT, reply_markup: pickKeyboard(prefix) });
 
 const keyboard = (l) => ({
   inline_keyboard: [
     [{ text: l.btnPosts, callback_data: 'latest' }, { text: l.btnConsult, url: `${SITE}/booking` }],
-    [{ text: l.btnSite, url: SITE + '/' }, { text: l.btnStop, callback_data: 'stop' }],
+    [{ text: l.btnSite, url: SITE + '/' }, { text: l.btnLang, callback_data: 'chlang' }],
+    [{ text: l.btnStop, callback_data: 'stop' }],
   ],
 });
 
@@ -80,22 +97,39 @@ async function sendLatest(chatId, l) {
 
 /* ── Everyone ── */
 async function onStart(msg) {
-  const u = msg.from, l = L[langOf(u)];
-  const isNew = await subs.add(u);
-  await tg('sendMessage', { chat_id: msg.chat.id, text: isNew ? l.welcome(esc(u.first_name || '')) : l.again(esc(u.first_name || '')), parse_mode: 'HTML', reply_markup: keyboard(l) });
-  await sendLatest(msg.chat.id, l);
-  if (isNew) groupLog(`🆕 Yangi obunachi: ${who(u)} · 🌐 ${esc((u.language_code || '?').toUpperCase())}\nJami: <b>${await subs.count()}</b>`);
+  const lang = await subs.getLang(msg.from.id);
+  if (!lang) return askLang(msg.chat.id); // first time: pick a language, then subscribe
+  return subscribe(msg.chat.id, msg.from, lang);
+}
+
+async function subscribe(chatId, u, lang) {
+  const l = L[lang];
+  const isNew = await subs.add(u, lang);
+  await tg('sendMessage', { chat_id: chatId, text: isNew ? l.welcome(esc(u.first_name || '')) : l.again(esc(u.first_name || '')), parse_mode: 'HTML', reply_markup: keyboard(l) });
+  await sendLatest(chatId, l);
+  if (isNew) groupLog(`🆕 Yangi obunachi: ${who(u)} · 🌐 ${lang.toUpperCase()}\nJami: <b>${await subs.count()}</b>`);
+}
+
+/* Language picked from the buttons: new users are then subscribed; existing ones just switch. */
+async function onLangPicked(cq, lang) {
+  const chatId = cq.message.chat.id;
+  await subs.setLang(cq.from.id, lang);
+  const l = L[lang];
+  await tg('answerCallbackQuery', { callback_query_id: cq.id, text: l.langSaved });
+  await tg('editMessageText', { chat_id: chatId, message_id: cq.message.message_id, text: l.langSaved });
+  if (await subs.isSubscribed(chatId)) return tg('sendMessage', { chat_id: chatId, text: l.langSaved, reply_markup: keyboard(l) });
+  return subscribe(chatId, cq.from, lang);
 }
 
 async function onStop(chatId, u) {
-  const l = L[langOf(u)];
+  const l = await texts(chatId);
   const was = await subs.remove(chatId);
   await tg('sendMessage', { chat_id: chatId, text: was ? l.stopped : l.notSub });
   if (was) groupLog(`🔕 Obunadan chiqdi: ${who(u)}\nJami: <b>${await subs.count()}</b>`);
 }
 
 async function onUserMessage(msg) {
-  const l = L[langOf(msg.from)];
+  const l = await texts(msg.chat.id);
   // Pass the message to the group with who sent it.
   if (process.env.TG_CHAT_ID) {
     await tg('sendMessage', { chat_id: process.env.TG_CHAT_ID, text: `✉️ Botdagi xabar: ${who(msg.from)}`, parse_mode: 'HTML' });
@@ -154,8 +188,8 @@ async function adminRecent(chatId) {
 }
 
 /* What a subscriber sees after /start, without subscribing the admin. */
-async function adminPreview(chatId, from) {
-  const l = L[langOf(from)];
+async function adminPreview(chatId, from, lang) {
+  const l = L[lang];
   await tg('sendMessage', { chat_id: chatId, text: "👁 <i>Obunachi ko'rinishi (siz obuna qilinmadingiz):</i>", parse_mode: 'HTML' });
   await tg('sendMessage', { chat_id: chatId, text: l.welcome(esc(from.first_name || '')), parse_mode: 'HTML', reply_markup: keyboard(l) });
   await sendLatest(chatId, l);
@@ -194,14 +228,17 @@ async function setup(req, res) {
   await tg('setWebhook', { url, secret_token: secret(), allowed_updates: ['message', 'callback_query'], drop_pending_updates: true });
   await tg('setMyCommands', { commands: [
     { command: 'start', description: "Obuna bo'lish va so'nggi maqolalar" },
+    { command: 'lang', description: 'Tilni tanlash' },
     { command: 'stop', description: "Obunani to'xtatish" },
   ] });
   await tg('setMyCommands', { language_code: 'ru', commands: [
     { command: 'start', description: 'Подписаться и последние статьи' },
+    { command: 'lang', description: 'Выбрать язык' },
     { command: 'stop', description: 'Отписаться' },
   ] });
   await tg('setMyCommands', { language_code: 'en', commands: [
     { command: 'start', description: 'Subscribe and latest posts' },
+    { command: 'lang', description: 'Choose language' },
     { command: 'stop', description: 'Unsubscribe' },
   ] });
   const me = await tg('getMe');
@@ -238,14 +275,27 @@ module.exports = async (req, res) => {
 
   try {
     if (cq) {
-      if (cq.data === 'latest') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await sendLatest(chat.id, L[langOf(from)]); }
+      if (cq.data === 'latest') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await sendLatest(chat.id, isAdmin ? L.uz : await texts(chat.id)); }
+      else if (cq.data === 'chlang') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await askLang(chat.id); }
+      else if (cq.data.startsWith('plang:') && isAdmin) {
+        const lang = cq.data.slice(6);
+        await tg('answerCallbackQuery', { callback_query_id: cq.id });
+        if (L[lang]) await adminPreview(chat.id, from, lang);
+      }
+      else if (cq.data.startsWith('lang:') && !isAdmin) {
+        const lang = cq.data.slice(5);
+        if (L[lang]) await onLangPicked(cq, lang); else await tg('answerCallbackQuery', { callback_query_id: cq.id });
+      }
       else if (cq.data === 'stop' && isAdmin) await tg('answerCallbackQuery', { callback_query_id: cq.id, text: 'Siz adminsiz — obunachi emassiz.' });
       else if (cq.data === 'stop') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await onStop(chat.id, from); }
       else if (cq.data.startsWith('a_') && isAdmin) {
         await tg('answerCallbackQuery', { callback_query_id: cq.id });
         if (cq.data === 'a_stats') await adminStats(chat.id);
         else if (cq.data === 'a_subs') await adminRecent(chat.id);
-        else if (cq.data === 'a_preview') await adminPreview(chat.id, from);
+        else if (cq.data === 'a_preview') {
+          await tg('sendMessage', { chat_id: chat.id, text: "👁 Obunachi ko'rinishi — foydalanuvchi avval tilni tanlaydi:" });
+          await askLang(chat.id, 'plang:');
+        }
       }
       else if (cq.data === 'bc' && isAdmin) await onAdminBroadcast(cq);
       else if (cq.data === 'bcx' && isAdmin) {
@@ -259,6 +309,7 @@ module.exports = async (req, res) => {
         await subs.remove(chat.id).catch(() => {});
         await adminPanel(chat.id);
       } else if (text === '/start' || text.startsWith('/start ')) await onStart(msg);
+      else if (text === '/lang' && !isAdmin) await askLang(chat.id);
       else if (text === '/stop') await onStop(chat.id, from);
       else if (isAdmin) await onAdminMessage(msg);
       else await onUserMessage(msg);

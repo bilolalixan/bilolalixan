@@ -47,11 +47,15 @@ async function waitUntilLive(url, maxMs = 35000) {
  * Sends a post to every subscriber. `cover` is a site path like
  * /assets/blog/slug.jpg (sent as a photo), or null.
  */
+const READ = { uz: "📖 O'qish", ru: '📖 Читать', en: '📖 Read' };
+
 async function announcePost(post, cover, { budgetMs = 20000 } = {}) {
   const m = postMessage(post);
+  const langOf = await subs.langs().catch(() => ({}));
+  const markup = (chatId) => ({ inline_keyboard: [[{ text: READ[langOf[chatId]] || READ.uz, url: m.url }]] });
   return subs.broadcast((chatId) => (cover
-    ? hub.tg('sendPhoto', { chat_id: chatId, photo: SITE + cover, caption: m.text, parse_mode: 'HTML', reply_markup: m.reply_markup })
-    : hub.tg('sendMessage', { chat_id: chatId, text: m.text, parse_mode: 'HTML', reply_markup: m.reply_markup, link_preview_options: { url: m.url, prefer_large_media: true } })), { budgetMs });
+    ? hub.tg('sendPhoto', { chat_id: chatId, photo: SITE + cover, caption: m.text, parse_mode: 'HTML', reply_markup: markup(chatId) })
+    : hub.tg('sendMessage', { chat_id: chatId, text: m.text, parse_mode: 'HTML', reply_markup: markup(chatId), link_preview_options: { url: m.url, prefer_large_media: true } })), { budgetMs });
 }
 
 function reportLine(r) {
