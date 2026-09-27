@@ -322,12 +322,7 @@ body {
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.8,.2,1), color 0.25s;
 }
 
-/* ── SERVICES: bento grid ──
-   Tall enough screens pin the section (sticky) while the tiles fly in one by
-   one as you scroll; after the last one the page moves on to the blog.
-   Otherwise (short screens, reduced motion, no JS) it is a normal grid whose
-   tiles fade in as they enter the viewport. */
-.svcs-pin { position: relative; }
+/* ── SERVICES: bento overview ── */
 .svcs { padding: 20px 18px 18px; display: flex; flex-direction: column; }
 .svcs .blogs-head { margin-bottom: 14px; }
 
@@ -338,16 +333,12 @@ body {
   grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo rl" "br br";
 }
 .bt {
-  --e: 1;
   position: relative; min-width: 0; min-height: 0; overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
   padding: 14px;
   background: var(--card2); border: 0.5px solid var(--line); border-radius: 22px;
   text-decoration: none; color: var(--ink);
-  opacity: clamp(0, calc(var(--e) * 1.6), 1);
-  transform: translateY(calc((1 - var(--e)) * var(--fly, 48px))) scale(calc(1 + (1 - var(--e)) * 0.14));
   transition: background 0.2s;
-  will-change: transform, opacity;
 }
 .bt:hover { background: var(--card2-hover); }
 .bt-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
@@ -385,21 +376,85 @@ body {
 .bt-pm { grid-area: pm; } .bt-lg { grid-area: lg; } .bt-ga { grid-area: ga; } .bt-wd { grid-area: wd; }
 .bt-inf { grid-area: inf; } .bt-rl { grid-area: rl; } .bt-lo { grid-area: lo; } .bt-br { grid-area: br; }
 
-/* Pinned mode (set by JS) */
-.svcs-pin.pin { height: 340vh; }
-.svcs-pin.pin .svcs {
-  position: sticky; top: 12px;
-  height: calc(100vh - 24px); height: calc(100svh - 24px); max-height: 820px;
+/* ── SERVICES: one service per screen ──
+   On tall enough screens the showcase is pinned (sticky) and scrolling moves
+   through the services: the next one slides up over the whole screen while
+   the previous one shrinks away. After the last one the page goes on to the
+   blog. Short screens, reduced motion and no JS get the slides as a list. */
+.show { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.show-stick { display: flex; flex-direction: column; gap: 8px; }
+.slide {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
+  min-height: 460px; padding: 22px 20px 20px;
+  background: var(--card);
 }
-.svcs-pin.pin .bento { flex: 1; min-height: 0; grid-template-rows: repeat(6, minmax(0, 1fr)); --fly: 62vh; }
-.bt.flying { box-shadow: 0 18px 40px rgba(0,0,0,0.3); z-index: 2; }
-/* Shorter screens: 5 rows — Reels and Branding become regular tiles */
-@media (max-height: 760px) {
-  .svcs-pin.pin .bento { grid-template-rows: repeat(5, minmax(0, 1fr)); grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo br"; }
-  .svcs-pin.pin .bt-rl .bt-text, .svcs-pin.pin .bt-rl .bt-go, .svcs-pin.pin .bt-br .bt-tag, .svcs-pin.pin .bt-br .bt-go { display: none; }
-  .svcs-pin.pin .bt-rl .bt-name, .svcs-pin.pin .bt-br .bt-name { font-size: 14.5px; letter-spacing: -0.01em; }
-  .svcs-pin.pin .bt { padding: 12px; }
-  .svcs-pin.pin .bt-ico { width: 32px; height: 32px; border-radius: 11px; }
+.slide.inv { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.slide-bg {
+  position: absolute; right: -60px; bottom: -40px; width: 300px; height: 300px;
+  color: var(--ink); opacity: 0.05; pointer-events: none;
+}
+.slide.inv .slide-bg { color: var(--bg); opacity: 0.08; }
+.slide-bg svg { width: 100%; height: 100%; stroke-width: 1.2; }
+.slide-top { display: flex; align-items: center; justify-content: space-between; position: relative; }
+.slide-num { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; color: var(--ink3); }
+.slide-num b { color: var(--ink); font-weight: 600; }
+.slide.inv .slide-num, .slide.inv .slide-num b { color: inherit; }
+.slide.inv .slide-num { opacity: 0.55; }
+.slide.inv .slide-num b { opacity: 1; }
+.slide-ico {
+  width: 60px; height: 60px; border-radius: 20px; background: var(--chip);
+  display: flex; align-items: center; justify-content: center;
+}
+.slide.inv .slide-ico { background: rgba(127,127,127,0.2); }
+.slide-ico svg { width: 26px; height: 26px; }
+.slide-body { position: relative; padding-right: 14px; }
+.slide-tag { font-size: 13px; color: var(--ink2); margin-bottom: 10px; }
+.slide.inv .slide-tag { color: inherit; opacity: 0.6; }
+.slide-name { font-size: clamp(30px, 9.6vw, 46px); line-height: 1.02; font-weight: 600; letter-spacing: -0.04em; }
+.slide-text { margin-top: 14px; font-size: 15.5px; line-height: 1.55; color: var(--ink2); max-width: 340px; }
+.slide.inv .slide-text { color: inherit; opacity: 0.72; }
+.slide-items { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.slide-items li {
+  display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 100px;
+  background: var(--card2); border: 0.5px solid var(--line2); font-size: 12.5px; color: var(--ink2); white-space: nowrap;
+}
+.slide.inv .slide-items li { background: transparent; border-color: currentColor; color: inherit; opacity: 0.75; }
+.slide-act { display: flex; gap: 6px; position: relative; }
+.slide-btn {
+  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 50px; border-radius: 100px; font-size: 14px; font-weight: 600; text-decoration: none;
+  background: var(--ink); color: var(--bg); transition: opacity 0.15s, transform 0.15s;
+}
+.slide-btn svg { width: 15px; height: 15px; }
+.slide-btn.ghost { background: var(--chip); color: var(--ink); }
+.slide.inv .slide-btn { background: var(--bg); color: var(--ink); }
+.slide.inv .slide-btn.ghost { background: rgba(127,127,127,0.2); color: var(--bg); }
+.slide-btn:hover { opacity: 0.88; }
+.slide-btn:active { transform: scale(0.97); }
+
+.show.pin { height: calc(100vh + 7 * 80vh); }
+.show.pin .show-stick {
+  position: sticky; top: 12px; display: block;
+  height: calc(100vh - 24px); height: calc(100svh - 24px); max-height: 860px;
+}
+.show.pin .slide {
+  position: absolute; inset: 0; min-height: 0; animation: none;
+  transform-origin: 50% 0%; will-change: transform, opacity;
+}
+.show-dots {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 20;
+  display: none; flex-direction: column; gap: 5px;
+}
+.show.pin .show-dots { display: flex; }
+.show-dots span { width: 4px; height: 4px; border-radius: 100px; background: var(--ink3); opacity: 0.5; transition: height 0.25s, opacity 0.25s; }
+.show-dots span.on { height: 16px; opacity: 1; }
+@media (max-height: 700px) {
+  .show.pin .slide { padding: 18px 18px 16px; }
+  .show.pin .slide-ico { width: 48px; height: 48px; border-radius: 16px; }
+  .show.pin .slide-text { font-size: 14.5px; }
+  .show.pin .slide-items { margin-top: 12px; }
+  .show.pin .slide-items li:nth-child(3) { display: none; }
 }
 
 /* ── LATEST POSTS: swipeable card stack ── */
@@ -515,8 +570,7 @@ body {
 
  </div>
 
-  <!-- SERVICES (bento; pinned while the tiles fly in on tall screens) -->
-  <div class="svcs-pin" id="svcsPin">
+  <!-- SERVICES: bento overview -->
   <section class="card svcs" id="services">
     <div class="blogs-head">
       <div>
@@ -562,6 +616,124 @@ body {
       </a>
     </nav>
   </section>
+
+  <!-- SERVICES: one per screen while scrolling -->
+  <div class="show" id="show">
+   <div class="show-stick">
+    <article class="card slide inv" data-i="0">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>01</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:performance-marketing">Natijaga yo'naltirilgan reklama</p>
+        <h3 class="slide-name" data-i18n="sn:performance-marketing">Performance Marketing</h3>
+        <p class="slide-text" data-i18n="ss:performance-marketing">Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz.</p>
+        <ul class="slide-items"><li data-i18n="si:performance-marketing:0">Analitika va tracking</li><li data-i18n="si:performance-marketing:1">Kanallar strategiyasi</li><li data-i18n="si:performance-marketing:2">Kampaniyalarni boshqarish</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/performance-marketing"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=performance-marketing"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide" data-i="1">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>02</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:lead-generation">Target reklama</p>
+        <h3 class="slide-name" data-i18n="sn:lead-generation">Lead Generation</h3>
+        <p class="slide-text" data-i18n="ss:lead-generation">Instagram va Facebook target reklamasi orqali sifatli, sotuvga tayyor lidlar.</p>
+        <ul class="slide-items"><li data-i18n="si:lead-generation:0">Auditoriya tadqiqoti</li><li data-i18n="si:lead-generation:1">Target sozlash</li><li data-i18n="si:lead-generation:2">Lid-formalar va landinglar</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/lead-generation"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=lead-generation"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide inv" data-i="2">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>03</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:google-ads">Qidiruv va YouTube reklamasi</p>
+        <h3 class="slide-name" data-i18n="sn:google-ads">Google Ads</h3>
+        <p class="slide-text" data-i18n="ss:google-ads">Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.</p>
+        <ul class="slide-items"><li data-i18n="si:google-ads:0">Qidiruv reklamasi</li><li data-i18n="si:google-ads:1">Performance Max va Display</li><li data-i18n="si:google-ads:2">YouTube reklamasi</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/google-ads"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=google-ads"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide" data-i="3">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>04</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:web-development">Web razrabotka</p>
+        <h3 class="slide-name" data-i18n="sn:web-development">Web-sayt yaratish</h3>
+        <p class="slide-text" data-i18n="ss:web-development">Tez ishlaydigan, chiroyli va sotadigan saytlar, landinglar va onlayn do'konlar.</p>
+        <ul class="slide-items"><li data-i18n="si:web-development:0">Landing sahifalar</li><li data-i18n="si:web-development:1">Korporativ saytlar</li><li data-i18n="si:web-development:2">Onlayn do'konlar</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/web-development"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=web-development"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide inv" data-i="4">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>05</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:influencer-marketing">Blogerlar bilan reklama</p>
+        <h3 class="slide-name" data-i18n="sn:influencer-marketing">Influencer Marketing</h3>
+        <p class="slide-text" data-i18n="ss:influencer-marketing">Auditoriyangiz ishonadigan blogerlar orqali brendingizni tanitamiz.</p>
+        <ul class="slide-items"><li data-i18n="si:influencer-marketing:0">Blogerlarni tanlash</li><li data-i18n="si:influencer-marketing:1">Statistikani tekshirish</li><li data-i18n="si:influencer-marketing:2">Ssenariy va brif</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/influencer-marketing"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=influencer-marketing"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide" data-i="5">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>06</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:reels-production">Qisqa videolar</p>
+        <h3 class="slide-name" data-i18n="sn:reels-production">Reels Production</h3>
+        <p class="slide-text" data-i18n="ss:reels-production">Ko'rishadigan, saqlashadigan va sotadigan Reels, Shorts va TikTok videolar.</p>
+        <ul class="slide-items"><li data-i18n="si:reels-production:0">G'oya va ssenariy</li><li data-i18n="si:reels-production:1">Suratga olish</li><li data-i18n="si:reels-production:2">Montaj</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/reels-production"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=reels-production"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide inv" data-i="6">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>07</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:logo-design">Logotip va grafik dizayn</p>
+        <h3 class="slide-name" data-i18n="sn:logo-design">Logo &amp; Design</h3>
+        <p class="slide-text" data-i18n="ss:logo-design">Esda qoladigan logotip va biznesingiz uchun barcha grafik dizayn.</p>
+        <ul class="slide-items"><li data-i18n="si:logo-design:0">Logotip</li><li data-i18n="si:logo-design:1">Firma uslubi</li><li data-i18n="si:logo-design:2">Poligrafiya</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/logo-design"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=logo-design"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <article class="card slide" data-i="7">
+      <span class="slide-bg" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+      <div class="slide-top"><span class="slide-num"><b>08</b> / 08</span><span class="slide-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+      <div class="slide-body">
+        <p class="slide-tag" data-i18n="st:branding">Brend yaratish va rivojlantirish</p>
+        <h3 class="slide-name" data-i18n="sn:branding">Branding</h3>
+        <p class="slide-text" data-i18n="ss:branding">Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend.</p>
+        <ul class="slide-items"><li data-i18n="si:branding:0">Bozor va raqobat tahlili</li><li data-i18n="si:branding:1">Pozitsiyalash</li><li data-i18n="si:branding:2">Nom va slogan</li></ul>
+      </div>
+      <div class="slide-act">
+        <a class="slide-btn" href="/services/branding"><span data-i18n="svcMore">Batafsil</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        <a class="slide-btn ghost" href="/booking?service=branding"><span data-i18n="svcBook">Konsultatsiya</span></a>
+      </div>
+    </article>
+    <div class="show-dots" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+   </div>
   </div>
 
   <!-- LATEST POSTS (filled from /blog; hidden if there are none) -->
@@ -809,51 +981,65 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
 })();
 </script>
 <script>
-/* ── SERVICES: tiles fly in one by one while the section is pinned ── */
+/* ── SERVICES showcase: pinned, one service per screen ── */
 (function () {
-  const pin = document.getElementById('svcsPin');
-  const tiles = [...document.querySelectorAll('#bento .bt')];
-  if (!pin || !tiles.length) return;
-  const mq = matchMedia('(min-height: 620px) and (prefers-reduced-motion: no-preference)');
-  const N = tiles.length;
-  const W = 0.24;                       // share of the scroll each tile takes to land
-  const ease = (x) => 1 - Math.pow(1 - x, 3);
-  const clamp = (x) => Math.max(0, Math.min(1, x));
-  let io = null, raf = 0;
+  const show = document.getElementById('show');
+  if (!show) return;
+  const slides = [...show.querySelectorAll('.slide')];
+  const dots = [...show.querySelectorAll('.show-dots span')];
+  const N = slides.length;
+  const mq = matchMedia('(min-height: 600px) and (prefers-reduced-motion: no-preference)');
+  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  const HOLD = 0.25;                    // extra "rest" on the first and last service
+  let raf = 0, snapT = 0, x = 0;
 
   function frame() {
     raf = 0;
-    const vh = innerHeight, r = pin.getBoundingClientRect();
-    // From "section top at 40% of the screen" to "a little before the pin ends".
-    const from = -0.4 * vh, to = r.height - vh - 0.35 * vh;
-    const p = clamp((-r.top - from) / (to - from));
-    tiles.forEach((t, i) => {
-      const start = i * (1 - W) / (N - 1);
-      const e = ease(clamp((p - start) / W));
-      t.style.setProperty('--e', e === 1 ? '1' : e.toFixed(4));
-      t.classList.toggle('flying', e > 0 && e < 1);
+    const vh = innerHeight, r = show.getBoundingClientRect();
+    const f = clamp(-r.top / (r.height - vh), 0, 1);
+    x = clamp(f * (N - 1 + 2 * HOLD) - HOLD, 0, N - 1);
+    slides.forEach((s, i) => {
+      const d = i - x;               // >0: still below, 0: on screen, <0: leaving
+      let tf, op = 1, vis = true;
+      if (d >= 1) { vis = false; tf = 'translateY(105%)'; }
+      else if (d > 0) tf = `translateY(${(d * 105).toFixed(2)}%)`;
+      else if (d > -1) { const k = -d; tf = `translateY(${(-k * 4).toFixed(2)}%) scale(${(1 - k * 0.12).toFixed(4)})`; op = 1 - k * 0.9; }
+      else { vis = false; tf = 'scale(0.88)'; op = 0; }
+      s.style.transform = tf; s.style.opacity = op.toFixed(3);
+      s.style.visibility = vis ? 'visible' : 'hidden';
+      s.style.zIndex = String(i + 1);
     });
+    const cur = Math.round(x);
+    dots.forEach((dot, i) => dot.classList.toggle('on', i === cur));
   }
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(frame);
+    clearTimeout(snapT); snapT = setTimeout(snap, 180);
+  };
+  // After scrolling stops mid-way, settle on the nearest service.
+  let touching = false;
+  addEventListener('touchstart', () => { touching = true; }, { passive: true });
+  addEventListener('touchend', () => { touching = false; clearTimeout(snapT); snapT = setTimeout(snap, 180); }, { passive: true });
+  function snap() {
+    if (touching || !show.classList.contains('pin')) return;
+    const vh = innerHeight, r = show.getBoundingClientRect();
+    if (r.top > 0 || r.bottom < vh) return;
+    const target = Math.round(x);
+    if (Math.abs(target - x) < 0.02) return;
+    const f = (target + HOLD) / (N - 1 + 2 * HOLD);
+    scrollTo({ top: scrollY + r.top + f * (r.height - vh), behavior: 'smooth' });
+  }
 
   function setup() {
     removeEventListener('scroll', onScroll);
-    if (io) { io.disconnect(); io = null; }
     if (mq.matches) {
-      pin.classList.add('pin');
+      show.classList.add('pin');
       addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onScroll);
       frame();
     } else {
-      pin.classList.remove('pin');
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { tiles.forEach((t) => t.style.setProperty('--e', '1')); return; }
-      // Short screens: each tile rises in as it scrolls into view.
-      tiles.forEach((t) => { t.style.setProperty('--e', '0'); t.style.transition = 'opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1), background .2s'; });
-      io = new IntersectionObserver((es) => es.forEach((en) => {
-        if (!en.isIntersecting) return;
-        const t = en.target; t.style.transitionDelay = (tiles.indexOf(t) % 2) * 80 + 'ms';
-        t.style.setProperty('--e', '1'); io.unobserve(t);
-      }), { rootMargin: '0px 0px -8% 0px' });
-      tiles.forEach((t) => io.observe(t));
+      show.classList.remove('pin');
+      slides.forEach((s) => { s.style.transform = s.style.opacity = s.style.visibility = s.style.zIndex = ''; });
     }
   }
   mq.addEventListener ? mq.addEventListener('change', setup) : mq.addListener(setup);
