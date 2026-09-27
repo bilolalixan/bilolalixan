@@ -105,23 +105,67 @@ async function onUserMessage(msg) {
 }
 
 /* ── Admin ── */
-const ADMIN_HELP = [
-  '<b>The Hub Robot — admin</b>',
-  '',
-  "📣 Rassilka: istalgan xabarni (matn, rasm, video, fayl) shu yerga yuboring — obunachilarga yuborishdan oldin tasdiq so'rayman.",
-  "📊 /stats — obunachilar soni",
-  "👤 /start — o'zingiz ham obunachi sifatida ko'rish",
-  '',
-  "Yangi blog maqolalari blog botida «Chop etish» bosilganda obunachilarga avtomatik yuboriladi.",
-].join('\n');
+// The admin is never a subscriber: /start opens this panel instead.
+const ADMIN_KEYBOARD = {
+  inline_keyboard: [
+    [{ text: '📊 Statistika', callback_data: 'a_stats' }, { text: "👥 So'nggi obunachilar", callback_data: 'a_subs' }],
+    [{ text: '📚 Maqolalar', callback_data: 'latest' }, { text: "👁 Obunachi ko'rinishi", callback_data: 'a_preview' }],
+  ],
+};
+
+async function adminPanel(chatId) {
+  const text = [
+    '👑 <b>Admin paneli — The Hub Robot</b>',
+    '',
+    `👥 Obunachilar: <b>${await subs.count()}</b>`,
+    '',
+    "📣 <b>Rassilka:</b> istalgan xabarni (matn, rasm, video, fayl) shu yerga yuboring — obunachilarga yuborishdan oldin tasdiq so'rayman.",
+    "📰 Yangi blog maqolalari blog botida «Chop etish + 📣» bosilganda avtomatik yuboriladi.",
+    '',
+    "Siz admin sifatida obunachilar ro'yxatiga kirmaysiz va rassilka olmaysiz.",
+  ].join('\n');
+  return tg('sendMessage', { chat_id: chatId, text, parse_mode: 'HTML', reply_markup: ADMIN_KEYBOARD });
+}
+
+async function adminStats(chatId) {
+  const [total, list] = await Promise.all([subs.count(), subs.recent(100000)]);
+  const day = (ms) => new Date(ms + 5 * 3600 * 1000).toISOString().slice(0, 10); // Tashkent date
+  const today = day(Date.now());
+  const week = Date.now() - 7 * 864e5;
+  const langs = {};
+  list.forEach((s) => { const l = (s.lang || '?').slice(0, 2).toUpperCase(); langs[l] = (langs[l] || 0) + 1; });
+  const text = [
+    '📊 <b>Statistika</b>',
+    '',
+    `👥 Jami obunachilar: <b>${total}</b>`,
+    `🆕 Bugun: <b>${list.filter((s) => day(Date.parse(s.joined)) === today).length}</b>`,
+    `📅 So'nggi 7 kun: <b>${list.filter((s) => Date.parse(s.joined) >= week).length}</b>`,
+    `🌐 Tillar: ${Object.entries(langs).sort((a, b) => b[1] - a[1]).map(([l, n]) => `${esc(l)} ${n}`).join(' · ') || '—'}`,
+  ].join('\n');
+  return tg('sendMessage', { chat_id: chatId, text, parse_mode: 'HTML' });
+}
+
+async function adminRecent(chatId) {
+  const list = await subs.recent(10);
+  if (!list.length) return tg('sendMessage', { chat_id: chatId, text: "Hozircha obunachilar yo'q." });
+  const when = (iso) => new Date(Date.parse(iso) + 5 * 3600 * 1000).toISOString().slice(0, 16).replace('T', ' ');
+  const lines = list.map((s, i) => `${i + 1}. <b>${esc(s.name || '—')}</b>${s.username ? ' @' + esc(s.username) : ''} · ${esc((s.lang || '?').toUpperCase())} · ${when(s.joined)}`);
+  return tg('sendMessage', { chat_id: chatId, text: "👥 <b>So'nggi obunachilar</b>\n\n" + lines.join('\n'), parse_mode: 'HTML' });
+}
+
+/* What a subscriber sees after /start, without subscribing the admin. */
+async function adminPreview(chatId, from) {
+  const l = L[langOf(from)];
+  await tg('sendMessage', { chat_id: chatId, text: "👁 <i>Obunachi ko'rinishi (siz obuna qilinmadingiz):</i>", parse_mode: 'HTML' });
+  await tg('sendMessage', { chat_id: chatId, text: l.welcome(esc(from.first_name || '')), parse_mode: 'HTML', reply_markup: keyboard(l) });
+  await sendLatest(chatId, l);
+}
 
 async function onAdminMessage(msg) {
   const text = (msg.text || '').trim();
-  if (text === '/help' || text === '/admin') return tg('sendMessage', { chat_id: msg.chat.id, text: ADMIN_HELP, parse_mode: 'HTML' });
-  if (text === '/stats') {
-    return tg('sendMessage', { chat_id: msg.chat.id, text: `📊 Obunachilar: <b>${await subs.count()}</b>`, parse_mode: 'HTML' });
-  }
-  if (text.startsWith('/')) return tg('sendMessage', { chat_id: msg.chat.id, text: "Noma'lum buyruq. /help" });
+  if (text === '/help' || text === '/admin') return adminPanel(msg.chat.id);
+  if (text === '/stats') return adminStats(msg.chat.id);
+  if (text.startsWith('/')) return tg('sendMessage', { chat_id: msg.chat.id, text: "Noma'lum buyruq. /start — admin paneli" });
   const n = await subs.count();
   return tg('sendMessage', {
     chat_id: msg.chat.id,
@@ -195,7 +239,14 @@ module.exports = async (req, res) => {
   try {
     if (cq) {
       if (cq.data === 'latest') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await sendLatest(chat.id, L[langOf(from)]); }
+      else if (cq.data === 'stop' && isAdmin) await tg('answerCallbackQuery', { callback_query_id: cq.id, text: 'Siz adminsiz — obunachi emassiz.' });
       else if (cq.data === 'stop') { await tg('answerCallbackQuery', { callback_query_id: cq.id }); await onStop(chat.id, from); }
+      else if (cq.data.startsWith('a_') && isAdmin) {
+        await tg('answerCallbackQuery', { callback_query_id: cq.id });
+        if (cq.data === 'a_stats') await adminStats(chat.id);
+        else if (cq.data === 'a_subs') await adminRecent(chat.id);
+        else if (cq.data === 'a_preview') await adminPreview(chat.id, from);
+      }
       else if (cq.data === 'bc' && isAdmin) await onAdminBroadcast(cq);
       else if (cq.data === 'bcx' && isAdmin) {
         await tg('answerCallbackQuery', { callback_query_id: cq.id });
@@ -203,7 +254,11 @@ module.exports = async (req, res) => {
       } else await tg('answerCallbackQuery', { callback_query_id: cq.id });
     } else if (msg) {
       const text = (msg.text || '').trim();
-      if (text === '/start' || text.startsWith('/start ')) await onStart(msg);
+      if (isAdmin && (text === '/start' || text.startsWith('/start') || text === '/stop')) {
+        // Clean up if the admin was subscribed before admins were excluded.
+        await subs.remove(chat.id).catch(() => {});
+        await adminPanel(chat.id);
+      } else if (text === '/start' || text.startsWith('/start ')) await onStart(msg);
       else if (text === '/stop') await onStop(chat.id, from);
       else if (isAdmin) await onAdminMessage(msg);
       else await onUserMessage(msg);

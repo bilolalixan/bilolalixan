@@ -7,9 +7,12 @@ const { cmd, configured } = require('./kv');
 const SET = 'subs';
 const INFO = 'subs:info';
 
-/** Adds a subscriber; returns true if they were not subscribed before. */
+const isAdmin = (id) => String(id) === String(process.env.BLOG_ADMIN_ID || '');
+
+/** Adds a subscriber; returns true if they were not subscribed before. The admin is never a subscriber. */
 async function add(user) {
   const id = String(user.id);
+  if (isAdmin(id)) return false;
   const added = await cmd('SADD', SET, id);
   const info = {
     name: [user.first_name, user.last_name].filter(Boolean).join(' ').slice(0, 80),
@@ -29,6 +32,16 @@ async function remove(id) {
 }
 
 const count = () => cmd('SCARD', SET).then(Number);
+
+/** The newest subscribers first: [{ id, name, username, lang, joined }]. */
+async function recent(n = 10) {
+  const flat = (await cmd('HGETALL', INFO)) || [];
+  const list = [];
+  for (let i = 0; i < flat.length; i += 2) {
+    try { list.push({ id: flat[i], ...JSON.parse(flat[i + 1]) }); } catch (_) {}
+  }
+  return list.sort((a, b) => String(b.joined).localeCompare(String(a.joined))).slice(0, n);
+}
 const all = () => cmd('SMEMBERS', SET);
 const isSubscribed = (id) => cmd('SISMEMBER', SET, String(id)).then((r) => r === 1);
 
@@ -41,7 +54,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  */
 async function broadcast(fn, { budgetMs = 50000 } = {}) {
   const started = Date.now();
-  const ids = await all();
+  const ids = (await all()).filter((id) => !isAdmin(id));
   const res = { total: ids.length, sent: 0, removed: 0, failed: 0, left: 0 };
   for (let i = 0; i < ids.length; i++) {
     if (Date.now() - started > budgetMs) { res.left = ids.length - i; break; }
@@ -65,4 +78,4 @@ async function broadcast(fn, { budgetMs = 50000 } = {}) {
   return res;
 }
 
-module.exports = { add, remove, count, all, isSubscribed, broadcast, configured };
+module.exports = { add, remove, count, recent, all, isSubscribed, broadcast, configured };
