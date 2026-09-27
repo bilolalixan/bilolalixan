@@ -333,10 +333,17 @@ function slugify(title) {
 const readingMinutes = (plain) => Math.max(1, Math.round(String(plain).split(/\s+/).filter(Boolean).length / 200));
 
 const MONTHS_UZ = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+/* Publish time in Tashkent (UTC+5, no DST).
+   iso:  2026-09-27                    (sitemap lastmod)
+   full: 2026-09-27T12:40:00+05:00     (<time datetime>, article meta, JSON-LD)
+   human: 27-sentabr, 2026, 12:40      (fallback text; the page shows a localized/relative form) */
 function tashkentDate(d = new Date()) {
-  const t = new Date(d.getTime() + 5 * 3600 * 1000); // UTC+5, no DST
+  const t = new Date(d.getTime() + 5 * 3600 * 1000);
   const y = t.getUTCFullYear(), m = t.getUTCMonth(), day = t.getUTCDate();
-  return { iso: `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`, human: `${day}-${MONTHS_UZ[m]}, ${y}` };
+  const p2 = (n) => String(n).padStart(2, '0');
+  const iso = `${y}-${p2(m + 1)}-${p2(day)}`;
+  const time = `${p2(t.getUTCHours())}:${p2(t.getUTCMinutes())}`;
+  return { iso, time, full: `${iso}T${time}:00+05:00`, human: `${day}-${MONTHS_UZ[m]}, ${y}, ${time}` };
 }
 
 function excerpt(plain, max = 160) {

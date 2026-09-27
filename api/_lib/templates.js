@@ -40,7 +40,7 @@ function postPage(p) {
   const ld = {
     '@context': 'https://schema.org', '@type': 'BlogPosting',
     headline: p.title, description: p.description,
-    datePublished: p.date.iso, dateModified: p.date.iso, inLanguage: 'uz',
+    datePublished: p.date.full, dateModified: p.date.full, inLanguage: 'uz',
     image, mainEntityOfPage: url,
     author: { '@type': 'Person', name: "Bilol alixan Kemal O'g'li", url: `${SITE}/bilolalixan` },
     publisher: { '@type': 'Organization', name: 'Apelsin', logo: { '@type': 'ImageObject', url: `${SITE}/assets/icon-512.png` } },
@@ -71,7 +71,7 @@ ${THEME_SCRIPT}
 <meta property="og:description" content="${esc(p.description)}">
 <meta property="og:url" content="${url}">
 <meta property="og:image" content="${esc(image)}">
-<meta property="article:published_time" content="${p.date.iso}">
+<meta property="article:published_time" content="${p.date.full}">
 <meta property="article:author" content="Bilol alixan">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="${esc(image)}">
@@ -105,7 +105,7 @@ ${THEME_SCRIPT}
     <div class="hero-body">
       <p class="eyebrow">
         <span class="post-tag">${esc(p.tag)}</span>
-        <time datetime="${p.date.iso}">${esc(p.date.human)}</time>
+        <time datetime="${p.date.full}">${esc(p.date.human)}</time>
         <span class="dot"></span>
         <span>${p.minutes} daqiqa o'qish</span>
       </p>
@@ -162,7 +162,7 @@ function postCard(p) {
     <a class="card post-card featured" href="/blog/${p.slug}">
       <div class="post-meta">
         <span class="post-tag">${esc(p.tag)}</span>
-        <time datetime="${p.date.iso}">${esc(p.date.human)}</time>
+        <time datetime="${p.date.full}">${esc(p.date.human)}</time>
         <span class="dot"></span>
         <span>${p.minutes} daqiqa</span>
       </div>

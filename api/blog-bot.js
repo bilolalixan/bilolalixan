@@ -135,7 +135,8 @@ async function uniqueSlug(base) {
 async function publish(original) {
   const post = await parsePost(original);
   const slug = await uniqueSlug(slugify(post.title));
-  const date = tashkentDate(new Date(original.date * 1000));
+  // The publish time is when Publish is pressed, not when the draft was sent.
+  const date = tashkentDate(new Date());
   const changes = [];
 
   let cover = null;
@@ -172,7 +173,7 @@ async function sendList(chatId) {
   const index = await gh.readFile('blog/index.html');
   const posts = index ? T.listCards(index) : [];
   if (!posts.length) return tg('sendMessage', { chat_id: chatId, text: "Hozircha maqolalar yo'q.", reply_markup: KEYBOARD });
-  const lines = posts.map((p, i) => `${i + 1}. <a href="${T.SITE}/blog/${p.slug}">${esc(p.title)}</a> · ${p.date}`);
+  const lines = posts.map((p, i) => `${i + 1}. <a href="${T.SITE}/blog/${p.slug}">${esc(p.title)}</a> · ${p.date.slice(0, 16).replace('T', ' ')}`);
   await tg('sendMessage', {
     chat_id: chatId,
     text: `📚 <b>Maqolalar (${posts.length})</b>\n\n${lines.join('\n')}\n\nO'chirish uchun tanlang:`,

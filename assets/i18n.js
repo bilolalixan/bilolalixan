@@ -63,6 +63,8 @@
       postNote: '',
       months: ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'],
       date: (d, m, y) => `${d}-${m}, ${y}`,
+      dateShort: (d, m) => `${d}-${m}`,
+      today: 'Bugun', yesterday: 'Kecha',
       tags: {},
     },
     ru: {
@@ -114,6 +116,8 @@
       postNote: 'Статья опубликована на узбекском языке.',
       months: ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'],
       date: (d, m, y) => `${d} ${m} ${y}`,
+      dateShort: (d, m) => `${d} ${m}`,
+      today: 'Сегодня', yesterday: 'Вчера',
       tags: { Maqola: 'Статья', Yangilik: 'Новости', Marketing: 'Маркетинг', Strategiya: 'Стратегия', Biznes: 'Бизнес', Brend: 'Бренд', Sinov: 'Тест' },
     },
     en: {
@@ -165,6 +169,8 @@
       postNote: 'This article is published in Uzbek.',
       months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
       date: (d, m, y) => `${m} ${d}, ${y}`,
+      dateShort: (d, m) => `${m} ${d}`,
+      today: 'Today', yesterday: 'Yesterday',
       tags: { Maqola: 'Article', Yangilik: 'News', Marketing: 'Marketing', Strategiya: 'Strategy', Biznes: 'Business', Brend: 'Brand', Sinov: 'Test' },
     },
   };
@@ -183,10 +189,26 @@
   const orig = (el) => (el.dataset.i18nOrig ??= el.textContent.trim());
   const num = (s) => { const m = String(s).match(/\d+/); return m ? Number(m[0]) : 0; };
 
+  /* Post dates. datetime is "YYYY-MM-DD" (older posts) or a full timestamp
+     like "2026-09-27T12:40:00+05:00". Shown in Tashkent time: "Bugun, 12:40",
+     "Kecha, 18:05", "27-sentabr, 12:40", or with the year when it differs. */
+  const TZ = 5 * 3600 * 1000;
+  const tashkent = (ms) => { const d = new Date(ms + TZ); return { y: d.getUTCFullYear(), m: d.getUTCMonth(), d: d.getUTCDate(), hh: d.getUTCHours(), mm: d.getUTCMinutes() }; };
   function formatDate(iso) {
-    const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (!m) return null;
-    return t('date', Number(m[3]), t('months')[Number(m[2]) - 1], Number(m[1]));
+    const s = String(iso);
+    const dateOnly = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateOnly) return t('date', Number(dateOnly[3]), t('months')[Number(dateOnly[2]) - 1], Number(dateOnly[1]));
+    const ms = Date.parse(s);
+    if (isNaN(ms)) return null;
+    const p = tashkent(ms), now = tashkent(Date.now()), yest = tashkent(Date.now() - 864e5);
+    const time = String(p.hh).padStart(2, '0') + ':' + String(p.mm).padStart(2, '0');
+    const same = (a, b) => a.y === b.y && a.m === b.m && a.d === b.d;
+    let day;
+    if (same(p, now)) day = t('today');
+    else if (same(p, yest)) day = t('yesterday');
+    else if (p.y === now.y) day = t('dateShort', p.d, t('months')[p.m]);
+    else day = t('date', p.d, t('months')[p.m], p.y);
+    return day + ', ' + time;
   }
 
   function apply() {
@@ -212,7 +234,7 @@
     // Dates: any <time datetime="YYYY-MM-DD"> in cards and post heroes
     document.querySelectorAll('.post-meta time[datetime], .eyebrow time[datetime]').forEach((el) => {
       orig(el);
-      el.textContent = lang === 'uz' ? el.dataset.i18nOrig : (formatDate(el.getAttribute('datetime')) || el.dataset.i18nOrig);
+      el.textContent = formatDate(el.getAttribute('datetime')) || el.dataset.i18nOrig;
     });
 
     // Tags
