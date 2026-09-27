@@ -1,4 +1,12 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "functions": {
+    "api/blog-bot.js": {
+      "maxDuration": 60
+    },
+    "api/hub-bot.js": {
+      "maxDuration": 60
+    }
+  }
 }

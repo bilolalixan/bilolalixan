@@ -16,6 +16,9 @@ const { fromTelegram, fromMarkdown, fromRichMessage, slugify, readingMinutes, ta
 const T = require('./_lib/templates');
 const gh = require('./_lib/github');
 const { tg, download } = require('./_lib/telegram');
+const subs = require('./_lib/subscribers');
+const notify = require('./_lib/notify');
+const { firstTime } = require('./_lib/kv');
 
 const BTN_NEW = '📝 Yangi maqola';
 const BTN_LIST = '📚 Maqolalar';
@@ -120,7 +123,10 @@ async function sendPreview(chatId, msg) {
   await tg('sendMessage', {
     chat_id: chatId, text, parse_mode: 'HTML',
     reply_parameters: { message_id: msg.message_id },
-    reply_markup: { inline_keyboard: [[{ text: '✅ Chop etish', callback_data: 'pub' }, { text: '❌ Bekor qilish', callback_data: 'cancel' }]] },
+    reply_markup: { inline_keyboard: [
+      [{ text: '✅ Chop etish + 📣 obunachilarga', callback_data: 'pub' }],
+      [{ text: '🌐 Faqat saytga', callback_data: 'pubq' }, { text: '❌ Bekor qilish', callback_data: 'cancel' }],
+    ] },
   });
 }
 
@@ -155,7 +161,7 @@ async function publish(original) {
   if (sitemap != null) changes.push({ path: 'sitemap.xml', text: T.addToSitemap(sitemap, slug, date.iso) });
 
   await gh.commit(changes, `Blog: publish "${post.title}"`);
-  return { slug, title: post.title };
+  return { slug, title: post.title, excerpt: post.description, cover };
 }
 
 async function removePost(slug) {
@@ -217,7 +223,7 @@ async function onCallback(cq) {
   const data = cq.data || '';
   const edit = (text, extra = {}) => tg('editMessageText', { chat_id: chatId, message_id: messageId, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true }, ...extra });
 
-  if (data === 'pub') {
+  if (data === 'pub' || data === 'pubq') {
     const original = cq.message.reply_to_message;
     if (!original) {
       await tg('answerCallbackQuery', { callback_query_id: cq.id });
@@ -226,9 +232,19 @@ async function onCallback(cq) {
     // Drop the buttons first so a double tap cannot publish twice.
     await tg('editMessageReplyMarkup', { chat_id: chatId, message_id: messageId, reply_markup: { inline_keyboard: [] } });
     await tg('answerCallbackQuery', { callback_query_id: cq.id, text: 'Chop etilmoqda…' });
-    const { slug, title } = await publish(original);
-    const url = `${T.SITE}/blog/${slug}`;
-    return edit(`✅ <b>Chop etildi!</b>\n\n<b>${esc(title)}</b>\n${url}\n\nSayt taxminan 1 daqiqada yangilanadi.`);
+    const post = await publish(original);
+    const url = `${T.SITE}/blog/${post.slug}`;
+    const head = `✅ <b>Chop etildi!</b>\n\n<b>${esc(post.title)}</b>\n${url}`;
+    if (data === 'pubq') return edit(`${head}\n\nSayt taxminan 1 daqiqada yangilanadi.`);
+    if (!subs.configured()) return edit(`${head}\n\n⚠️ Obunachilar bazasi (Upstash Redis) ulanmagan — rassilka yuborilmadi.`);
+
+    // Announce to subscribers once the page is live, so the link works.
+    await edit(`${head}\n\n⏳ Sayt yangilanishini kutib, obunachilarga yuboryapman…`);
+    const live = await notify.waitUntilLive(url);
+    const r = await notify.announcePost(post, post.cover);
+    const line = notify.reportLine(r) + (live ? '' : ' (sahifa hali yangilanmagan bo\'lishi mumkin)');
+    notify.groupLog(`📰 Yangi maqola: <b>${esc(post.title)}</b>\n${esc(line)}`);
+    return edit(`${head}\n\n📣 ${esc(line)}`);
   }
 
   if (data === 'cancel') {
@@ -292,6 +308,10 @@ module.exports = async (req, res) => {
   let update = req.body;
   if (typeof update === 'string') { try { update = JSON.parse(update); } catch (_) { update = {}; } }
   update = update || {};
+
+  // Publishing can take ~a minute (waiting for the deploy); Telegram may retry
+  // the same update meanwhile. Handle each update only once.
+  if (update.update_id != null && !(await firstTime('upd:blog:' + update.update_id))) return res.status(200).json({ ok: true });
 
   const from = (update.message && update.message.from) || (update.callback_query && update.callback_query.from);
   const chatId = (update.message && update.message.chat.id) || (update.callback_query && update.callback_query.message.chat.id);

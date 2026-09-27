@@ -195,11 +195,22 @@ function removeCard(indexHtml, slug) {
 }
 
 /** List posts on /blog (newest first) from the card markers. */
+const unesc = (s) => String(s).replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
 function listCards(indexHtml) {
   const out = [];
-  const re = /<!-- POST:([a-z0-9-]+) -->[\s\S]*?<time datetime="([^"]+)">[\s\S]*?<h2 class="post-title">([\s\S]*?)<\/h2>/g;
+  const re = /<!-- POST:([a-z0-9-]+) -->([\s\S]*?)<!-- \/POST:\1 -->/g;
   let m;
-  while ((m = re.exec(indexHtml))) out.push({ slug: m[1], date: m[2], title: m[3].replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&') });
+  while ((m = re.exec(indexHtml))) {
+    const block = m[2];
+    const pick = (r) => { const x = block.match(r); return x ? unesc(x[1].trim()) : ''; };
+    out.push({
+      slug: m[1],
+      date: pick(/<time datetime="([^"]+)">/),
+      title: pick(/<h2 class="post-title">([\s\S]*?)<\/h2>/),
+      excerpt: pick(/<p class="post-excerpt">([\s\S]*?)<\/p>/),
+      tag: pick(/<span class="post-tag">([\s\S]*?)<\/span>/),
+    });
+  }
   return out;
 }
 
