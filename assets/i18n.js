@@ -65,6 +65,7 @@
       date: (d, m, y) => `${d}-${m}, ${y}`,
       dateShort: (d, m) => `${d}-${m}`,
       today: 'Bugun', yesterday: 'Kecha',
+      latestPosts: "So'nggi maqolalar", allPosts: 'Barchasi', prevPost: 'Oldingi maqola', nextPost: 'Keyingi maqola',
       tags: {},
     },
     ru: {
@@ -118,6 +119,7 @@
       date: (d, m, y) => `${d} ${m} ${y}`,
       dateShort: (d, m) => `${d} ${m}`,
       today: 'Сегодня', yesterday: 'Вчера',
+      latestPosts: 'Последние статьи', allPosts: 'Все', prevPost: 'Предыдущая статья', nextPost: 'Следующая статья',
       tags: { Maqola: 'Статья', Yangilik: 'Новости', Marketing: 'Маркетинг', Strategiya: 'Стратегия', Biznes: 'Бизнес', Brend: 'Бренд', Sinov: 'Тест' },
     },
     en: {
@@ -171,6 +173,7 @@
       date: (d, m, y) => `${m} ${d}, ${y}`,
       dateShort: (d, m) => `${m} ${d}`,
       today: 'Today', yesterday: 'Yesterday',
+      latestPosts: 'Latest posts', allPosts: 'All', prevPost: 'Previous post', nextPost: 'Next post',
       tags: { Maqola: 'Article', Yangilik: 'News', Marketing: 'Marketing', Strategiya: 'Strategy', Biznes: 'Business', Brend: 'Brand', Sinov: 'Test' },
     },
   };
@@ -291,6 +294,8 @@
     document.dispatchEvent(new CustomEvent('langchange', { detail: l }));
   }
   window.I18N.setLang = setLang;
+  // Re-translate content added after load (e.g. the landing page's post slider).
+  window.I18N.refresh = apply;
 
   /* ── Site menu ── */
   const ICON_MENU = '<svg class="i-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="15" y2="15"/></svg>' +
