@@ -1,16 +1,31 @@
 // Upstash Redis over its REST API (no dependencies).
-// Vercel's Upstash integration sets KV_REST_API_URL / KV_REST_API_TOKEN;
-// a direct Upstash setup uses UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN.
 
-function cfg() {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) throw new Error('Redis (Upstash) is not connected to this Vercel project');
-  return { url: url.replace(/\/$/, ''), token };
+/* Finds the Upstash REST URL and token. Vercel's integration names them
+   KV_REST_API_URL / KV_REST_API_TOKEN, or <PREFIX>_KV_REST_API_URL when a
+   custom prefix was chosen; a direct Upstash setup uses UPSTASH_REDIS_REST_*. */
+function find() {
+  const env = process.env;
+  const pairs = [
+    ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN'],
+    ['KV_REST_API_URL', 'KV_REST_API_TOKEN'],
+  ];
+  for (const k of Object.keys(env)) {
+    const m = k.match(/^(.*)_REST_API_URL$/) || k.match(/^(.*)_REDIS_REST_URL$/);
+    if (m) pairs.push([k, k.replace(/URL$/, 'TOKEN')]);
+  }
+  for (const [u, t] of pairs) {
+    if (env[u] && env[t] && /^https:/.test(env[u])) return { url: env[u].replace(/\/$/, ''), token: env[t] };
+  }
+  return null;
 }
 
-const configured = () => !!((process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL) &&
-  (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN));
+function cfg() {
+  const c = find();
+  if (!c) throw new Error('Redis (Upstash) is not connected to this Vercel project (redeploy after connecting it)');
+  return c;
+}
+
+const configured = () => !!find();
 
 /** Runs one Redis command, e.g. cmd('SADD', 'subs', '42'). */
 async function cmd(...args) {
