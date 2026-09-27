@@ -35,46 +35,49 @@
 <meta name="twitter:image" content="https://www.apelsin.asia/assets/og-blog.jpg">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog","name":"Apelsin blogi","url":"https://www.apelsin.asia/blog","inLanguage":"uz","publisher":{"@type":"Organization","name":"Apelsin","logo":"https://www.apelsin.asia/assets/icon-512.png"}}</script>
 <link rel="stylesheet" href="/assets/blog.css">
+<link rel="stylesheet" href="/assets/blog-feed.css">
 </head>
 <body>
 
-<div class="wrap">
+<div class="wrap feed-wrap">
 
-  <!-- HERO -->
-  <header class="card hero">
-    <div class="top">
-      <div class="top-left">
-        <a class="icon-btn" href="/" aria-label="Bosh sahifa" data-i18n-aria="home">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        </a>
-        <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство"></a>
-      </div>
-      <div class="top-actions">
-        <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
-          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-        </button>
-        <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
-        </button>
-      </div>
+  <!-- TOP BAR -->
+  <header class="bh-top">
+    <div class="top-left">
+      <a class="icon-btn" href="/" aria-label="Bosh sahifa" data-i18n-aria="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </a>
+      <h1 class="bh-title" data-i18n="blog">Blog</h1>
     </div>
-
-    <div class="hero-body">
-      <p class="eyebrow" data-i18n="blogEyebrow">Apelsin blogi</p>
-      <h1 class="h1" data-i18n-html="blogTitle">Marketing, biznes va <b>g'oyalar</b> haqida yozamiz</h1>
-      <div class="chips">
-        <span class="chip">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          <span data-i18n-posts><b id="postCount">1</b>&nbsp;ta maqola</span>
-        </span>
-        <a class="chip" href="/bilolalixan" style="text-decoration:none">
-          <img src="/assets/bilolalixan.jpg" alt="" style="width:20px;height:20px;border-radius:50%;object-fit:cover;margin-left:-6px">
-          <span data-i18n="author">Muallif:</span> <b>Bilol alixan</b>
-        </a>
+    <div class="top-actions">
+      <div class="bh-bell-wrap">
+        <button class="bh-bell" id="bellBtn" type="button" aria-label="Bildirishnomalar" data-i18n-aria="fNotif" aria-expanded="false" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <b id="bellCount">0</b>
+        </button>
+        <div class="bh-panel" id="bellPanel" hidden></div>
       </div>
+      <button class="icon-btn" id="searchBtn" type="button" aria-label="Qidirish" data-i18n-aria="fSearchBtn" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+      <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+      </button>
+      <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+      </button>
     </div>
   </header>
+  <div class="bh-search" id="searchRow" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="search" autocomplete="off" placeholder="Maqola qidirish" data-i18n-ph="fSearch">
+  </div>
+
+  <!-- STORIES + FEED (built from the post cards below by /assets/blog-feed.js) -->
+  <nav class="stories" id="stories" aria-label="Stories"></nav>
+  <div class="feed" id="feed"></div>
+  <p class="feed-empty" id="feedEmpty" data-i18n="fNothing" hidden>Hech narsa topilmadi</p>
 
   <!-- POSTS (newest first; the first one is .featured) -->
   <main id="posts" style="display:flex;flex-direction:column;gap:8px">
@@ -147,11 +150,10 @@
     <!-- POSTS:END -->
   </main>
 
-  <p class="foot"><a href="/">© Apelsin</a> · <a href="/bilolalixan">Bilol alixan</a></p>
+  <p class="foot"><a href="/">© Apelsin</a> · <a href="/services" data-i18n="services">Xizmatlar</a> · <a href="/bilolalixan">Bilol alixan</a></p>
 </div>
 
 <script>
-document.getElementById('postCount').textContent = document.querySelectorAll('#posts .post-card').length;
 document.getElementById('shareBtn').addEventListener('click', async () => {
   const data = { title: document.title, url: location.href };
   try {
@@ -163,5 +165,6 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
 </script>
 <script src="/assets/i18n.js"></script>
 <script src="/assets/theme.js"></script>
+<script src="/assets/blog-feed.js"></script>
 </body>
 </html>
