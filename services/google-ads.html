@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<script>
+/* Apply the saved (or system) theme before first paint. */
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('theme'); } catch (_) {}
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.dataset.theme = t;
+  var m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = t === 'light' ? '#eeeef0' : '#0b0b0c';
+})();
+</script>
+<title>Google Ads — Apelsin</title>
+<meta name="description" content="Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.">
+<link rel="canonical" href="https://www.apelsin.asia/services/google-ads">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Apelsin">
+<meta property="og:locale" content="uz_UZ">
+<meta property="og:title" content="Google Ads — Apelsin">
+<meta property="og:description" content="Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.">
+<meta property="og:url" content="https://www.apelsin.asia/services/google-ads">
+<meta property="og:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Service","name":"Google Ads","serviceType":"Qidiruv va YouTube reklamasi","description":"Google’da odamlar tayyor ehtiyoj bilan qidiradi. Biz sizni ular qidirayotgan paytda birinchi o'rinlarda ko'rsatamiz va bu qiziqishni qo'ng'iroq va arizaga aylantiramiz.","url":"https://www.apelsin.asia/services/google-ads","provider":{"@type":"Organization","name":"Apelsin","url":"https://www.apelsin.asia","logo":"https://www.apelsin.asia/assets/icon-512.png"},"areaServed":{"@type":"Country","name":"Uzbekistan"}}</script>
+<link rel="stylesheet" href="/assets/blog.css">
+<link rel="stylesheet" href="/assets/services.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="card hero">
+    <div class="top">
+      <div class="top-left">
+        <a class="icon-btn" href="/services" aria-label="Barcha xizmatlar" data-i18n-aria="svcAll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </a>
+        <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство"></a>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn theme-btn" type="button" data-theme-toggle aria-label="Yorug' / qorong'i rejim">
+          <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
+        </button>
+        <button class="icon-btn" id="shareBtn" type="button" aria-label="Ulashish">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-body svc-hero">
+      <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <p class="eyebrow" data-i18n="st:google-ads">Qidiruv va YouTube reklamasi</p>
+      <h1 class="h1"><b data-i18n="sn:google-ads">Google Ads</b></h1>
+      <p class="svc-lead" data-i18n="lead">Google’da odamlar tayyor ehtiyoj bilan qidiradi. Biz sizni ular qidirayotgan paytda birinchi o'rinlarda ko'rsatamiz va bu qiziqishni qo'ng'iroq va arizaga aylantiramiz.</p>
+      <div class="chips">
+        <a class="chip chip-cta" href="/booking?service=google-ads">
+          <span data-i18n="svcCtaBtn">Bepul konsultatsiya</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a class="chip" href="/services"><span data-i18n="svcAll">Barcha xizmatlar</span></a>
+      </div>
+    </div>
+  </header>
+
+  <!-- WHAT'S INCLUDED -->
+  <section class="card svc-sec">
+    <h2 class="svc-h2" data-i18n="svcIncluded">Nimalar kiradi</h2>
+    <ul class="svc-list">
+      <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div><b data-i18n="i1t">Qidiruv reklamasi</b><p data-i18n="i1d">Kalit so'zlar tadqiqoti, minus-so'zlar va kuchli e'lon matnlari.</p></div></li>
+      <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div><b data-i18n="i2t">Performance Max va Display</b><p data-i18n="i2d">Google tarmog'ining barcha joylarida avtomatlashtirilgan kampaniyalar.</p></div></li>
+      <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div><b data-i18n="i3t">YouTube reklamasi</b><p data-i18n="i3d">Video orqali brendni tanitish va remarketing.</p></div></li>
+      <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div><b data-i18n="i4t">Konversiyalarni o'lchash</b><p data-i18n="i4d">GA4, Google Tag Manager va qo'ng'iroqlarni kuzatish sozlanadi.</p></div></li>
+      <li><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><div><b data-i18n="i5t">Doimiy optimizatsiya</b><p data-i18n="i5d">Stavkalar, so'zlar va e'lonlar har hafta natijaga qarab yangilanadi.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="card svc-sec">
+    <h2 class="svc-h2" data-i18n="svcProcess">Qanday ishlaymiz</h2>
+    <ol class="svc-steps">
+      <li><span class="num">01</span><b data-i18n="p1t">Tadqiqot</b><p data-i18n="p1d">Mijozlaringiz Google’da nimani qidirayotganini o'rganamiz.</p></li>
+      <li><span class="num">02</span><b data-i18n="p2t">Tuzilma</b><p data-i18n="p2d">Kampaniyalar, guruhlar va e'lonlar tuzilmasini quramiz.</p></li>
+      <li><span class="num">03</span><b data-i18n="p3t">Ishga tushirish</b><p data-i18n="p3d">Konversiyalar sozlanadi, reklama start oladi.</p></li>
+      <li><span class="num">04</span><b data-i18n="p4t">Optimizatsiya</b><p data-i18n="p4d">Keraksiz xarajatlarni kesib, foydali so'zlarni kuchaytiramiz.</p></li>
+    </ol>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card svc-sec">
+    <h2 class="svc-h2" data-i18n="svcGains">Natijada nima olasiz</h2>
+    <ul class="svc-gains">
+      <li data-i18n="g1">Tayyor ehtiyoji bor “issiq” mijozlar</li>
+      <li data-i18n="g2">Raqobatchilardan oldin ko'rinish</li>
+      <li data-i18n="g3">Har bir klik va qo'ng'iroq o'lchanadi</li>
+    </ul>
+  </section>
+
+  <!-- CTA -->
+  <a class="card svc-cta" href="/booking?service=google-ads">
+    <div>
+      <p class="svc-cta-title" data-i18n="svcCtaTitle">Loyihangizni muhokama qilamiz</p>
+      <p class="svc-cta-text" data-i18n="svcCtaText">8 ta qisqa savolga javob bering — mutaxassisimiz siz bilan bog'lanadi va biznesingizga mos yechim taklif qiladi.</p>
+    </div>
+    <span class="svc-cta-btn"><span data-i18n="svcCtaBtn">Bepul konsultatsiya</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+  </a>
+
+  <!-- OTHER SERVICES -->
+  <section class="card svc-sec">
+    <h2 class="svc-h2" data-i18n="svcOther">Boshqa xizmatlar</h2>
+    <nav class="svc-rows">
+      <a class="svc-row" href="/services/performance-marketing"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span class="svc-row-name" data-i18n="sn:performance-marketing">Performance Marketing</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/lead-generation"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="svc-row-name" data-i18n="sn:lead-generation">Lead Generation</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/web-development"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span><span class="svc-row-name" data-i18n="sn:web-development">Web-sayt yaratish</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/influencer-marketing"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="svc-row-name" data-i18n="sn:influencer-marketing">Influencer Marketing</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/reels-production"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span><span class="svc-row-name" data-i18n="sn:reels-production">Reels Production</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/logo-design"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><span class="svc-row-name" data-i18n="sn:logo-design">Logo &amp; Design</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+      <a class="svc-row" href="/services/branding"><span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="svc-row-name" data-i18n="sn:branding">Branding</span><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></a>
+    </nav>
+  </section>
+
+  <p class="foot"><a href="/">© Apelsin</a> · <a href="/services" data-i18n="services">Xizmatlar</a> · <a href="/blog">Blog</a></p>
+</div>
+
+<script>window.I18N_PAGE = {"uz":{"lead":"Google’da odamlar tayyor ehtiyoj bilan qidiradi. Biz sizni ular qidirayotgan paytda birinchi o'rinlarda ko'rsatamiz va bu qiziqishni qo'ng'iroq va arizaga aylantiramiz.","i1t":"Qidiruv reklamasi","i1d":"Kalit so'zlar tadqiqoti, minus-so'zlar va kuchli e'lon matnlari.","i2t":"Performance Max va Display","i2d":"Google tarmog'ining barcha joylarida avtomatlashtirilgan kampaniyalar.","i3t":"YouTube reklamasi","i3d":"Video orqali brendni tanitish va remarketing.","i4t":"Konversiyalarni o'lchash","i4d":"GA4, Google Tag Manager va qo'ng'iroqlarni kuzatish sozlanadi.","i5t":"Doimiy optimizatsiya","i5d":"Stavkalar, so'zlar va e'lonlar har hafta natijaga qarab yangilanadi.","p1t":"Tadqiqot","p1d":"Mijozlaringiz Google’da nimani qidirayotganini o'rganamiz.","p2t":"Tuzilma","p2d":"Kampaniyalar, guruhlar va e'lonlar tuzilmasini quramiz.","p3t":"Ishga tushirish","p3d":"Konversiyalar sozlanadi, reklama start oladi.","p4t":"Optimizatsiya","p4d":"Keraksiz xarajatlarni kesib, foydali so'zlarni kuchaytiramiz.","g1":"Tayyor ehtiyoji bor “issiq” mijozlar","g2":"Raqobatchilardan oldin ko'rinish","g3":"Har bir klik va qo'ng'iroq o'lchanadi"},"ru":{"lead":"В Google люди ищут с уже готовой потребностью. Мы показываем вас на первых позициях в момент поиска и превращаем этот интерес в звонки и заявки.","i1t":"Поисковая реклама","i1d":"Подбор ключевых слов, минус-слова и сильные тексты объявлений.","i2t":"Performance Max и КМС","i2d":"Автоматизированные кампании на всех площадках Google.","i3t":"Реклама на YouTube","i3d":"Узнаваемость бренда и ремаркетинг через видео.","i4t":"Учёт конверсий","i4d":"Настраиваем GA4, Google Tag Manager и отслеживание звонков.","i5t":"Постоянная оптимизация","i5d":"Ставки, ключи и объявления обновляются каждую неделю по результатам.","p1t":"Исследование","p1d":"Изучаем, что ваши клиенты ищут в Google.","p2t":"Структура","p2d":"Строим структуру кампаний, групп и объявлений.","p3t":"Запуск","p3d":"Настраиваем конверсии и запускаем рекламу.","p4t":"Оптимизация","p4d":"Отсекаем лишние расходы и усиливаем прибыльные запросы.","g1":"«Горячие» клиенты с готовой потребностью","g2":"Видимость раньше конкурентов","g3":"Каждый клик и звонок измеряется"},"en":{"lead":"On Google people search with a need they already have. We put you at the top at the moment they search and turn that intent into calls and enquiries.","i1t":"Search ads","i1d":"Keyword research, negative keywords and strong ad copy.","i2t":"Performance Max & Display","i2d":"Automated campaigns across all of Google’s placements.","i3t":"YouTube ads","i3d":"Brand awareness and remarketing through video.","i4t":"Conversion tracking","i4d":"GA4, Google Tag Manager and call tracking set up.","i5t":"Ongoing optimisation","i5d":"Bids, keywords and ads refreshed every week based on results.","p1t":"Research","p1d":"We learn what your customers search for on Google.","p2t":"Structure","p2d":"We build the campaign, ad group and ad structure.","p3t":"Launch","p3d":"Conversions are set up and ads go live.","p4t":"Optimise","p4d":"Wasted spend is cut and profitable searches are pushed.","g1":"“Warm” customers who already need you","g2":"Visibility ahead of competitors","g3":"Every click and call is measured"}};</script>
+<script src="/assets/i18n.js"></script>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

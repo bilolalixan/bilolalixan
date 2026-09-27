@@ -8,5 +8,82 @@
     "api/hub-bot.js": {
       "maxDuration": 60
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/services/PerformanceMarketing",
+      "destination": "/services/performance-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/services/LeadGeneration",
+      "destination": "/services/lead-generation",
+      "permanent": true
+    },
+    {
+      "source": "/services/Targeting",
+      "destination": "/services/lead-generation",
+      "permanent": true
+    },
+    {
+      "source": "/services/GoogleAds",
+      "destination": "/services/google-ads",
+      "permanent": true
+    },
+    {
+      "source": "/services/WebDevelopment",
+      "destination": "/services/web-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/WebRazrabotka",
+      "destination": "/services/web-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/Web",
+      "destination": "/services/web-development",
+      "permanent": true
+    },
+    {
+      "source": "/services/InfluencerMarketing",
+      "destination": "/services/influencer-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/services/InfluenceMarketing",
+      "destination": "/services/influencer-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/services/influence-marketing",
+      "destination": "/services/influencer-marketing",
+      "permanent": true
+    },
+    {
+      "source": "/services/ReelsProduction",
+      "destination": "/services/reels-production",
+      "permanent": true
+    },
+    {
+      "source": "/services/Reels",
+      "destination": "/services/reels-production",
+      "permanent": true
+    },
+    {
+      "source": "/services/LogoDesign",
+      "destination": "/services/logo-design",
+      "permanent": true
+    },
+    {
+      "source": "/services/Logo",
+      "destination": "/services/logo-design",
+      "permanent": true
+    },
+    {
+      "source": "/services/Design",
+      "destination": "/services/logo-design",
+      "permanent": true
+    }
+  ]
 }
