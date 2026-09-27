@@ -204,10 +204,49 @@ body {
 }
 .chip b { color: var(--ink); font-weight: 500; }
 .chip svg { width: 13px; height: 13px; flex-shrink: 0; }
-/* "Strategiya · Natija" opens /booking */
-.chip-link { text-decoration: none; cursor: pointer; transition: background 0.15s, border-color 0.15s, transform 0.15s; }
-.chip-link:hover { background: var(--card2-hover); border-color: var(--line2); }
-.chip-link:active { transform: scale(0.97); }
+/* Primary call to action: opens /booking */
+.cta-btn {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 10px; height: 56px; padding: 0 8px 0 10px;
+  border-radius: 100px;
+  background: var(--ink); color: var(--bg);
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.cta-btn:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+.cta-btn:active { transform: scale(0.98); }
+.cta-ico {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--bg) 12%, transparent);
+}
+.cta-ico svg { width: 17px; height: 17px; }
+.cta-text { flex: 1; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cta-arrow {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg); color: var(--ink);
+  transition: transform 0.25s ease;
+}
+.cta-arrow svg { width: 17px; height: 17px; }
+.cta-btn:hover .cta-arrow { transform: translateX(3px); }
+/* Soft light sweep to draw the eye */
+.cta-btn::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, var(--bg) 22%, transparent), transparent);
+  transform: skewX(-20deg);
+  animation: ctaShine 3.6s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+@keyframes ctaShine { 0% { left: -40%; } 45%, 100% { left: 130%; } }
+@media (prefers-reduced-motion: reduce) { .cta-btn::after { animation: none; display: none; } }
+@media (max-width: 350px) {
+  .cta-ico { display: none; }
+  .cta-btn { padding-left: 20px; }
+  .cta-text { font-size: 14px; white-space: normal; line-height: 1.2; }
+}
 .chips .icon-btn { margin-left: auto; flex-shrink: 0; background: var(--card2); border: 0.5px solid var(--line); }
 
 /* ── SWIPE CARD ── */
@@ -348,14 +387,16 @@ body {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           <b data-i18n="city">Toshkent</b>
         </span>
-        <a class="chip chip-link" href="/booking">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          <span data-i18n-html="strategy">Strategiya · <b>Natija</b></span>
-        </a>
         <a class="icon-btn" href="/bilolalixan" aria-label="Bilolalixan">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
         </a>
       </div>
+
+      <a class="cta-btn" href="/booking">
+        <span class="cta-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
+        <span class="cta-text" data-i18n="ctaBook">Bepul konsultatsiya olish</span>
+        <span class="cta-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </a>
     </div>
   </section>
 
