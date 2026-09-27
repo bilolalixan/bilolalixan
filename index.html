@@ -322,25 +322,85 @@ body {
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.8,.2,1), color 0.25s;
 }
 
-/* ── SERVICES ── */
-.svcs { padding: 22px 20px 20px; }
-.svc-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.svc-tile {
-  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
-  min-height: 112px; padding: 14px;
+/* ── SERVICES: bento grid ──
+   Tall enough screens pin the section (sticky) while the tiles fly in one by
+   one as you scroll; after the last one the page moves on to the blog.
+   Otherwise (short screens, reduced motion, no JS) it is a normal grid whose
+   tiles fade in as they enter the viewport. */
+.svcs-pin { position: relative; }
+.svcs { padding: 20px 18px 18px; display: flex; flex-direction: column; }
+.svcs .blogs-head { margin-bottom: 14px; }
+
+.bento {
+  display: grid; gap: 6px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 108px);
+  grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo rl" "br br";
+}
+.bt {
+  --e: 1;
+  position: relative; min-width: 0; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+  padding: 14px;
   background: var(--card2); border: 0.5px solid var(--line); border-radius: 22px;
   text-decoration: none; color: var(--ink);
-  transition: background 0.2s, transform 0.15s;
+  opacity: clamp(0, calc(var(--e) * 1.6), 1);
+  transform: translateY(calc((1 - var(--e)) * var(--fly, 48px))) scale(calc(1 + (1 - var(--e)) * 0.14));
+  transition: background 0.2s;
+  will-change: transform, opacity;
 }
-.svc-tile:hover { background: var(--card2-hover); }
-.svc-tile:active { transform: scale(0.97); }
-.svc-tile-ico {
-  width: 38px; height: 38px; border-radius: 13px; background: var(--chip);
+.bt:hover { background: var(--card2-hover); }
+.bt-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.bt-ico {
+  width: 36px; height: 36px; border-radius: 12px; background: var(--chip); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.svc-tile-ico svg { width: 18px; height: 18px; }
-.svc-tile-name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
-@media (min-width: 560px) { .svc-tiles { grid-template-columns: repeat(4, 1fr); } }
+.bt-ico svg { width: 17px; height: 17px; }
+.bt-go {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  border: 1px solid var(--line2); color: var(--ink2);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+.bt-go svg { width: 14px; height: 14px; }
+.bt:hover .bt-go { transform: rotate(-45deg); background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.bt-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bt-tag { font-size: 11.5px; color: var(--ink3); }
+.bt-name { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.22; }
+.bt-text { font-size: 12.5px; line-height: 1.45; color: var(--ink2);
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+/* What each tile size shows */
+.bt .bt-tag, .bt .bt-text, .bt .bt-go { display: none; }
+.bt-pm .bt-tag, .bt-br .bt-tag, .bt-pm .bt-go, .bt-br .bt-go, .bt-lg .bt-go, .bt-rl .bt-go { display: flex; }
+.bt-lg .bt-text, .bt-rl .bt-text { display: -webkit-box; }
+.bt-pm .bt-name, .bt-br .bt-name { font-size: 19px; letter-spacing: -0.02em; }
+.bt-lg .bt-name, .bt-rl .bt-name { font-size: 16px; }
+/* The lead tile is inverted */
+.bt-pm { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.bt-pm:hover { background: var(--ink); opacity: 0.94; }
+.bt-pm .bt-ico { background: rgba(127,127,127,0.18); }
+.bt-pm .bt-tag { color: inherit; opacity: 0.6; }
+.bt-pm .bt-go { border-color: currentColor; color: inherit; opacity: 0.7; }
+.bt-pm:hover .bt-go { background: var(--bg); color: var(--ink); border-color: var(--bg); opacity: 1; }
+.bt-pm { grid-area: pm; } .bt-lg { grid-area: lg; } .bt-ga { grid-area: ga; } .bt-wd { grid-area: wd; }
+.bt-inf { grid-area: inf; } .bt-rl { grid-area: rl; } .bt-lo { grid-area: lo; } .bt-br { grid-area: br; }
+
+/* Pinned mode (set by JS) */
+.svcs-pin.pin { height: 340vh; }
+.svcs-pin.pin .svcs {
+  position: sticky; top: 12px;
+  height: calc(100vh - 24px); height: calc(100svh - 24px); max-height: 820px;
+}
+.svcs-pin.pin .bento { flex: 1; min-height: 0; grid-template-rows: repeat(6, minmax(0, 1fr)); --fly: 62vh; }
+.bt.flying { box-shadow: 0 18px 40px rgba(0,0,0,0.3); z-index: 2; }
+/* Shorter screens: 5 rows — Reels and Branding become regular tiles */
+@media (max-height: 760px) {
+  .svcs-pin.pin .bento { grid-template-rows: repeat(5, minmax(0, 1fr)); grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo br"; }
+  .svcs-pin.pin .bt-rl .bt-text, .svcs-pin.pin .bt-rl .bt-go, .svcs-pin.pin .bt-br .bt-tag, .svcs-pin.pin .bt-br .bt-go { display: none; }
+  .svcs-pin.pin .bt-rl .bt-name, .svcs-pin.pin .bt-br .bt-name { font-size: 14.5px; letter-spacing: -0.01em; }
+  .svcs-pin.pin .bt { padding: 12px; }
+  .svcs-pin.pin .bt-ico { width: 32px; height: 32px; border-radius: 11px; }
+}
 
 /* ── LATEST POSTS: swipeable card stack ── */
 .blogs { padding: 22px 20px 18px; }
@@ -455,7 +515,8 @@ body {
 
  </div>
 
-  <!-- SERVICES -->
+  <!-- SERVICES (bento; pinned while the tiles fly in on tall screens) -->
+  <div class="svcs-pin" id="svcsPin">
   <section class="card svcs" id="services">
     <div class="blogs-head">
       <div>
@@ -466,17 +527,42 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
-    <nav class="svc-tiles">
-      <a class="svc-tile" href="/services/performance-marketing"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span class="svc-tile-name" data-i18n="sn:performance-marketing">Performance Marketing</span></a>
-      <a class="svc-tile" href="/services/lead-generation"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:lead-generation">Lead Generation</span></a>
-      <a class="svc-tile" href="/services/google-ads"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="svc-tile-name" data-i18n="sn:google-ads">Google Ads</span></a>
-      <a class="svc-tile" href="/services/web-development"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span><span class="svc-tile-name" data-i18n="sn:web-development">Web-sayt yaratish</span></a>
-      <a class="svc-tile" href="/services/influencer-marketing"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="svc-tile-name" data-i18n="sn:influencer-marketing">Influencer Marketing</span></a>
-      <a class="svc-tile" href="/services/reels-production"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:reels-production">Reels Production</span></a>
-      <a class="svc-tile" href="/services/logo-design"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><span class="svc-tile-name" data-i18n="sn:logo-design">Logo & Design</span></a>
-      <a class="svc-tile" href="/services/branding"><span class="svc-tile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="svc-tile-name" data-i18n="sn:branding">Branding</span></a>
+    <nav class="bento" id="bento">
+      <a class="bt bt-pm" href="/services/performance-marketing">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:performance-marketing">Natijaga yo'naltirilgan reklama</span><span class="bt-name" data-i18n="sn:performance-marketing">Performance Marketing</span><span class="bt-text" data-i18n="ss:performance-marketing">Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz.</span></span>
+      </a>
+      <a class="bt bt-lg" href="/services/lead-generation">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:lead-generation">Target reklama</span><span class="bt-name" data-i18n="sn:lead-generation">Lead Generation</span><span class="bt-text" data-i18n="ss:lead-generation">Instagram va Facebook target reklamasi orqali sifatli, sotuvga tayyor lidlar.</span></span>
+      </a>
+      <a class="bt bt-ga" href="/services/google-ads">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:google-ads">Qidiruv va YouTube reklamasi</span><span class="bt-name" data-i18n="sn:google-ads">Google Ads</span><span class="bt-text" data-i18n="ss:google-ads">Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.</span></span>
+      </a>
+      <a class="bt bt-wd" href="/services/web-development">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:web-development">Web razrabotka</span><span class="bt-name" data-i18n="sn:web-development">Web-sayt yaratish</span><span class="bt-text" data-i18n="ss:web-development">Tez ishlaydigan, chiroyli va sotadigan saytlar, landinglar va onlayn do'konlar.</span></span>
+      </a>
+      <a class="bt bt-inf" href="/services/influencer-marketing">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:influencer-marketing">Blogerlar bilan reklama</span><span class="bt-name" data-i18n="sn:influencer-marketing">Influencer Marketing</span><span class="bt-text" data-i18n="ss:influencer-marketing">Auditoriyangiz ishonadigan blogerlar orqali brendingizni tanitamiz.</span></span>
+      </a>
+      <a class="bt bt-rl" href="/services/reels-production">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:reels-production">Qisqa videolar</span><span class="bt-name" data-i18n="sn:reels-production">Reels Production</span><span class="bt-text" data-i18n="ss:reels-production">Ko'rishadigan, saqlashadigan va sotadigan Reels, Shorts va TikTok videolar.</span></span>
+      </a>
+      <a class="bt bt-lo" href="/services/logo-design">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:logo-design">Logotip va grafik dizayn</span><span class="bt-name" data-i18n="sn:logo-design">Logo &amp; Design</span><span class="bt-text" data-i18n="ss:logo-design">Esda qoladigan logotip va biznesingiz uchun barcha grafik dizayn.</span></span>
+      </a>
+      <a class="bt bt-br" href="/services/branding">
+        <span class="bt-top"><span class="bt-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span class="bt-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></span>
+        <span class="bt-body"><span class="bt-tag" data-i18n="st:branding">Brend yaratish va rivojlantirish</span><span class="bt-name" data-i18n="sn:branding">Branding</span><span class="bt-text" data-i18n="ss:branding">Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend.</span></span>
+      </a>
     </nav>
   </section>
+  </div>
 
   <!-- LATEST POSTS (filled from /blog; hidden if there are none) -->
   <section class="card blogs" id="blogs" hidden>
@@ -720,6 +806,58 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
       if (posts.length) build(posts);
     })
     .catch(() => {});
+})();
+</script>
+<script>
+/* ── SERVICES: tiles fly in one by one while the section is pinned ── */
+(function () {
+  const pin = document.getElementById('svcsPin');
+  const tiles = [...document.querySelectorAll('#bento .bt')];
+  if (!pin || !tiles.length) return;
+  const mq = matchMedia('(min-height: 620px) and (prefers-reduced-motion: no-preference)');
+  const N = tiles.length;
+  const W = 0.24;                       // share of the scroll each tile takes to land
+  const ease = (x) => 1 - Math.pow(1 - x, 3);
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  let io = null, raf = 0;
+
+  function frame() {
+    raf = 0;
+    const vh = innerHeight, r = pin.getBoundingClientRect();
+    // From "section top at 40% of the screen" to "a little before the pin ends".
+    const from = -0.4 * vh, to = r.height - vh - 0.35 * vh;
+    const p = clamp((-r.top - from) / (to - from));
+    tiles.forEach((t, i) => {
+      const start = i * (1 - W) / (N - 1);
+      const e = ease(clamp((p - start) / W));
+      t.style.setProperty('--e', e === 1 ? '1' : e.toFixed(4));
+      t.classList.toggle('flying', e > 0 && e < 1);
+    });
+  }
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
+  function setup() {
+    removeEventListener('scroll', onScroll);
+    if (io) { io.disconnect(); io = null; }
+    if (mq.matches) {
+      pin.classList.add('pin');
+      addEventListener('scroll', onScroll, { passive: true });
+      frame();
+    } else {
+      pin.classList.remove('pin');
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { tiles.forEach((t) => t.style.setProperty('--e', '1')); return; }
+      // Short screens: each tile rises in as it scrolls into view.
+      tiles.forEach((t) => { t.style.setProperty('--e', '0'); t.style.transition = 'opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1), background .2s'; });
+      io = new IntersectionObserver((es) => es.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const t = en.target; t.style.transitionDelay = (tiles.indexOf(t) % 2) * 80 + 'ms';
+        t.style.setProperty('--e', '1'); io.unobserve(t);
+      }), { rootMargin: '0px 0px -8% 0px' });
+      tiles.forEach((t) => io.observe(t));
+    }
+  }
+  mq.addEventListener ? mq.addEventListener('change', setup) : mq.addListener(setup);
+  setup();
 })();
 </script>
 <script src="/assets/theme.js"></script>
