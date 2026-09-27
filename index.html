@@ -322,7 +322,12 @@ body {
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.2,.8,.2,1), color 0.25s;
 }
 
-/* ── SERVICES: bento overview ── */
+/* ── SERVICES: bento grid ──
+   Tall enough screens pin the section (sticky) while the tiles fly in one by
+   one as you scroll; after the last one the page moves on to the blog.
+   Otherwise (short screens, reduced motion, no JS) it is a normal grid whose
+   tiles fade in as they enter the viewport. */
+.svcs-pin { position: relative; }
 .svcs { padding: 20px 18px 18px; display: flex; flex-direction: column; }
 .svcs .blogs-head { margin-bottom: 14px; }
 
@@ -333,12 +338,16 @@ body {
   grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo rl" "br br";
 }
 .bt {
+  --e: 1;
   position: relative; min-width: 0; min-height: 0; overflow: hidden;
   display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
   padding: 14px;
   background: var(--card2); border: 0.5px solid var(--line); border-radius: 22px;
   text-decoration: none; color: var(--ink);
+  opacity: clamp(0, calc(var(--e) * 1.6), 1);
+  transform: translateY(calc((1 - var(--e)) * var(--fly, 48px))) scale(calc(1 + (1 - var(--e)) * 0.14));
   transition: background 0.2s;
+  will-change: transform, opacity;
 }
 .bt:hover { background: var(--card2-hover); }
 .bt-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
@@ -376,79 +385,21 @@ body {
 .bt-pm { grid-area: pm; } .bt-lg { grid-area: lg; } .bt-ga { grid-area: ga; } .bt-wd { grid-area: wd; }
 .bt-inf { grid-area: inf; } .bt-rl { grid-area: rl; } .bt-lo { grid-area: lo; } .bt-br { grid-area: br; }
 
-/* ── SERVICES: zoom-through ──
-   On tall enough screens the bento card is pinned (sticky) while scrolling.
-   The first tile grows out of its place until it fills the card; further
-   scrolling slides from one service to the next inside that full view; after
-   the last one it shrinks back into its tile and the page moves on to the
-   blog. Motion follows the scroll with easing and a soft lag. Short screens,
-   reduced motion and no JS keep the plain bento. */
-.svcs { position: relative; }
-.svcs-pin.pin { height: calc(100vh + 14.4 * 45vh); }
+/* Pinned mode (set by JS) */
+.svcs-pin.pin { height: 340vh; }
 .svcs-pin.pin .svcs {
   position: sticky; top: 12px;
   height: calc(100vh - 24px); height: calc(100svh - 24px); max-height: 820px;
 }
-.svcs-pin.pin .bento { flex: 1; min-height: 0; grid-template-rows: repeat(6, minmax(0, 1fr)); }
-.svcs-pin.pin .bento .bt, .svcs-pin.pin .blogs-head { opacity: var(--dim, 1); }
+.svcs-pin.pin .bento { flex: 1; min-height: 0; grid-template-rows: repeat(6, minmax(0, 1fr)); --fly: 62vh; }
+.bt.flying { box-shadow: 0 18px 40px rgba(0,0,0,0.3); z-index: 2; }
+/* Shorter screens: 5 rows — Reels and Branding become regular tiles */
 @media (max-height: 760px) {
   .svcs-pin.pin .bento { grid-template-rows: repeat(5, minmax(0, 1fr)); grid-template-areas: "pm pm" "lg ga" "lg wd" "inf rl" "lo br"; }
   .svcs-pin.pin .bt-rl .bt-text, .svcs-pin.pin .bt-rl .bt-go, .svcs-pin.pin .bt-br .bt-tag, .svcs-pin.pin .bt-br .bt-go { display: none; }
   .svcs-pin.pin .bt-rl .bt-name, .svcs-pin.pin .bt-br .bt-name { font-size: 14.5px; letter-spacing: -0.01em; }
   .svcs-pin.pin .bt { padding: 12px; }
   .svcs-pin.pin .bt-ico { width: 32px; height: 32px; border-radius: 11px; }
-}
-
-.zoom {
-  position: absolute; z-index: 10; overflow: hidden; display: none;
-  background: var(--card2); color: var(--ink);
-  border: 0.5px solid var(--line2); border-radius: 22px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-}
-.zoom.on { display: block; }
-.zoom.inv { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-.z-small, .z-panel { position: absolute; left: 0; top: 0; }
-.z-small { z-index: 2; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; background: inherit; }
-.z-small .bt-name { font-size: 15px; }
-.z-panel {
-  display: flex; flex-direction: column; justify-content: space-between;
-  padding: 22px 20px 20px;
-  background: var(--card2); color: var(--ink);
-  transform-origin: 50% 0%; will-change: transform, opacity;
-}
-.z-panel.inv { background: var(--ink); color: var(--bg); }
-.z-top { display: flex; align-items: center; justify-content: space-between; }
-.z-num { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; opacity: 0.5; }
-.z-num b { opacity: 1; }
-.z-ico {
-  width: 64px; height: 64px; border-radius: 22px; background: var(--chip);
-  display: flex; align-items: center; justify-content: center;
-}
-.z-ico svg { width: 28px; height: 28px; }
-.z-panel.inv .z-ico, .zoom.inv .z-small .bt-ico { background: rgba(127,127,127,0.2); }
-.z-tag { font-size: 13px; opacity: 0.6; margin-bottom: 10px; }
-.z-name { font-size: clamp(32px, 10vw, 46px); line-height: 1.02; font-weight: 600; letter-spacing: -0.04em; }
-.z-text { margin-top: 14px; font-size: 15.5px; line-height: 1.55; opacity: 0.72; max-width: 360px; }
-.z-items { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
-.z-items li {
-  display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 100px;
-  border: 0.5px solid currentColor; font-size: 12.5px; white-space: nowrap; opacity: 0.7;
-}
-.z-act { display: flex; gap: 6px; }
-.z-btn {
-  flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 50px; border-radius: 100px; font-size: 14px; font-weight: 600; text-decoration: none;
-  background: var(--ink); color: var(--bg); transition: opacity 0.15s;
-}
-.z-btn svg { width: 15px; height: 15px; }
-.z-btn.ghost { background: var(--chip); color: var(--ink); }
-.z-panel.inv .z-btn { background: var(--bg); color: var(--ink); }
-.z-panel.inv .z-btn.ghost { background: rgba(127,127,127,0.22); color: var(--bg); }
-.z-btn:hover { opacity: 0.88; }
-@media (max-height: 700px) {
-  .z-panel { padding: 18px 18px 16px; }
-  .z-ico { width: 52px; height: 52px; border-radius: 18px; }
-  .z-items li:nth-child(3) { display: none; }
 }
 
 /* ── LATEST POSTS: swipeable card stack ── */
@@ -564,7 +515,7 @@ body {
 
  </div>
 
-  <!-- SERVICES: bento; on tall screens each tile zooms to fill the card while scrolling -->
+  <!-- SERVICES (bento; pinned while the tiles fly in on tall screens) -->
   <div class="svcs-pin" id="svcsPin">
   <section class="card svcs" id="services">
     <div class="blogs-head">
@@ -610,7 +561,6 @@ body {
         <span class="bt-body"><span class="bt-tag" data-i18n="st:branding">Brend yaratish va rivojlantirish</span><span class="bt-name" data-i18n="sn:branding">Branding</span><span class="bt-text" data-i18n="ss:branding">Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend.</span></span>
       </a>
     </nav>
-    <div class="zoom" id="zoom"></div>
   </section>
   </div>
 
@@ -859,137 +809,51 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
 })();
 </script>
 <script>
-/* ── SERVICES: zoom into the bento, then glide through the services ── */
+/* ── SERVICES: tiles fly in one by one while the section is pinned ── */
 (function () {
   const pin = document.getElementById('svcsPin');
-  const card = document.getElementById('services');
-  const bento = document.getElementById('bento');
-  const zoom = document.getElementById('zoom');
-  if (!pin || !bento || !zoom) return;
-  const tiles = [...bento.querySelectorAll('.bt')];
+  const tiles = [...document.querySelectorAll('#bento .bt')];
+  if (!pin || !tiles.length) return;
+  const mq = matchMedia('(min-height: 620px) and (prefers-reduced-motion: no-preference)');
   const N = tiles.length;
-  const mq = matchMedia('(min-height: 600px) and (prefers-reduced-motion: no-preference)');
-  // Scroll timeline in units (must add up to the 14.4 in .svcs-pin.pin's height):
-  // rest on the bento, grow, [hold, move] × (N-1) + hold, shrink, rest.
-  const REST = 0.3, GROW = 1, HOLD = 0.6, MOVE = 1;
-  const MID = N * HOLD + (N - 1) * MOVE;
-  const TOTAL = REST + GROW + MID + GROW + REST;
-  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-  const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
-  const t = (k) => (window.I18N ? window.I18N.t(k) : '') || '';
-  const pad = (n) => String(n).padStart(2, '0');
-  let panels = [], small = null, smallFor = -1, cur = null, target = 0, raf = 0;
+  const W = 0.24;                       // share of the scroll each tile takes to land
+  const ease = (x) => 1 - Math.pow(1 - x, 3);
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  let io = null, raf = 0;
 
-  function build() {
-    zoom.innerHTML = '<div class="z-small"></div>' + tiles.map((tile, i) => {
-      const slug = tile.getAttribute('href').split('/').pop();
-      const icon = tile.querySelector('.bt-ico').innerHTML;
-      const items = [0, 1, 2].map((j) => t('si:' + slug + ':' + j)).filter(Boolean).map((x) => '<li>' + x + '</li>').join('');
-      return '<div class="z-panel' + (tile.classList.contains('bt-pm') ? ' inv' : '') + '">' +
-        '<div class="z-top"><span class="z-num"><b>' + pad(i + 1) + '</b> / ' + pad(N) + '</span><span class="z-ico">' + icon + '</span></div>' +
-        '<div><p class="z-tag">' + t('st:' + slug) + '</p><h3 class="z-name">' + t('sn:' + slug) + '</h3>' +
-          '<p class="z-text">' + t('ss:' + slug) + '</p><ul class="z-items">' + items + '</ul></div>' +
-        '<div class="z-act"><a class="z-btn" href="/services/' + slug + '"><span>' + t('svcMore') + '</span>' + ARROW + '</a>' +
-          '<a class="z-btn ghost" href="/booking?service=' + slug + '">' + t('svcBook') + '</a></div>' +
-      '</div>';
-    }).join('');
-    small = zoom.querySelector('.z-small');
-    panels = [...zoom.querySelectorAll('.z-panel')];
-    smallFor = -1;
-  }
-
-  function setSmall(i) {
-    if (smallFor === i) return;
-    const tile = tiles[i];
-    small.innerHTML = '<span class="bt-ico">' + tile.querySelector('.bt-ico').innerHTML + '</span><span class="bt-name">' + tile.querySelector('.bt-name').textContent + '</span>';
-    zoom.classList.toggle('inv', tile.classList.contains('bt-pm'));
-    smallFor = i;
-  }
-
-  // Where we are for a timeline position u: zoom amount, which tile it
-  // grows from / shrinks into, and the (fractional) service shown.
-  function state(u) {
-    let x = u - REST;
-    if (x <= 0) return { z: 0 };
-    if (x < GROW) return { z: ease(x / GROW), anchor: 0, c: 0 };
-    x -= GROW;
-    if (x < MID) {
-      const k = Math.floor(x / (HOLD + MOVE)), r = x - k * (HOLD + MOVE);
-      return { z: 1, c: Math.min(N - 1, r < HOLD ? k : k + ease((r - HOLD) / MOVE)) };
-    }
-    x -= MID;
-    if (x < GROW) return { z: ease(1 - x / GROW), anchor: N - 1, c: N - 1 };
-    return { z: 0 };
-  }
-
-  function render(u) {
-    const s = state(u);
-    if (s.z <= 0.001) {
-      zoom.classList.remove('on');
-      tiles.forEach((x) => { x.style.visibility = ''; });
-      card.style.removeProperty('--dim');
-      return;
-    }
-    zoom.classList.add('on');
-    const anchor = s.anchor ?? Math.round(s.c);
-    tiles.forEach((x, j) => { x.style.visibility = s.z < 1 && j === anchor ? 'hidden' : ''; });
-    const cr = card.getBoundingClientRect(), tr = tiles[anchor].getBoundingClientRect();
-    const W = card.clientWidth, H = card.clientHeight;
-    const lerp = (a, b) => a + (b - a) * s.z;
-    zoom.style.left = lerp(tr.left - cr.left, 0) + 'px';
-    zoom.style.top = lerp(tr.top - cr.top, 0) + 'px';
-    zoom.style.width = lerp(tr.width, W) + 'px';
-    zoom.style.height = lerp(tr.height, H) + 'px';
-    zoom.style.borderRadius = lerp(22, 30) + 'px';
-    setSmall(anchor);
-    small.style.width = tr.width + 'px'; small.style.height = tr.height + 'px';
-    small.style.opacity = String(clamp((0.6 - s.z) / 0.3, 0, 1));
-    const reveal = clamp((s.z - 0.3) / 0.4, 0, 1);
-    panels.forEach((p, j) => {
-      const d = j - s.c;                      // >0 below (incoming), <0 leaving upward
-      if (d >= 1 || d <= -1) { p.style.visibility = 'hidden'; return; }
-      p.style.visibility = 'visible';
-      p.style.width = W + 'px'; p.style.height = H + 'px';
-      if (d > 0) { p.style.transform = 'translateY(' + (d * 100).toFixed(3) + '%)'; p.style.opacity = String(reveal); }
-      else { p.style.transform = 'translateY(' + (d * 18).toFixed(3) + '%) scale(' + (1 + d * 0.08).toFixed(4) + ')'; p.style.opacity = String((1 + d * 0.85) * reveal); }
-      p.style.zIndex = String(j + 1);
-      p.style.pointerEvents = s.z > 0.95 && Math.abs(d) < 0.05 ? 'auto' : 'none';
-    });
-    card.style.setProperty('--dim', String(1 - 0.75 * s.z));
-  }
-
-  function measure() {
-    const vh = innerHeight, r = pin.getBoundingClientRect();
-    return clamp(-r.top / (r.height - vh), 0, 1) * TOTAL;
-  }
-  // Follow the scroll with a soft lag, so the motion stays smooth even on
-  // jumpy wheel or touch scrolling.
-  function tick() {
+  function frame() {
     raf = 0;
-    if (!pin.classList.contains('pin')) return;
-    target = measure();
-    if (cur === null || Math.abs(target - cur) > TOTAL * 0.5) cur = target;
-    cur += (target - cur) * 0.1;
-    if (Math.abs(target - cur) < 0.0005) cur = target;
-    render(cur);
-    if (cur !== target) raf = requestAnimationFrame(tick);
+    const vh = innerHeight, r = pin.getBoundingClientRect();
+    // From "section top at 40% of the screen" to "a little before the pin ends".
+    const from = -0.4 * vh, to = r.height - vh - 0.35 * vh;
+    const p = clamp((-r.top - from) / (to - from));
+    tiles.forEach((t, i) => {
+      const start = i * (1 - W) / (N - 1);
+      const e = ease(clamp((p - start) / W));
+      t.style.setProperty('--e', e === 1 ? '1' : e.toFixed(4));
+      t.classList.toggle('flying', e > 0 && e < 1);
+    });
   }
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(tick); };
-  document.addEventListener('langchange', () => { build(); render(cur || 0); });
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(frame); };
 
   function setup() {
     removeEventListener('scroll', onScroll);
-    removeEventListener('resize', onScroll);
+    if (io) { io.disconnect(); io = null; }
     if (mq.matches) {
       pin.classList.add('pin');
-      build();
       addEventListener('scroll', onScroll, { passive: true });
-      addEventListener('resize', onScroll);
-      cur = null; onScroll();
+      frame();
     } else {
       pin.classList.remove('pin');
-      render(0);
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { tiles.forEach((t) => t.style.setProperty('--e', '1')); return; }
+      // Short screens: each tile rises in as it scrolls into view.
+      tiles.forEach((t) => { t.style.setProperty('--e', '0'); t.style.transition = 'opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1), background .2s'; });
+      io = new IntersectionObserver((es) => es.forEach((en) => {
+        if (!en.isIntersecting) return;
+        const t = en.target; t.style.transitionDelay = (tiles.indexOf(t) % 2) * 80 + 'ms';
+        t.style.setProperty('--e', '1'); io.unobserve(t);
+      }), { rootMargin: '0px 0px -8% 0px' });
+      tiles.forEach((t) => io.observe(t));
     }
   }
   mq.addEventListener ? mq.addEventListener('change', setup) : mq.addListener(setup);
