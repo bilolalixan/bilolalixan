@@ -159,7 +159,7 @@ document.getElementById('shareBtn').addEventListener('click', async () => {
 /** Card for /blog. The newest card gets the "featured" class. */
 function postCard(p) {
   return `    <!-- POST:${p.slug} -->
-    <a class="card post-card featured" href="/blog/${p.slug}"${p.cover ? ` data-cover="${esc(p.cover)}"` : ''}>
+    <a class="card post-card featured" href="/blog/${p.slug}">
       <div class="post-meta">
         <span class="post-tag">${esc(p.tag)}</span>
         <time datetime="${p.date.full}">${esc(p.date.human)}</time>

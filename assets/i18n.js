@@ -225,37 +225,6 @@
     svcPicked: 'Service:',
     svcMore: 'Learn more', svcBook: 'Consultation',
   });
-  /* /blog feed (assets/blog-feed.js) */
-  Object.assign(D.uz, {
-    fAuthor: 'Bilol alixan', fNew: 'Yangi maqolalar', fNoNew: "Hozircha yangi maqola yo'q",
-    fSearch: 'Maqola qidirish', fNothing: 'Hech narsa topilmadi', fNotif: 'Bildirishnomalar', fSearchBtn: 'Qidirish',
-    fWrite: 'Izoh yozing', fLike: 'Yoqdi', fComments: 'Izohlar', fMore: 'Yana', fCopy: 'Havolani nusxalash',
-    fRead: "O'qish", fClose: 'Yopish', fStory: 'Muallif',
-    fCmTitle: 'Izoh qoldirish', fCmName: 'Ismingiz (ixtiyoriy)', fCmText: 'Fikringizni yozing…', fCmSend: 'Yuborish', fCmSending: 'Yuborilmoqda…',
-    fCmNote: "Izohingiz muallifga yuboriladi va saytda e'lon qilinmaydi.",
-    fCmDone: 'Rahmat! Izohingiz yuborildi.', fCmErr: "Yuborib bo'lmadi. Qayta urinib ko'ring.",
-    navChat: 'Chat', navHome: 'Bosh sahifa', navBook: 'Konsultatsiya', navProfile: 'Profil',
-  });
-  Object.assign(D.ru, {
-    fAuthor: 'Bilol alixan', fNew: 'Новые статьи', fNoNew: 'Пока новых статей нет',
-    fSearch: 'Поиск статей', fNothing: 'Ничего не найдено', fNotif: 'Уведомления', fSearchBtn: 'Поиск',
-    fWrite: 'Написать комментарий', fLike: 'Нравится', fComments: 'Комментарии', fMore: 'Ещё', fCopy: 'Скопировать ссылку',
-    fRead: 'Читать', fClose: 'Закрыть', fStory: 'Автор',
-    fCmTitle: 'Оставить комментарий', fCmName: 'Ваше имя (необязательно)', fCmText: 'Напишите ваше мнение…', fCmSend: 'Отправить', fCmSending: 'Отправка…',
-    fCmNote: 'Комментарий отправляется автору и не публикуется на сайте.',
-    fCmDone: 'Спасибо! Комментарий отправлен.', fCmErr: 'Не удалось отправить. Попробуйте ещё раз.',
-    navChat: 'Чат', navHome: 'Главная', navBook: 'Консультация', navProfile: 'Профиль',
-  });
-  Object.assign(D.en, {
-    fAuthor: 'Bilol alixan', fNew: 'New posts', fNoNew: 'No new posts yet',
-    fSearch: 'Search posts', fNothing: 'Nothing found', fNotif: 'Notifications', fSearchBtn: 'Search',
-    fWrite: 'Write a comment', fLike: 'Like', fComments: 'Comments', fMore: 'More', fCopy: 'Copy link',
-    fRead: 'Read', fClose: 'Close', fStory: 'Author',
-    fCmTitle: 'Leave a comment', fCmName: 'Your name (optional)', fCmText: 'Share your thoughts…', fCmSend: 'Send', fCmSending: 'Sending…',
-    fCmNote: 'Your comment goes to the author and is not published on the site.',
-    fCmDone: 'Thank you! Your comment was sent.', fCmErr: "Couldn't send it. Please try again.",
-    navChat: 'Chat', navHome: 'Home', navBook: 'Consultation', navProfile: 'Profile',
-  });
   const SVC = {
     uz: {"performance-marketing": ["Performance Marketing", "Natijaga yo'naltirilgan reklama", "Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz.", ["Analitika va tracking", "Kanallar strategiyasi", "Kampaniyalarni boshqarish"]], "lead-generation": ["Lead Generation", "Target reklama", "Instagram va Facebook target reklamasi orqali sifatli, sotuvga tayyor lidlar.", ["Auditoriya tadqiqoti", "Target sozlash", "Lid-formalar va landinglar"]], "google-ads": ["Google Ads", "Qidiruv va YouTube reklamasi", "Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.", ["Qidiruv reklamasi", "Performance Max va Display", "YouTube reklamasi"]], "web-development": ["Web-sayt yaratish", "Web razrabotka", "Tez ishlaydigan, chiroyli va sotadigan saytlar, landinglar va onlayn do'konlar.", ["Landing sahifalar", "Korporativ saytlar", "Onlayn do'konlar"]], "influencer-marketing": ["Influencer Marketing", "Blogerlar bilan reklama", "Auditoriyangiz ishonadigan blogerlar orqali brendingizni tanitamiz.", ["Blogerlarni tanlash", "Statistikani tekshirish", "Ssenariy va brif"]], "reels-production": ["Reels Production", "Qisqa videolar", "Ko'rishadigan, saqlashadigan va sotadigan Reels, Shorts va TikTok videolar.", ["G'oya va ssenariy", "Suratga olish", "Montaj"]], "logo-design": ["Logo & Design", "Logotip va grafik dizayn", "Esda qoladigan logotip va biznesingiz uchun barcha grafik dizayn.", ["Logotip", "Firma uslubi", "Poligrafiya"]], "branding": ["Branding", "Brend yaratish va rivojlantirish", "Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend.", ["Bozor va raqobat tahlili", "Pozitsiyalash", "Nom va slogan"]]},
     ru: {"performance-marketing": ["Performance Marketing", "Реклама с оплатой за результат", "Считаем каждый сум: работаем на продажи и выручку, а не на показы.", ["Аналитика и трекинг", "Стратегия каналов", "Ведение кампаний"]], "lead-generation": ["Lead Generation", "Таргетированная реклама", "Качественные, готовые к покупке лиды через таргет в Instagram и Facebook.", ["Исследование аудитории", "Настройка таргета", "Лид-формы и лендинги"]], "google-ads": ["Google Ads", "Поиск и YouTube", "Показывайтесь клиентам, которые ищут вас прямо сейчас, в Google и на YouTube.", ["Поисковая реклама", "Performance Max и КМС", "Реклама на YouTube"]], "web-development": ["Веб-разработка", "Сайты и лендинги", "Быстрые, красивые и продающие сайты, лендинги и интернет-магазины.", ["Лендинги", "Корпоративные сайты", "Интернет-магазины"]], "influencer-marketing": ["Influencer Marketing", "Реклама у блогеров", "Продвигаем бренд через блогеров, которым доверяет ваша аудитория.", ["Подбор блогеров", "Проверка статистики", "Сценарий и бриф"]], "reels-production": ["Reels Production", "Короткие видео", "Reels, Shorts и TikTok, которые смотрят, сохраняют и которые продают.", ["Идея и сценарий", "Съёмка", "Монтаж"]], "logo-design": ["Logo & Design", "Логотип и графический дизайн", "Запоминающийся логотип и весь графический дизайн для вашего бизнеса.", ["Логотип", "Фирменный стиль", "Полиграфия"]], "branding": ["Branding", "Создание и развитие бренда", "От позиционирования до брендбука: бренд, который выделяет вас среди конкурентов.", ["Анализ рынка и конкурентов", "Позиционирование", "Нейминг и слоган"]]},
