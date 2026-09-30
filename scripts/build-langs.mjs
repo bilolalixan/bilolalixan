@@ -2,6 +2,8 @@
 //
 //   node scripts/build-langs.mjs
 //
+// Also refreshes the site footer (api/_lib/footer.js) in every page and blog post.
+//
 // Russian is the default language and lives at the root (/, /services, ...).
 // Uzbek and English copies are written to /uz/... and /en/.... The root file
 // of each page is the source: every element with data-i18n, data-i18n-html,
@@ -21,8 +23,10 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const footer = createRequire(import.meta.url)('../api/_lib/footer.js');
 const SITE = 'https://www.apelsin.asia';
 const LANGS = ['ru', 'uz', 'en'];
 const DEFAULT = 'ru';
@@ -113,7 +117,12 @@ function translate({ l, dict, P, meta, alts, canonical, locale, DEFAULT }) {
 
   // Internal links to pages that exist in every language
   const VARIANT = /^\/(?:bilolalixan|booking|blog|services(?:\/[a-z-]+)?)?$/;
-  doc.querySelectorAll('a[href^="/"]').forEach((a) => {
+  doc.querySelectorAll('[data-lang-link]').forEach((a) => {
+    const hit = alts.find(([hl]) => hl === a.dataset.langLink);
+    if (hit) a.setAttribute('href', new URL(hit[1]).pathname);
+    if (a.dataset.langLink === l) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+  });
+  doc.querySelectorAll('a[href^="/"]:not([data-lang-link])').forEach((a) => {
     const href = a.getAttribute('href');
     if (href.startsWith('//')) return;
     const m = href.match(/^([^?#]*)(.*)$/);
@@ -160,8 +169,14 @@ const page = await ctx.newPage();
 await page.route('**/*', (r) => r.abort());
 
 const written = [];
+for (const f of fs.readdirSync(path.join(ROOT, 'blog'))) {
+  if (!f.endsWith('.html') || f === 'index.html') continue;
+  const p = path.join(ROOT, 'blog', f), html = fs.readFileSync(p, 'utf8'), next = footer.inject(html);
+  if (next !== html) { fs.writeFileSync(p, next); written.push('blog/' + f); }
+}
 for (const pg of PAGES) {
-  const src = fs.readFileSync(path.join(ROOT, pg.file), 'utf8');
+  // The shared footer is refreshed in the (Russian) source first.
+  const src = footer.inject(fs.readFileSync(path.join(ROOT, pg.file), 'utf8'));
   const P = pageDict(src);
   const alts = [...LANGS.map((l) => [l, SITE + langPath(pg.path, l)]), ['x-default', SITE + langPath(pg.path, DEFAULT)]];
   for (const l of LANGS) {
