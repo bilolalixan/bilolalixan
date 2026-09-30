@@ -11,6 +11,26 @@
   },
   "redirects": [
     {
+      "source": "/eng",
+      "destination": "/en",
+      "permanent": true
+    },
+    {
+      "source": "/eng/:path*",
+      "destination": "/en/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/ru",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/ru/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    },
+    {
       "source": "/services/PerformanceMarketing",
       "destination": "/services/performance-marketing",
       "permanent": true

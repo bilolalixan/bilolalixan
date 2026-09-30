@@ -238,17 +238,42 @@
     items.forEach((it, i) => { D[l]['si:' + slug + ':' + i] = it; });
   }));
 
-  let lang = 'uz';
-  try { lang = localStorage.getItem('lang') || 'uz'; } catch (_) {}
-  if (!LANGS.includes(lang)) lang = 'uz';
+  // Build scripts (scripts/build-langs.mjs) only need the dictionary.
+  if (window.__I18N_EXPORT) { window.__I18N_EXPORT(D); return; }
+
+  /* Language and URLs. Russian is the default and lives at the root; Uzbek
+     and English copies of the same pages live under /uz and /en (generated
+     by scripts/build-langs.mjs). Those pages carry <link rel="alternate"
+     hreflang> tags: their language comes from the URL, and switching the
+     language opens the other copy. Pages without copies (blog posts) use the
+     visitor's saved choice and switch in place. */
+  const DEFAULT = 'ru';
+  const VARIANT = /^\/(?:bilolalixan|booking|blog|services(?:\/[a-z-]+)?)?$/;  // paths that exist in every language
+  const alt = (l) => document.querySelector('link[rel="alternate"][hreflang="' + l + '"]');
+  const hasVariants = !!alt(DEFAULT);
+  const splitLang = (path) => { const m = path.match(/^\/(uz|en)(?=\/|$)/); return m ? { l: m[1], rest: path.slice(m[0].length) || '/' } : { l: DEFAULT, rest: path }; };
+  /** The same page in language l, for site paths that exist in every language. */
+  function localize(href, l) {
+    if (!href || href[0] !== '/' || href.startsWith('//')) return href;
+    const m = href.match(/^([^?#]*)(.*)$/);
+    const base = splitLang(m[1]).rest.replace(/\/$/, '') || '/';
+    if (!VARIANT.test(base)) return href;
+    return (l === DEFAULT ? base : '/' + l + (base === '/' ? '' : base)) + m[2];
+  }
+
+  let lang = DEFAULT;
+  if (hasVariants) lang = splitLang(location.pathname).l;
+  else { try { lang = localStorage.getItem('lang') || DEFAULT; } catch (_) {} }
+  if (!LANGS.includes(lang)) lang = DEFAULT;
+  try { localStorage.setItem('lang', lang); } catch (_) {}
 
   // Page-specific texts (window.I18N_PAGE = { uz: {...}, ru: {...}, en: {...} }) win over D.
   const P = window.I18N_PAGE || {};
   const t = (key, ...args) => {
-    const v = (P[lang] && P[lang][key]) ?? (D[lang] && D[lang][key]) ?? (P.uz && P.uz[key]) ?? D.uz[key];
+    const v = (P[lang] && P[lang][key]) ?? (D[lang] && D[lang][key]) ?? (P[DEFAULT] && P[DEFAULT][key]) ?? D[DEFAULT][key] ?? D.uz[key];
     return typeof v === 'function' ? v(...args) : v;
   };
-  window.I18N = { t, get lang() { return lang; } };
+  window.I18N = { t, get lang() { return lang; }, path: (href) => localize(href, lang) };
 
   // Remember the original (Uzbek) text of structure-translated nodes once.
   const orig = (el) => (el.dataset.i18nOrig ??= el.textContent.trim());
@@ -343,16 +368,28 @@
     const count = document.querySelector('[data-i18n-posts]');
     if (count) count.innerHTML = t('posts', document.querySelectorAll('#posts .post-card').length);
 
+    // Internal links point to the pages in the current language.
+    document.querySelectorAll('a[href^="/"]').forEach((el) => {
+      const o = (el.dataset.hrefOrig ??= el.getAttribute('href'));
+      const h = localize(o, lang);
+      if (h !== el.getAttribute('href')) el.setAttribute('href', h);
+    });
+
     updateMenu();
   }
 
   function setLang(l) {
     if (!LANGS.includes(l)) return;
+    try { localStorage.setItem('lang', l); } catch (_) {}
+    if (hasVariants) {
+      if (l === lang) return;
+      const a = alt(l);
+      location.href = (a ? new URL(a.href).pathname : localize(location.pathname, l)) + location.search + location.hash;
+      return;
+    }
     lang = l;
     try { localStorage.setItem('lang', l); } catch (_) {}
     apply();
-    // /bilolalixan has its own translations; keep it in sync.
-    if (document.getElementById('langWrap') && typeof window.setLang === 'function') window.setLang(l);
     document.dispatchEvent(new CustomEvent('langchange', { detail: l }));
   }
   window.I18N.setLang = setLang;

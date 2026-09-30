@@ -153,22 +153,33 @@ async function publish(original) {
   }
 
   const data = { ...post, slug, date, cover };
-  const [index, sitemap] = await Promise.all([gh.readFile('blog/index.html'), gh.readFile('sitemap.xml')]);
-  if (index == null) throw new Error('blog/index.html not found');
+  const [indexes, sitemap] = await Promise.all([readIndexes(), gh.readFile('sitemap.xml')]);
+  if (!indexes.length) throw new Error('blog/index.html not found');
 
   changes.push({ path: `blog/${slug}.html`, text: T.postPage(data) });
-  changes.push({ path: 'blog/index.html', text: T.addCard(index, T.postCard(data)) });
+  const card = T.postCard(data);
+  for (const { path, text } of indexes) changes.push({ path, text: T.addCard(text, card) });
   if (sitemap != null) changes.push({ path: 'sitemap.xml', text: T.addToSitemap(sitemap, slug, date.iso) });
 
   await gh.commit(changes, `Blog: publish "${post.title}"`);
   return { slug, title: post.title, excerpt: post.description, cover };
 }
 
+// The blog list exists in every site language: /blog (ru), /uz/blog, /en/blog.
+const INDEXES = ['blog/index.html', 'uz/blog/index.html', 'en/blog/index.html'];
+async function readIndexes() {
+  const texts = await Promise.all(INDEXES.map((p) => gh.readFile(p)));
+  return INDEXES.map((path, i) => ({ path, text: texts[i] })).filter((x) => x.text != null);
+}
+
 async function removePost(slug) {
-  const [index, sitemap] = await Promise.all([gh.readFile('blog/index.html'), gh.readFile('sitemap.xml')]);
-  const newIndex = index && T.removeCard(index, slug);
-  if (!newIndex) throw new UserError('Bu maqola topilmadi (ehtimol allaqachon o\'chirilgan).');
-  const changes = [{ path: 'blog/index.html', text: newIndex }];
+  const [indexes, sitemap] = await Promise.all([readIndexes(), gh.readFile('sitemap.xml')]);
+  const changes = [];
+  for (const { path, text } of indexes) {
+    const next = T.removeCard(text, slug);
+    if (next) changes.push({ path, text: next });
+  }
+  if (!changes.length) throw new UserError('Bu maqola topilmadi (ehtimol allaqachon o\'chirilgan).');
   if (await gh.exists(`blog/${slug}.html`)) changes.push({ path: `blog/${slug}.html`, delete: true });
   if (await gh.exists(`assets/blog/${slug}.jpg`)) changes.push({ path: `assets/blog/${slug}.jpg`, delete: true });
   if (sitemap != null) changes.push({ path: 'sitemap.xml', text: T.removeFromSitemap(sitemap, slug) });
