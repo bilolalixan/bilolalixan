@@ -11,6 +11,21 @@ const ICON_SUN = '<svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="cur
 const ICON_MOON = '<svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>';
 const ICON_SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>';
 
+const METRIKA = `<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113189110', 'ym');
+
+    ym(113189110, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+`;
+const METRIKA_NOSCRIPT = `<noscript><div><img src="https://mc.yandex.ru/watch/113189110" style="position:absolute; left:-9999px;" alt="" /></div></noscript>`;
+
 const THEME_SCRIPT = `<script>
 /* Apply the saved (or system) theme before first paint. */
 (function () {
@@ -77,8 +92,9 @@ ${THEME_SCRIPT}
 <meta name="twitter:image" content="${esc(image)}">
 <script type="application/ld+json">${ldJson}</script>
 <link rel="stylesheet" href="/assets/blog.css">
-</head>
+${METRIKA}</head>
 <body>
+${METRIKA_NOSCRIPT}
 
 <div class="wrap">
 
