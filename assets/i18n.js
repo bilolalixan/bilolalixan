@@ -228,6 +228,39 @@
     svcPicked: 'Service:',
     svcMore: 'Learn more', svcBook: 'Consultation',
   });
+  /* Site footer (api/_lib/footer.js) */
+  const FS = {
+    ru: ['Performance-маркетинг в Ташкенте', 'Таргетированная реклама в Ташкенте', 'Реклама в Google Ads в Ташкенте', 'Разработка сайтов в Ташкенте', 'Реклама у блогеров в Ташкенте', 'Reels Production в Ташкенте', 'Дизайн логотипа в Ташкенте', 'Брендинг в Ташкенте'],
+    uz: ['Toshkentda performance marketing', 'Toshkentda target reklama', 'Toshkentda Google Ads reklama', 'Toshkentda sayt yaratish', 'Toshkentda blogerlar bilan reklama', 'Toshkentda Reels production', 'Toshkentda logo dizayn', 'Toshkentda brending'],
+    en: ['Performance marketing in Tashkent', 'Targeted advertising in Tashkent', 'Google Ads in Tashkent', 'Web development in Tashkent', 'Influencer marketing in Tashkent', 'Reels production in Tashkent', 'Logo design in Tashkent', 'Branding in Tashkent'],
+  };
+  ['performance-marketing', 'lead-generation', 'google-ads', 'web-development', 'influencer-marketing', 'reels-production', 'logo-design', 'branding']
+    .forEach((slug, i) => LANGS.forEach((l) => { D[l]['fs:' + slug] = FS[l][i]; }));
+  Object.assign(D.ru, {
+    footAbout: 'Apelsin — performance-маркетинговое агентство в Ташкенте. Настраиваем рекламу, создаём сайты, контент и бренд, которые приносят бизнесу заявки и продажи.',
+    footBook: 'Бесплатная консультация', footServices: 'Услуги в Ташкенте', footAllServices: 'Все услуги',
+    footNav: 'Навигация', footHome: 'Главная', footBlog: 'Блог о маркетинге', footFounder: 'Основатель — Bilol alixan',
+    footContacts: 'Контакты', footAddr: 'Ташкент, Узбекистан',
+    footReq: 'Реквизиты', footReqBrand: 'Бренд', footReqFounder: 'Основатель', footReqCity: 'Адрес', footReqPhone: 'Телефон', footReqSite: 'Сайт',
+    footRights: 'Все права защищены.',
+  });
+  Object.assign(D.uz, {
+    footAbout: "Apelsin — Toshkentdagi performance-marketing agentligi. Biznesingizga lid va sotuv olib keladigan reklama, sayt, kontent va brend yaratamiz.",
+    footBook: 'Bepul konsultatsiya', footServices: 'Toshkentdagi xizmatlar', footAllServices: 'Barcha xizmatlar',
+    footNav: 'Navigatsiya', footHome: 'Bosh sahifa', footBlog: 'Marketing blogi', footFounder: 'Asoschi — Bilol alixan',
+    footContacts: 'Aloqa', footAddr: "Toshkent, O'zbekiston",
+    footReq: 'Rekvizitlar', footReqBrand: 'Brend', footReqFounder: 'Asoschi', footReqCity: 'Manzil', footReqPhone: 'Telefon', footReqSite: 'Sayt',
+    footRights: 'Barcha huquqlar himoyalangan.',
+  });
+  Object.assign(D.en, {
+    footAbout: 'Apelsin is a performance marketing agency in Tashkent. We run ads and build websites, content and brands that bring your business leads and sales.',
+    footBook: 'Free consultation', footServices: 'Services in Tashkent', footAllServices: 'All services',
+    footNav: 'Navigation', footHome: 'Home', footBlog: 'Marketing blog', footFounder: 'Founder — Bilol alixan',
+    footContacts: 'Contacts', footAddr: 'Tashkent, Uzbekistan',
+    footReq: 'Company details', footReqBrand: 'Brand', footReqFounder: 'Founder', footReqCity: 'Address', footReqPhone: 'Phone', footReqSite: 'Website',
+    footRights: 'All rights reserved.',
+  });
+
   const SVC = {
     uz: {"performance-marketing": ["Performance Marketing", "Natijaga yo'naltirilgan reklama", "Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz.", ["Analitika va tracking", "Kanallar strategiyasi", "Kampaniyalarni boshqarish"]], "lead-generation": ["Lead Generation", "Target reklama", "Instagram va Facebook target reklamasi orqali sifatli, sotuvga tayyor lidlar.", ["Auditoriya tadqiqoti", "Target sozlash", "Lid-formalar va landinglar"]], "google-ads": ["Google Ads", "Qidiruv va YouTube reklamasi", "Sizni aynan hozir qidirayotgan mijozlarga Google va YouTube’da ko'rining.", ["Qidiruv reklamasi", "Performance Max va Display", "YouTube reklamasi"]], "web-development": ["Web-sayt yaratish", "Web razrabotka", "Tez ishlaydigan, chiroyli va sotadigan saytlar, landinglar va onlayn do'konlar.", ["Landing sahifalar", "Korporativ saytlar", "Onlayn do'konlar"]], "influencer-marketing": ["Influencer Marketing", "Blogerlar bilan reklama", "Auditoriyangiz ishonadigan blogerlar orqali brendingizni tanitamiz.", ["Blogerlarni tanlash", "Statistikani tekshirish", "Ssenariy va brif"]], "reels-production": ["Reels Production", "Qisqa videolar", "Ko'rishadigan, saqlashadigan va sotadigan Reels, Shorts va TikTok videolar.", ["G'oya va ssenariy", "Suratga olish", "Montaj"]], "logo-design": ["Logo & Design", "Logotip va grafik dizayn", "Esda qoladigan logotip va biznesingiz uchun barcha grafik dizayn.", ["Logotip", "Firma uslubi", "Poligrafiya"]], "branding": ["Branding", "Brend yaratish va rivojlantirish", "Pozitsiyalashdan brendbukgacha: sizni raqobatchilardan ajratib turadigan brend.", ["Bozor va raqobat tahlili", "Pozitsiyalash", "Nom va slogan"]]},
     ru: {"performance-marketing": ["Performance Marketing", "Реклама с оплатой за результат", "Считаем каждый сум: работаем на продажи и выручку, а не на показы.", ["Аналитика и трекинг", "Стратегия каналов", "Ведение кампаний"]], "lead-generation": ["Lead Generation", "Таргетированная реклама", "Качественные, готовые к покупке лиды через таргет в Instagram и Facebook.", ["Исследование аудитории", "Настройка таргета", "Лид-формы и лендинги"]], "google-ads": ["Google Ads", "Поиск и YouTube", "Показывайтесь клиентам, которые ищут вас прямо сейчас, в Google и на YouTube.", ["Поисковая реклама", "Performance Max и КМС", "Реклама на YouTube"]], "web-development": ["Веб-разработка", "Сайты и лендинги", "Быстрые, красивые и продающие сайты, лендинги и интернет-магазины.", ["Лендинги", "Корпоративные сайты", "Интернет-магазины"]], "influencer-marketing": ["Influencer Marketing", "Реклама у блогеров", "Продвигаем бренд через блогеров, которым доверяет ваша аудитория.", ["Подбор блогеров", "Проверка статистики", "Сценарий и бриф"]], "reels-production": ["Reels Production", "Короткие видео", "Reels, Shorts и TikTok, которые смотрят, сохраняют и которые продают.", ["Идея и сценарий", "Съёмка", "Монтаж"]], "logo-design": ["Logo & Design", "Логотип и графический дизайн", "Запоминающийся логотип и весь графический дизайн для вашего бизнеса.", ["Логотип", "Фирменный стиль", "Полиграфия"]], "branding": ["Branding", "Создание и развитие бренда", "От позиционирования до брендбука: бренд, который выделяет вас среди конкурентов.", ["Анализ рынка и конкурентов", "Позиционирование", "Нейминг и слоган"]]},
@@ -369,7 +402,12 @@
     if (count) count.innerHTML = t('posts', document.querySelectorAll('#posts .post-card').length);
 
     // Internal links point to the pages in the current language.
-    document.querySelectorAll('a[href^="/"]').forEach((el) => {
+    document.querySelectorAll('[data-lang-link]').forEach((el) => {
+      const l = el.dataset.langLink, a = hasVariants && alt(l);
+      if (a) el.setAttribute('href', new URL(a.href).pathname);
+      if (l === lang) el.setAttribute('aria-current', 'true'); else el.removeAttribute('aria-current');
+    });
+    document.querySelectorAll('a[href^="/"]:not([data-lang-link])').forEach((el) => {
       const o = (el.dataset.hrefOrig ??= el.getAttribute('href'));
       const h = localize(o, lang);
       if (h !== el.getAttribute('href')) el.setAttribute('href', h);
@@ -393,6 +431,12 @@
     document.dispatchEvent(new CustomEvent('langchange', { detail: l }));
   }
   window.I18N.setLang = setLang;
+  // Footer language links: pages without copies switch in place.
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest && e.target.closest('[data-lang-link]');
+    if (a && !hasVariants) { e.preventDefault(); setLang(a.dataset.langLink); }
+    else if (a) { try { localStorage.setItem('lang', a.dataset.langLink); } catch (_) {} }
+  });
   // Re-translate content added after load (e.g. the landing page's post slider).
   window.I18N.refresh = apply;
 

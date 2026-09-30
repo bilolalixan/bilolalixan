@@ -2,6 +2,7 @@
 // blog/apelsin-blogi-ishga-tushdi.html so bot-made posts look identical.
 
 const { esc } = require('./format');
+const footer = require('./footer');
 
 const SITE = 'https://www.apelsin.asia';
 
@@ -92,6 +93,7 @@ ${THEME_SCRIPT}
 <meta name="twitter:image" content="${esc(image)}">
 <script type="application/ld+json">${ldJson}</script>
 <link rel="stylesheet" href="/assets/blog.css">
+${footer.CSS_LINK}
 ${METRIKA}</head>
 <body>
 ${METRIKA_NOSCRIPT}
@@ -152,7 +154,7 @@ ${p.bodyHtml}
     <span class="go">${ICON_NEXT}</span>
   </a>
 
-  <p class="foot"><a href="/">© Apelsin</a> · <a href="/blog">Blog</a></p>
+  ${footer.HTML}
 </div>
 
 <script>
