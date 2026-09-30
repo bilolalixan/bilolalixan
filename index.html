@@ -15,8 +15,8 @@
   if (m) m.content = t === 'light' ? '#eeeef0' : '#0b0b0c';
 })();
 </script>
-<title>Apelsin — Marketing agentligi, Toshkent</title>
-<meta name="description" content="Apelsin — Toshkentdagi marketing agentligi. Biznesingiz uchun strategiya, tahlil va marketing yechimlari: g'oyalarni natijaga aylantiramiz.">
+<title>Apelsin — performance-marketing agentligi, Toshkent</title>
+<meta name="description" content="Apelsin — Toshkentdagi performance-marketing agentligi. Target reklama, Google Ads, sayt va brending orqali biznesingizga lid va sotuv olib kelamiz. Bepul konsultatsiya.">
 <link rel="canonical" href="https://www.apelsin.asia/">
 <meta name="yandex-verification" content="6bfd7041ba637afe">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -26,17 +26,17 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Apelsin">
 <meta property="og:locale" content="uz_UZ">
-<meta property="og:title" content="Apelsin — Marketing agentligi, Toshkent">
-<meta property="og:description" content="Apelsin — Toshkentdagi marketing agentligi. Biznesingiz uchun strategiya, tahlil va marketing yechimlari: g'oyalarni natijaga aylantiramiz.">
+<meta property="og:title" content="Apelsin — performance-marketing agentligi, Toshkent">
+<meta property="og:description" content="Apelsin — Toshkentdagi performance-marketing agentligi. Target reklama, Google Ads, sayt va brending orqali biznesingizga lid va sotuv olib kelamiz. Bepul konsultatsiya.">
 <meta property="og:url" content="https://www.apelsin.asia/">
 <meta property="og:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Apelsin — Marketing agentligi, Toshkent">
-<meta name="twitter:description" content="Apelsin — Toshkentdagi marketing agentligi. Biznesingiz uchun strategiya, tahlil va marketing yechimlari: g'oyalarni natijaga aylantiramiz.">
+<meta name="twitter:title" content="Apelsin — performance-marketing agentligi, Toshkent">
+<meta name="twitter:description" content="Apelsin — Toshkentdagi performance-marketing agentligi. Target reklama, Google Ads, sayt va brending orqali biznesingizga lid va sotuv olib kelamiz. Bepul konsultatsiya.">
 <meta name="twitter:image" content="https://www.apelsin.asia/assets/og-apelsin.jpg">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Apelsin","alternateName":"Апельсин — маркетинговое агентство","url":"https://www.apelsin.asia/","logo":"https://www.apelsin.asia/assets/icon-512.png","address":{"@type":"PostalAddress","addressLocality":"Toshkent","addressCountry":"UZ"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfessionalService", "name": "Apelsin", "alternateName": ["Апельсин", "Apelsin marketing agentligi"], "description": "Apelsin — Toshkentdagi performance-marketing agentligi. Target reklama, Google Ads, sayt va brending orqali biznesingizga lid va sotuv olib kelamiz. Bepul konsultatsiya.", "url": "https://www.apelsin.asia/", "logo": "https://www.apelsin.asia/assets/icon-512.png", "image": "https://www.apelsin.asia/assets/og-apelsin.jpg", "telephone": "+998338308000", "areaServed": {"@type": "Country", "name": "Uzbekistan"}, "address": {"@type": "PostalAddress", "addressLocality": "Toshkent", "addressCountry": "UZ"}, "founder": {"@type": "Person", "name": "Bilol alixan Kemal O'g'li", "url": "https://www.apelsin.asia/bilolalixan"}, "knowsAbout": ["Performance marketing", "Target reklama", "Google Ads", "Web-sayt yaratish", "Influencer marketing", "Reels production", "Logo dizayn", "Branding"], "hasOfferCatalog": {"@type": "OfferCatalog", "name": "Xizmatlar", "url": "https://www.apelsin.asia/services"}}</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -325,6 +325,7 @@ body {
 /* ── SERVICES: list ── */
 .svcs { padding: 22px 20px 10px; }
 .svcs .blogs-head { margin-bottom: 6px; }
+.svcs-lead { margin: 4px 0 6px; font-size: 14px; line-height: 1.55; color: var(--ink2); }
 .svc-list { display: flex; flex-direction: column; }
 .svc-item {
   display: flex; align-items: center; gap: 14px;
@@ -415,7 +416,7 @@ body {
   <!-- HERO -->
   <section class="card hero">
     <div class="hero-top">
-      <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Апельсин — маркетинговое агентство"></a>
+      <a href="/" aria-label="Apelsin"><img class="logo" src="/assets/apelsin-logo.png" alt="Apelsin"></a>
       <div class="top-actions">
         <a class="pill" href="/blog">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -456,7 +457,8 @@ body {
   </section>
 
   <!-- SWIPE TO CONTACT -->
-  <div class="card swipe" id="swipe" role="link" tabindex="0"
+  <!--noindex-->
+  <div class="card swipe" id="swipe" data-nosnippet role="link" tabindex="0"
        data-i18n-aria="swipeAria" aria-label="Bilolalixan bilan bog'lanish: chapga suring yoki Enter bosing">
     <div class="swipe-label">
       <p class="swipe-text"><span data-i18n="swipeTitle">Contact Bilolalixan</span><br><span class="sub" data-i18n="swipeHint">chapga suring</span></p>
@@ -467,6 +469,7 @@ body {
     <div class="swipe-fill" id="swipeFill"><span class="fill-text" id="fillText" data-i18n="keepGoing">Davom eting</span></div>
     <div class="knob" id="knob"><img src="/assets/bilolalixan.jpg" alt="Bilol alixan"></div>
   </div>
+  <!--/noindex-->
 
  </div>
 
@@ -481,6 +484,7 @@ body {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
+    <p class="svcs-lead" data-i18n="svcHomeLead">Apelsin — Toshkentdagi performance-marketing agentligi. Reklama, sayt va brendni bitta tizimga bog'lab, biznesingizga barqaror lid va sotuv olib kelamiz.</p>
     <nav class="svc-list">
       <a class="svc-item" href="/services/performance-marketing">
         <span class="svc-item-text"><span class="svc-item-name" data-i18n="sn:performance-marketing">Performance Marketing</span><p class="svc-item-desc" data-i18n="ss:performance-marketing">Har bir so'mni o'lchaymiz: reklama emas, sotuv va daromad uchun ishlaymiz.</p></span>
@@ -518,7 +522,8 @@ body {
   </section>
 
   <!-- LATEST POSTS (filled from /blog; hidden if there are none) -->
-  <section class="card blogs" id="blogs" hidden>
+  <!--noindex-->
+  <section class="card blogs" id="blogs" data-nosnippet hidden>
     <div class="blogs-head">
       <div>
         <p class="eyebrow" data-i18n="blogEyebrow">Apelsin blogi</p>
@@ -539,8 +544,9 @@ body {
       </button>
     </div>
   </section>
+  <!--/noindex-->
 
-  <p class="foot">© Apelsin · apelsin.asia</p>
+  <p class="foot" data-nosnippet>© Apelsin · apelsin.asia</p>
 </div>
 
 <script>
