@@ -1,0 +1,2 @@
+# Build helpers are run locally, not served.
+scripts/
