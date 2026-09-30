@@ -192,6 +192,7 @@
     svcCtaText: "8 ta qisqa savolga javob bering — mutaxassisimiz siz bilan bog'lanadi va biznesingizga mos yechim taklif qiladi.",
     svcCtaBtn: 'Bepul konsultatsiya',
     svcHomeEyebrow: 'Nima qilamiz', svcHomeTitle: 'Xizmatlarimiz',
+    svcHomeLead: "Apelsin — Toshkentdagi performance-marketing agentligi. Reklama, sayt va brendni bitta tizimga bog'lab, biznesingizga barqaror lid va sotuv olib kelamiz.",
     svcPicked: 'Xizmat:',
     svcMore: 'Batafsil', svcBook: 'Konsultatsiya',
   });
@@ -207,6 +208,7 @@
     svcCtaText: 'Ответьте на 8 коротких вопросов — наш специалист свяжется с вами и предложит решение под ваш бизнес.',
     svcCtaBtn: 'Бесплатная консультация',
     svcHomeEyebrow: 'Что мы делаем', svcHomeTitle: 'Наши услуги',
+    svcHomeLead: 'Apelsin — performance-маркетинговое агентство в Ташкенте. Связываем рекламу, сайт и бренд в одну систему и приносим бизнесу стабильный поток заявок и продаж.',
     svcPicked: 'Услуга:',
     svcMore: 'Подробнее', svcBook: 'Консультация',
   });
@@ -222,6 +224,7 @@
     svcCtaText: 'Answer 8 short questions and our specialist will get in touch with a solution for your business.',
     svcCtaBtn: 'Free consultation',
     svcHomeEyebrow: 'What we do', svcHomeTitle: 'Our services',
+    svcHomeLead: 'Apelsin is a performance marketing agency in Tashkent. We connect ads, website and brand into one system that brings your business a steady flow of leads and sales.',
     svcPicked: 'Service:',
     svcMore: 'Learn more', svcBook: 'Consultation',
   });
