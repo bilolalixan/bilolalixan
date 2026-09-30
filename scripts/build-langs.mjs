@@ -152,14 +152,20 @@ function translate({ l, dict, P, meta, alts, canonical, locale, DEFAULT }) {
       s.textContent = JSON.stringify(ld).replace(/</g, '\\u003c');
     } catch (_) {}
   });
-  doc.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
+  doc.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => {
+    const prev = el.previousSibling;
+    if (prev && prev.nodeType === 3 && !prev.textContent.trim()) prev.remove();
+    el.remove();
+  });
+  // Keep the head tidy: one newline between tags.
+  [...doc.head.childNodes].forEach((n) => { if (n.nodeType === 3 && !n.textContent.trim()) n.textContent = '\n'; });
   let after = can;
   for (const [hl, href] of alts) {
     const link = doc.createElement('link');
     link.setAttribute('rel', 'alternate'); link.setAttribute('hreflang', hl); link.setAttribute('href', href);
     after.after(doc.createTextNode('\n'), link); after = link;
   }
-  return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML + '\n';
+  return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML.replace(/\s+(<\/body>)/, '\n$1') + '\n';
 }
 
 const dict = loadDict();
