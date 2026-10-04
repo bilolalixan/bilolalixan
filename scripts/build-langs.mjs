@@ -69,9 +69,9 @@ const SVC_TAIL = { ru: 'Apelsin, Ташкент — бесплатная кон�
 
 const PAGES = [
   { path: '/', file: 'index.html', meta: {
-    ru: ['Apelsin — performance-маркетинговое агентство в Ташкенте', 'Apelsin — performance-маркетинговое агентство в Ташкенте. Таргетированная реклама, Google Ads, сайты и брендинг, которые приносят бизнесу заявки и продажи. Бесплатная консультация.'],
-    uz: ['Apelsin — performance-marketing agentligi, Toshkent', "Apelsin — Toshkentdagi performance-marketing agentligi. Target reklama, Google Ads, sayt va brending orqali biznesingizga lid va sotuv olib kelamiz. Bepul konsultatsiya."],
-    en: ['Apelsin — performance marketing agency in Tashkent', 'Apelsin is a performance marketing agency in Tashkent. Targeted ads, Google Ads, websites and branding that bring your business leads and sales. Free consultation.'],
+    ru: ['Apelsin — маркетинговое агентство в Ташкенте', 'Стратегия, аналитика и маркетинг на основе цифр. Помогаем бизнесу расти системно и измеримо.'],
+    uz: ['Apelsin — Toshkentdagi marketing agentligi', "Strategiya, tahlil va raqamlarga asoslangan marketing. Biznesingizni tizimli va o'lchanadigan tarzda o'stirishga yordam beramiz."],
+    en: ['Apelsin — marketing agency in Tashkent', 'Strategy, analytics and data-driven marketing. We help businesses grow in a systematic, measurable way.'],
   } },
   { path: '/bilolalixan', file: 'bilolalixan/index.html', meta: {
     ru: ["Bilol alixan Kemal O'g'li — основатель Kingdom Group", "Bilol alixan Kemal O'g'li — основатель Kingdom Group. Телефон, Telegram, Instagram, LinkedIn и YouTube для связи; оставьте отзыв напрямую."],
