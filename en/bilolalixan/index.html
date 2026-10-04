@@ -272,7 +272,7 @@ body {
 .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
 .about-stats div { padding: 14px 12px; border-radius: 18px; background: var(--card2); display: flex; flex-direction: column; gap: 4px; }
 .about-stats b { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
-.about-stats span { font-size: 12px; line-height: 1.35; color: var(--ink3); }
+.about-stats span { font-size: 13px; line-height: 1.3; color: var(--ink2); }
 .about-sub { margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--ink); }
 .ventures { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .ventures li { padding: 14px 16px; border-radius: 18px; background: var(--card2); font-size: 14px; line-height: 1.55; color: var(--ink2); }
@@ -429,9 +429,9 @@ body {
     <h2 class="section-title" data-i18n="aboutTitle">About me</h2>
     <p class="about-p" data-i18n-html="about1"><b>Bilol alixan Toxirov</b> is an analytical and strategic marketer, and the founder and head of several companies. Born in Namangan, he now works in Tashkent.</p>
     <div class="about-stats">
-      <div><b>2021</b><span data-i18n="statStart">started in marketing</span></div>
-      <div><b>400+</b><span data-i18n="statBrands">brands worked with</span></div>
-      <div><b>3</b><span data-i18n="statCos">companies founded</span></div>
+      <div><b>2021</b><span data-i18n="statStart">year started</span></div>
+      <div><b>400+</b><span data-i18n="statBrands">brands</span></div>
+      <div><b>3</b><span data-i18n="statCos">companies</span></div>
     </div>
     <p class="about-p" data-i18n-html="about2">His path in marketing began in 2021. He studied digital marketing at a private agency in Kazan, where he also gained his first hands-on experience. In 2023 he moved into strategic and analytical marketing and took on the role of CEO. His approach is clear: <b>every decision should rest on numbers, and every campaign on a well-thought-out strategy.</b></p>
     <p class="about-p" data-i18n="about3">To date he has worked with more than 400 brands across different areas of marketing, leading these projects through his teams. They include international brands such as Hilton, InterContinental, Swissôtel and KIA, as well as leading and premium companies in Uzbekistan: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center and Dehkon, the largest supermarket chain in Khorezm.</p>
@@ -545,9 +545,9 @@ const T = window.I18N_PAGE = {
     about1: "<b>Bilol alixan Toxirov</b> Namangan shahrida tug'ilgan, ammo hozirda faoliyatini Toshkentda olib boruvchi analitik va strateg marketolog, bir nechta kompaniyaning asoschisi va rahbari.",
     about2: "Uning marketing sohasidagi yo'li 2021-yilda boshlangan. Digital marketing bo'yicha Qozondagi xususiy agentlikda tahsil olib, shu yerda dastlabki amaliy tajribasini orttirgan. 2023-yildan boshlab strategik va analitik marketing yo'nalishiga o'tib, CEO sifatida faoliyat yurita boshlagan. Uning yondashuvi aniq: <b>har bir qaror raqamlarga, har bir kampaniya puxta strategiyaga asoslanishi kerak.</b>",
     about3: "Bugungi kunga qadar u 400 dan ortiq brend bilan marketingning turli yo'nalishlarida hamkorlik qilgan va bu loyihalarni o'z jamoalari orqali boshqargan. Ular orasida Hilton, InterContinental, Swissôtel va KIA kabi xalqaro brendlar, shuningdek Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center va Xorazmdagi eng yirik supermarket tarmog'i Dehkon kabi O'zbekiston bozorining yetakchi va premium kompaniyalari bor.",
-    statStart: "marketingdagi yo'l boshlandi",
-    statBrands: "brend bilan hamkorlik",
-    statCos: "kompaniya asoschisi",
+    statStart: "yildan beri",
+    statBrands: "brend",
+    statCos: "kompaniya",
     venturesTitle: "Bugun Bilol alixan uch yo'nalishni rivojlantirmoqda:",
     vApelsin: "bizneslar uchun strategik marketing agentligi.",
     vOdex: "bizneslarning moliya, mijozlar bilan ishlash, bron va sotuv bo'limlarini raqamlashtiradigan va avtomatlashtiradigan IT-kompaniya. Mobil ilova va veb-saytlar ham ishlab chiqadi.",
@@ -575,9 +575,9 @@ const T = window.I18N_PAGE = {
     about1: "<b>Bilol alixan Toxirov</b> — маркетолог-аналитик и стратег, основатель и руководитель нескольких компаний. Родился в Намангане, сейчас работает в Ташкенте.",
     about2: "Его путь в маркетинге начался в 2021 году. Он обучался digital-маркетингу в частном агентстве в Казани и там же получил первый практический опыт. С 2023 года перешёл в стратегический и аналитический маркетинг и начал работать в роли CEO. Его подход прост: <b>каждое решение должно опираться на цифры, а каждая кампания — на продуманную стратегию.</b>",
     about3: "На сегодняшний день он поработал более чем с 400 брендами в разных направлениях маркетинга и руководил этими проектами через свои команды. Среди них — международные бренды Hilton, InterContinental, Swissôtel и KIA, а также ведущие и премиальные компании Узбекистана: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center и Dehkon — крупнейшая сеть супермаркетов в Хорезме.",
-    statStart: "начало пути в маркетинге",
-    statBrands: "брендов-партнёров",
-    statCos: "компании под его руководством",
+    statStart: "год старта",
+    statBrands: "брендов",
+    statCos: "компании",
     venturesTitle: "Сегодня Bilol alixan развивает три направления:",
     vApelsin: "агентство стратегического маркетинга для бизнеса.",
     vOdex: "IT-компания, которая цифровизирует и автоматизирует финансы, работу с клиентами, бронирование и отделы продаж бизнеса. Также разрабатывает мобильные приложения и веб-сайты.",
@@ -605,9 +605,9 @@ const T = window.I18N_PAGE = {
     about1: "<b>Bilol alixan Toxirov</b> is an analytical and strategic marketer, and the founder and head of several companies. Born in Namangan, he now works in Tashkent.",
     about2: "His path in marketing began in 2021. He studied digital marketing at a private agency in Kazan, where he also gained his first hands-on experience. In 2023 he moved into strategic and analytical marketing and took on the role of CEO. His approach is clear: <b>every decision should rest on numbers, and every campaign on a well-thought-out strategy.</b>",
     about3: "To date he has worked with more than 400 brands across different areas of marketing, leading these projects through his teams. They include international brands such as Hilton, InterContinental, Swissôtel and KIA, as well as leading and premium companies in Uzbekistan: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center and Dehkon, the largest supermarket chain in Khorezm.",
-    statStart: "started in marketing",
-    statBrands: "brands worked with",
-    statCos: "companies founded",
+    statStart: "year started",
+    statBrands: "brands",
+    statCos: "companies",
     venturesTitle: "Today Bilol alixan is building three companies:",
     vApelsin: "a strategic marketing agency for businesses.",
     vOdex: "an IT company that digitises and automates businesses' finance, customer service, booking and sales departments. It also builds mobile apps and websites.",
