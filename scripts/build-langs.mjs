@@ -74,9 +74,9 @@ const PAGES = [
     en: ['Apelsin — marketing agency in Tashkent', 'Strategy, analytics and data-driven marketing. We help businesses grow in a systematic, measurable way.'],
   } },
   { path: '/bilolalixan', file: 'bilolalixan/index.html', meta: {
-    ru: ["Bilol alixan Kemal O'g'li — основатель Kingdom Group", "Bilol alixan Kemal O'g'li — основатель Kingdom Group. Телефон, Telegram, Instagram, LinkedIn и YouTube для связи; оставьте отзыв напрямую."],
-    uz: ["Bilol alixan Kemal O'g'li — Founder, Kingdom Group", "Bilol alixan Kemal O'g'li — Kingdom Group asoschisi. Aloqa uchun telefon, Telegram, Instagram, LinkedIn va YouTube; fikringizni to'g'ridan-to'g'ri yuboring."],
-    en: ["Bilol alixan Kemal O'g'li — Founder, Kingdom Group", "Bilol alixan Kemal O'g'li, founder of Kingdom Group. Phone, Telegram, Instagram, LinkedIn and YouTube; send your feedback directly."],
+    ru: ['Bilolalixan Toxirov — стратег-маркетолог, основатель Apelsin', 'Аналитик и стратег-маркетолог, CEO Apelsin, Odex Asia и The Hub. 400+ брендов, включая Hilton и KIA. Связь в Telegram, Instagram, LinkedIn и YouTube.'],
+    uz: ['Bilolalixan Toxirov — strateg-marketolog, Apelsin asoschisi', "Analitik va strateg-marketolog, Apelsin, Odex Asia va The Hub CEO'si. Hilton va KIA kabi 400+ brend bilan ishlagan. Telegram, Instagram, LinkedIn va YouTube'da aloqa."],
+    en: ['Bilolalixan Toxirov — strategic marketer, founder of Apelsin', 'Analytical and strategic marketer, CEO of Apelsin, Odex Asia and The Hub. 400+ brands, including Hilton and KIA. Contact via Telegram, Instagram, LinkedIn and YouTube.'],
   } },
   { path: '/booking', file: 'booking/index.html', meta: {
     ru: ['Бесплатная маркетинговая консультация — Apelsin', 'Бесплатная маркетинговая консультация от Apelsin: ответьте на 8 коротких вопросов, и наш специалист свяжется с вами со стратегией для вашего бизнеса.'],
