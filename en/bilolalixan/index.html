@@ -262,6 +262,24 @@ body {
 .s-arrow { width: 16px; height: 16px; color: var(--ink3); transition: color 0.15s, transform 0.2s; }
 .s-item:hover .s-arrow { color: var(--ink); transform: translate(2px, -2px); }
 
+/* ── ABOUT ── */
+.about { padding: 24px 22px 24px; }
+.about .section-title { font-size: 22px; margin-bottom: 14px; }
+.about-p { font-size: 15px; line-height: 1.65; color: var(--ink2); }
+.about-p + .about-p, .about-stats + .about-p, .ventures + .about-p { margin-top: 14px; }
+.about-p b { color: var(--ink); font-weight: 600; }
+.about-goal { padding: 16px 18px; border-radius: 20px; background: var(--card2); color: var(--ink); }
+.about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 18px; }
+.about-stats div { padding: 14px 12px; border-radius: 18px; background: var(--card2); display: flex; flex-direction: column; gap: 4px; }
+.about-stats b { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+.about-stats span { font-size: 12px; line-height: 1.35; color: var(--ink3); }
+.about-sub { margin-top: 18px; font-size: 15px; font-weight: 600; color: var(--ink); }
+.ventures { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ventures li { padding: 14px 16px; border-radius: 18px; background: var(--card2); font-size: 14px; line-height: 1.55; color: var(--ink2); }
+.ventures b { color: var(--ink); font-weight: 600; }
+.ventures a { color: inherit; text-decoration: none; }
+.ventures a b { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ink3); }
+
 /* ── FEEDBACK ── */
 .feedback { padding: 22px 20px 20px; }
 .section-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 14px; }
@@ -406,6 +424,27 @@ body {
     </form>
   </section>
 
+  <!-- ABOUT -->
+  <section class="card about" id="about">
+    <h2 class="section-title" data-i18n="aboutTitle">About me</h2>
+    <p class="about-p" data-i18n-html="about1"><b>Bilol alixan Toxirov</b> is an analytical and strategic marketer, and the founder and head of several companies. Born in Namangan, he now works in Tashkent.</p>
+    <div class="about-stats">
+      <div><b>2021</b><span data-i18n="statStart">started in marketing</span></div>
+      <div><b>400+</b><span data-i18n="statBrands">brands worked with</span></div>
+      <div><b>3</b><span data-i18n="statCos">companies founded</span></div>
+    </div>
+    <p class="about-p" data-i18n-html="about2">His path in marketing began in 2021. He studied digital marketing at a private agency in Kazan, where he also gained his first hands-on experience. In 2023 he moved into strategic and analytical marketing and took on the role of CEO. His approach is clear: <b>every decision should rest on numbers, and every campaign on a well-thought-out strategy.</b></p>
+    <p class="about-p" data-i18n="about3">To date he has worked with more than 400 brands across different areas of marketing, leading these projects through his teams. They include international brands such as Hilton, InterContinental, Swissôtel and KIA, as well as leading and premium companies in Uzbekistan: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center and Dehkon, the largest supermarket chain in Khorezm.</p>
+    <p class="about-sub" data-i18n="venturesTitle">Today Bilol alixan is building three companies:</p>
+    <ul class="ventures">
+      <li><a href="/en"><b>Apelsin</b></a> — <span data-i18n="vApelsin">a strategic marketing agency for businesses.</span></li>
+      <li><b>Odex Asia</b> — <span data-i18n="vOdex">an IT company that digitises and automates businesses' finance, customer service, booking and sales departments. It also builds mobile apps and websites.</span></li>
+      <li><b>The Hub</b> — <span data-i18n="vHub">a performance agency specialising in lead generation and advertising on Google, Yandex, Telegram, YouTube and Facebook.</span></li>
+    </ul>
+    <p class="about-p" data-i18n="about4">He is currently studying for an MBA at the University of London.</p>
+    <p class="about-p about-goal" data-i18n-html="about5">His goal is to help businesses in Uzbekistan make their marketing, sales and processes <b>systematic, measurable and scalable.</b></p>
+  </section>
+
   <!-- FOOTER:START (generated from api/_lib/footer.js) -->
   <footer class="card site-foot" id="siteFooter">
    <div class="sf-in">
@@ -501,7 +540,20 @@ const T = window.I18N_PAGE = {
     fbOk: "Rahmat! Fikringiz yuborildi.",
     fbErr: "Xatolik yuz berdi. Keyinroq urinib ko'ring.",
     fbEmpty: "Iltimos, fikringizni yozing.",
-    fbWait: "Iltimos, biroz kutib qayta yuboring."
+    fbWait: "Iltimos, biroz kutib qayta yuboring.",
+    aboutTitle: "Men haqimda",
+    about1: "<b>Bilol alixan Toxirov</b> Namangan shahrida tug'ilgan, ammo hozirda faoliyatini Toshkentda olib boruvchi analitik va strateg marketolog, bir nechta kompaniyaning asoschisi va rahbari.",
+    about2: "Uning marketing sohasidagi yo'li 2021-yilda boshlangan. Digital marketing bo'yicha Qozondagi xususiy agentlikda tahsil olib, shu yerda dastlabki amaliy tajribasini orttirgan. 2023-yildan boshlab strategik va analitik marketing yo'nalishiga o'tib, CEO sifatida faoliyat yurita boshlagan. Uning yondashuvi aniq: <b>har bir qaror raqamlarga, har bir kampaniya puxta strategiyaga asoslanishi kerak.</b>",
+    about3: "Bugungi kunga qadar u 400 dan ortiq brend bilan marketingning turli yo'nalishlarida hamkorlik qilgan va bu loyihalarni o'z jamoalari orqali boshqargan. Ular orasida Hilton, InterContinental, Swissôtel va KIA kabi xalqaro brendlar, shuningdek Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center va Xorazmdagi eng yirik supermarket tarmog'i Dehkon kabi O'zbekiston bozorining yetakchi va premium kompaniyalari bor.",
+    statStart: "marketingdagi yo'l boshlandi",
+    statBrands: "brend bilan hamkorlik",
+    statCos: "kompaniya asoschisi",
+    venturesTitle: "Bugun Bilol alixan uch yo'nalishni rivojlantirmoqda:",
+    vApelsin: "bizneslar uchun strategik marketing agentligi.",
+    vOdex: "bizneslarning moliya, mijozlar bilan ishlash, bron va sotuv bo'limlarini raqamlashtiradigan va avtomatlashtiradigan IT-kompaniya. Mobil ilova va veb-saytlar ham ishlab chiqadi.",
+    vHub: "lead generatsiya hamda Google, Yandex, Telegram, YouTube va Facebook reklamasiga ixtisoslashgan performance agentlik.",
+    about4: "Hozirda u University of London'da MBA bo'yicha tahsil olmoqda.",
+    about5: "Uning maqsadi — O'zbekistondagi bizneslarga marketing, sotuv va jarayonlarini <b>tizimli, o'lchanadigan va masshtablanadigan</b> qilishda yordam berish."
   },
   ru: {
     role: "Основатель · Kingdom Group",
@@ -518,7 +570,20 @@ const T = window.I18N_PAGE = {
     fbOk: "Спасибо! Ваш отзыв отправлен.",
     fbErr: "Произошла ошибка. Попробуйте позже.",
     fbEmpty: "Пожалуйста, напишите ваше мнение.",
-    fbWait: "Пожалуйста, подождите немного и отправьте снова."
+    fbWait: "Пожалуйста, подождите немного и отправьте снова.",
+    aboutTitle: "Обо мне",
+    about1: "<b>Bilol alixan Toxirov</b> — маркетолог-аналитик и стратег, основатель и руководитель нескольких компаний. Родился в Намангане, сейчас работает в Ташкенте.",
+    about2: "Его путь в маркетинге начался в 2021 году. Он обучался digital-маркетингу в частном агентстве в Казани и там же получил первый практический опыт. С 2023 года перешёл в стратегический и аналитический маркетинг и начал работать в роли CEO. Его подход прост: <b>каждое решение должно опираться на цифры, а каждая кампания — на продуманную стратегию.</b>",
+    about3: "На сегодняшний день он поработал более чем с 400 брендами в разных направлениях маркетинга и руководил этими проектами через свои команды. Среди них — международные бренды Hilton, InterContinental, Swissôtel и KIA, а также ведущие и премиальные компании Узбекистана: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center и Dehkon — крупнейшая сеть супермаркетов в Хорезме.",
+    statStart: "начало пути в маркетинге",
+    statBrands: "брендов-партнёров",
+    statCos: "компании под его руководством",
+    venturesTitle: "Сегодня Bilol alixan развивает три направления:",
+    vApelsin: "агентство стратегического маркетинга для бизнеса.",
+    vOdex: "IT-компания, которая цифровизирует и автоматизирует финансы, работу с клиентами, бронирование и отделы продаж бизнеса. Также разрабатывает мобильные приложения и веб-сайты.",
+    vHub: "performance-агентство, специализирующееся на лидогенерации и рекламе в Google, Yandex, Telegram, YouTube и Facebook.",
+    about4: "Сейчас он получает степень MBA в University of London.",
+    about5: "Его цель — помочь бизнесу в Узбекистане сделать маркетинг, продажи и процессы <b>системными, измеримыми и масштабируемыми.</b>"
   },
   en: {
     role: "Founder · Kingdom Group",
@@ -535,7 +600,20 @@ const T = window.I18N_PAGE = {
     fbOk: "Thank you! Your feedback has been sent.",
     fbErr: "Something went wrong. Please try again later.",
     fbEmpty: "Please write your feedback.",
-    fbWait: "Please wait a moment before sending again."
+    fbWait: "Please wait a moment before sending again.",
+    aboutTitle: "About me",
+    about1: "<b>Bilol alixan Toxirov</b> is an analytical and strategic marketer, and the founder and head of several companies. Born in Namangan, he now works in Tashkent.",
+    about2: "His path in marketing began in 2021. He studied digital marketing at a private agency in Kazan, where he also gained his first hands-on experience. In 2023 he moved into strategic and analytical marketing and took on the role of CEO. His approach is clear: <b>every decision should rest on numbers, and every campaign on a well-thought-out strategy.</b>",
+    about3: "To date he has worked with more than 400 brands across different areas of marketing, leading these projects through his teams. They include international brands such as Hilton, InterContinental, Swissôtel and KIA, as well as leading and premium companies in Uzbekistan: Imzo, Beston, Asialuxe Travel, Marstiff, Target International School, Silver Rain Health Center and Dehkon, the largest supermarket chain in Khorezm.",
+    statStart: "started in marketing",
+    statBrands: "brands worked with",
+    statCos: "companies founded",
+    venturesTitle: "Today Bilol alixan is building three companies:",
+    vApelsin: "a strategic marketing agency for businesses.",
+    vOdex: "an IT company that digitises and automates businesses' finance, customer service, booking and sales departments. It also builds mobile apps and websites.",
+    vHub: "a performance agency specialising in lead generation and advertising on Google, Yandex, Telegram, YouTube and Facebook.",
+    about4: "He is currently studying for an MBA at the University of London.",
+    about5: "His goal is to help businesses in Uzbekistan make their marketing, sales and processes <b>systematic, measurable and scalable.</b>"
   }
 };
 
