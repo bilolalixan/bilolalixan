@@ -7,8 +7,17 @@
     },
     "api/hub-bot.js": {
       "maxDuration": 60
+    },
+    "api/jarvis-bot.js": {
+      "maxDuration": 60
     }
   },
+  "crons": [
+    {
+      "path": "/api/jarvis-bot?cron=1",
+      "schedule": "0 4 * * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/eng",
