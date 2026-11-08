@@ -392,6 +392,66 @@ body {
 .stack-nav .icon-btn { background: var(--card2); border: 0.5px solid var(--line2); }
 @media (prefers-reduced-motion: reduce) { .s-card { transition: opacity 0.2s ease; } }
 
+/* ── DESKTOP: wide first screen ──
+   Phones keep the single column. From 1024px the page widens: the hero takes
+   the left side with a large headline, and a founder card plus the swipe card
+   stack in a right-hand column. */
+.founder { display: none; }
+@media (min-width: 1024px) {
+  body { padding: 16px 24px 24px; }
+  .wrap { max-width: 1240px; gap: 10px; }
+  .screen {
+    display: grid; gap: 10px;
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 30vw, 400px);
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: min(calc(100vh - 32px), 980px); min-height: min(calc(100dvh - 32px), 980px);
+  }
+  .hero { grid-column: 1; grid-row: 1 / span 2; padding: 30px 40px 36px; }
+  .logo { height: 28px; }
+  .hero-body { padding-top: 80px; max-width: 900px; }
+  .eyebrow { font-size: 15px; margin-bottom: 18px; }
+  .greet { font-size: clamp(60px, 5.6vw, 92px); line-height: 1.02; letter-spacing: -0.045em; }
+  .chips { margin-top: 40px; gap: 8px; }
+  .chip { height: 48px; padding: 0 20px; font-size: 14.5px; }
+  .chip svg { width: 15px; height: 15px; }
+  .chips .icon-btn { display: none; }
+
+  .founder {
+    grid-column: 2; grid-row: 1;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 24px;
+    padding: 26px 26px 24px; background: var(--card); text-decoration: none; color: var(--ink);
+    animation-delay: 0.05s; transition: background 0.2s;
+  }
+  .founder:hover { background: var(--card2); }
+  .founder-top { display: flex; align-items: flex-start; justify-content: space-between; }
+  .founder-top img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ring); }
+  .founder-go {
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line2); color: var(--ink2);
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .founder-go svg { width: 18px; height: 18px; }
+  .founder:hover .founder-go { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .founder-name { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; }
+  .founder-role { margin-top: 6px; font-size: 14.5px; line-height: 1.5; color: var(--ink2); }
+  .founder-stats { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .founder-stats div { padding: 14px 12px; border-radius: 18px; background: var(--card2); display: flex; flex-direction: column; gap: 4px; }
+  .founder:hover .founder-stats div { background: var(--chip); }
+  .founder-stats b { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+  .founder-stats span { font-size: 13px; color: var(--ink2); }
+
+  .swipe { grid-column: 2; grid-row: 2; }
+
+  /* Sections below the first screen use the wider page too. */
+  .svcs { padding: 30px 40px 18px; }
+  .svc-list { display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px; }
+  .svc-item + .svc-item { border-top: none; }
+  .svc-item { border-top: 0.5px solid var(--line2); }
+  .svc-item:nth-child(-n+2) { border-top: none; }
+  .svcs-lead { max-width: 720px; font-size: 15px; }
+  .blogs { padding: 30px 40px 26px; }
+  .stack, .stack-nav { max-width: 640px; margin-left: auto; margin-right: auto; }
+}
+
 .foot {
   text-align: center; font-size: 11px; color: var(--ink3);
   padding: 10px 0 2px; letter-spacing: 0.02em;
@@ -455,6 +515,23 @@ body {
       </div>
     </div>
   </section>
+
+  <!-- FOUNDER (desktop only: fills the right column next to the hero) -->
+  <a class="card founder" href="/en/bilolalixan">
+    <div class="founder-top">
+      <img src="/assets/bilolalixan.jpg" alt="Bilol alixan" width="96" height="96">
+      <span class="founder-go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg></span>
+    </div>
+    <div class="founder-body">
+      <p class="founder-name">Bilol alixan</p>
+      <p class="founder-role" data-i18n="hfRole">Founder of Apelsin, CEO of Odex Asia and The Hub</p>
+      <div class="founder-stats">
+        <div><b>400+</b><span data-i18n="hfBrands">brands</span></div>
+        <div><b>2021</b><span data-i18n="hfSince">year started</span></div>
+        <div><b>3</b><span data-i18n="hfCos">companies</span></div>
+      </div>
+    </div>
+  </a>
 
   <!-- SWIPE TO CONTACT -->
   <!--noindex-->
