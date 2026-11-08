@@ -107,7 +107,7 @@ function translate({ l, dict, P, meta, alts, canonical, locale, DEFAULT }) {
   doc.querySelectorAll('[data-i18n]').forEach((el) => { const v = t(el.dataset.i18n); if (typeof v === 'string') el.textContent = v; });
   doc.querySelectorAll('[data-i18n-html]').forEach((el) => {
     let v = t(el.dataset.i18nHtml); if (typeof v !== 'string') return;
-    if (v.includes('{avatar}')) { const img = el.querySelector('img'); v = v.replace('{avatar}', img ? img.outerHTML : ''); }
+    if (v.includes('{avatar}')) { const img = el.querySelector('img.greet-avatar') || el.querySelector('img:not(.wave-img)'); v = v.replace('{avatar}', img ? img.outerHTML : ''); }
     el.innerHTML = v;
   });
   doc.querySelectorAll('[data-i18n-aria]').forEach((el) => { const v = t(el.dataset.i18nAria); if (typeof v === 'string') el.setAttribute('aria-label', v); });

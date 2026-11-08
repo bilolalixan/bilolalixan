@@ -189,6 +189,8 @@ body {
 }
 .greet b { font-weight: 600; color: var(--ink); }
 .wave { display: inline-block; transform-origin: 70% 70%; animation: wave 2.4s ease-in-out 0.6s 2; }
+/* Same 3D emoji on every system (Microsoft Fluent Emoji, MIT) instead of the OS font. */
+.wave-img { width: 0.92em; height: 0.92em; vertical-align: -0.12em; display: inline-block; }
 @keyframes wave {
   0%, 60%, 100% { transform: rotate(0); }
   10%, 30% { transform: rotate(14deg); }
@@ -498,7 +500,7 @@ body {
 
     <div class="hero-body">
       <p class="eyebrow" data-i18n="eyebrow">Marketing agency</p>
-      <h1 class="greet" data-i18n-html="greet"><b>Hello</b> <span class="wave">👋</span> <img class="greet-avatar" src="/assets/bilolalixan.jpg" alt=""> welcome, this is where <b>ideas turn into results</b></h1>
+      <h1 class="greet" data-i18n-html="greet"><b>Hello</b> <span class="wave"><img class="wave-img" src="/assets/wave.png" alt="👋" width="64" height="64"></span> <img class="greet-avatar" src="/assets/bilolalixan.jpg" alt=""> welcome, this is where <b>ideas turn into results</b></h1>
 
       <div class="chips">
         <span class="chip">
