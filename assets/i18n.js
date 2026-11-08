@@ -15,7 +15,7 @@
   const D = {
     uz: {
       eyebrow: 'Marketing agentligi',
-      greet: "<b>Salom</b> <span class=\"wave\"><img class=\"wave-img\" src=\"/assets/wave.png\" alt=\"👋\" width=\"64\" height=\"64\"></span> {avatar} xush kelibsiz, bu yerda <b>g'oyalar natijaga aylanadi</b>",
+      greet: "<b>Salom</b> {avatar} xush kelibsiz, bu yerda <b>g'oyalar natijaga aylanadi</b>",
       city: 'Toshkent',
       ctaBook: 'Konsultatsiya',
       blog: 'Blog',
@@ -70,7 +70,7 @@
     },
     ru: {
       eyebrow: 'Маркетинговое агентство',
-      greet: '<b>Привет</b> <span class="wave"><img class="wave-img" src="/assets/wave.png" alt="👋" width="64" height="64"></span> {avatar} здесь <b>идеи становятся результатом</b>',
+      greet: '<b>Привет</b> {avatar} здесь <b>идеи становятся результатом</b>',
       city: 'Ташкент',
       ctaBook: 'Консультация',
       blog: 'Блог',
@@ -124,7 +124,7 @@
     },
     en: {
       eyebrow: 'Marketing agency',
-      greet: '<b>Hello</b> <span class="wave"><img class="wave-img" src="/assets/wave.png" alt="👋" width="64" height="64"></span> {avatar} welcome, this is where <b>ideas turn into results</b>',
+      greet: '<b>Hello</b> {avatar} welcome, this is where <b>ideas turn into results</b>',
       city: 'Tashkent',
       ctaBook: 'Consultation',
       blog: 'Blog',
