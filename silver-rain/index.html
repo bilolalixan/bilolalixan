@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0b0c">
+<title>Silver Rain — zonani tanlang</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #0b0b0c; --card: #141416; --card2: #1c1c1f; --chip: #242428;
+  --line: rgba(255,255,255,0.07); --line2: rgba(255,255,255,0.13);
+  --ink: #f2f2f3; --ink2: #a1a1a6; --ink3: #6b6b70;
+  --accent: #7ee0a8; --accent-ink: #062615; --taken: #6b2a33; --vip: #c8a96b;
+  --safe-b: env(safe-area-inset-bottom);
+}
+html, body { height: 100%; background: var(--bg); color: var(--ink); overflow: hidden; }
+body { font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Inter, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; border: none; background: none; cursor: pointer; }
+
+.screen { position: fixed; inset: 0; display: flex; flex-direction: column; transition: opacity 0.35s ease, transform 0.35s ease; }
+.screen[hidden] { display: none; }
+
+/* ── MAP SCREEN ── */
+#map { max-width: 520px; margin: 0 auto; padding: 14px 16px calc(14px + var(--safe-b)); }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.round { width: 40px; height: 40px; border-radius: 50%; background: var(--chip); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.round svg { width: 17px; height: 17px; }
+.title { text-align: center; }
+.title b { display: block; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.title span { font-size: 12px; color: var(--ink2); }
+
+.days, .slots { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-top: 14px; padding-bottom: 2px; }
+.days::-webkit-scrollbar, .slots::-webkit-scrollbar { display: none; }
+.day, .slot {
+  flex-shrink: 0; height: 36px; padding: 0 14px; border-radius: 100px; background: var(--card2);
+  border: 0.5px solid var(--line); font-size: 13px; color: var(--ink2); display: inline-flex; align-items: center; gap: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+.day[aria-pressed="true"], .slot[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); font-weight: 600; }
+.slots { margin-top: 8px; }
+
+.plan-wrap { position: relative; flex: 1; min-height: 0; margin-top: 12px; display: flex; flex-direction: column; }
+.plan-label { text-align: center; font-size: 10.5px; letter-spacing: 0.2em; color: var(--ink3); margin-bottom: 4px; }
+.arc { display: block; width: 78%; margin: 0 auto; height: 18px; }
+svg.plan { flex: 1; min-height: 0; width: 100%; display: block; }
+.zone rect { transition: fill 0.2s, stroke 0.2s; }
+.zone { cursor: pointer; }
+.zone text { pointer-events: none; font-family: inherit; }
+.zone .z-name { font-size: 11.5px; font-weight: 600; fill: var(--ink); }
+.zone .z-sub { font-size: 9.5px; fill: var(--ink2); }
+.zone.taken { cursor: not-allowed; }
+.zone.taken .z-name, .zone.taken .z-sub { fill: var(--ink3); }
+.zone.pulse rect { animation: pulse 0.5s ease; }
+@keyframes pulse { 50% { transform: scale(0.97); } }
+
+.legend { display: flex; justify-content: center; gap: 14px; margin-top: 8px; font-size: 11.5px; color: var(--ink2); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+.bar {
+  margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 14px 14px 18px; border-radius: 24px; background: var(--card); border: 0.5px solid var(--line);
+}
+.bar small { display: block; font-size: 12px; color: var(--ink2); }
+.bar b { font-size: 17px; font-weight: 600; }
+.btn {
+  height: 48px; padding: 0 24px; border-radius: 100px; font-size: 15px; font-weight: 600;
+  background: var(--accent); color: var(--accent-ink); transition: opacity 0.15s, transform 0.15s;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { background: var(--chip); color: var(--ink3); }
+.btn.light { background: var(--ink); color: var(--bg); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line2); }
+
+/* ── ZONE (3D) SCREEN ── */
+#zone canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.z-top { position: absolute; left: 0; right: 0; top: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+.z-top .round { background: rgba(20,20,22,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.view-pill {
+  height: 32px; padding: 0 14px; border-radius: 100px; display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(20,20,22,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 12.5px;
+}
+.view-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.hint {
+  position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 2; pointer-events: none;
+  padding: 10px 16px; border-radius: 100px; background: rgba(20,20,22,0.55); font-size: 12.5px; color: var(--ink2);
+  transition: opacity 0.6s ease;
+}
+.sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; max-width: 520px; margin: 0 auto;
+  padding: 10px 18px calc(18px + var(--safe-b)); border-radius: 28px 28px 0 0;
+  background: rgba(18,18,20,0.92); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-top: 0.5px solid var(--line2);
+  transform: translateY(105%); transition: transform 0.55s cubic-bezier(.2,.8,.2,1);
+}
+.sheet.open { transform: none; }
+.grab { width: 40px; height: 4px; border-radius: 4px; background: var(--line2); margin: 0 auto 14px; }
+.s-head { display: flex; justify-content: space-between; gap: 12px; }
+.s-tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); }
+.s-name { margin-top: 4px; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+.s-sub { margin-top: 2px; font-size: 13px; color: var(--ink2); }
+.mini { width: 64px; height: 56px; flex-shrink: 0; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 14px; }
+.stats div { padding: 10px 12px; border-radius: 16px; background: var(--card2); border: 0.5px solid var(--line); }
+.stats b { display: block; font-size: 18px; font-weight: 600; }
+.stats span { font-size: 11.5px; color: var(--ink3); }
+.feats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.feats span { height: 28px; padding: 0 11px; border-radius: 100px; border: 0.5px solid var(--line2); font-size: 12px; color: var(--ink2); display: inline-flex; align-items: center; }
+.acts { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; margin-top: 16px; }
+
+/* ── BOOKING ── */
+.form { display: none; }
+.sheet.booking .info { display: none; }
+.sheet.booking .form { display: block; }
+.form h3 { font-size: 20px; font-weight: 600; }
+.form p { margin-top: 4px; font-size: 13px; color: var(--ink2); }
+.form label { display: block; margin-top: 12px; font-size: 12px; color: var(--ink2); }
+.form input {
+  width: 100%; height: 48px; margin-top: 6px; padding: 0 16px; border-radius: 16px;
+  background: var(--card2); border: 0.5px solid var(--line2); color: var(--ink); font: inherit; font-size: 15px; outline: none;
+}
+.form input:focus { border-color: var(--ink3); }
+.guests { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.guests button { width: 44px; height: 44px; border-radius: 50%; background: var(--chip); font-size: 20px; }
+.guests b { min-width: 30px; text-align: center; font-size: 18px; }
+.msg { margin-top: 10px; font-size: 13px; min-height: 18px; }
+.msg.err { color: #eb7a7a; } .msg.ok { color: var(--accent); }
+.demo { position: fixed; left: 50%; bottom: 2px; transform: translateX(-50%); font-size: 9.5px; color: var(--ink3); z-index: 1; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- MAP -->
+<section class="screen" id="map">
+  <div class="head">
+    <button class="round" id="infoBtn" aria-label="Ma'lumot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></button>
+    <div class="title"><b>Silver Rain</b><span>Spa &amp; Wellness · Toshkent</span></div>
+    <button class="round" id="closeBtn" aria-label="Yopish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="days" id="days"></div>
+  <div class="slots" id="slots"></div>
+  <div class="plan-wrap">
+    <svg class="arc" viewBox="0 0 300 18" aria-hidden="true"><path d="M5 16 Q150 -6 295 16" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5"/></svg>
+    <p class="plan-label">KIRISH · RESEPSHN</p>
+    <svg class="plan" id="plan" viewBox="0 0 340 400" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+  <div class="legend">
+    <span><i style="background:#2b2b30"></i>Bo'sh</span>
+    <span><i style="background:var(--taken)"></i>Band</span>
+    <span><i style="background:var(--accent)"></i>Tanlangan</span>
+  </div>
+  <div class="bar">
+    <div><small id="barSmall">Zonani tanlang</small><b id="barBig">—</b></div>
+    <button class="btn" id="contBtn" disabled>Ko'rish</button>
+  </div>
+</section>
+
+<!-- ZONE 3D -->
+<section class="screen" id="zone" hidden>
+  <canvas id="gl"></canvas>
+  <div class="z-top">
+    <button class="round" id="backBtn" aria-label="Orqaga"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <span class="view-pill"><i></i><span id="viewName">Ko'rinish</span></span>
+    <button class="round" id="gyroBtn" aria-label="Telefonni burab ko'rish"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M2 8a10 10 0 0 0 0 8M22 8a10 10 0 0 1 0 8"/></svg></button>
+  </div>
+  <p class="hint" id="hint">Atrofga qarash uchun suring</p>
+  <div class="sheet" id="sheet">
+    <div class="grab"></div>
+    <div class="info">
+      <div class="s-head">
+        <div><p class="s-tag" id="sTag"></p><h2 class="s-name" id="sName"></h2><p class="s-sub" id="sSub"></p></div>
+        <svg class="mini" id="mini" viewBox="0 0 340 400"></svg>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="feats" id="feats"></div>
+      <div class="acts">
+        <button class="btn ghost" id="otherBtn">Boshqa zona</button>
+        <button class="btn light" id="bookBtn">Bron qilish</button>
+      </div>
+    </div>
+    <form class="form" id="form" novalidate>
+      <h3>Bron qilish</h3>
+      <p id="formSub"></p>
+      <label>Ismingiz<input id="fName" autocomplete="name" maxlength="60" placeholder="Ism"></label>
+      <label>Telefon<input id="fPhone" type="tel" autocomplete="tel" maxlength="20" placeholder="+998 __ ___ __ __"></label>
+      <label>Mehmonlar soni</label>
+      <div class="guests"><button type="button" id="gMinus">−</button><b id="gCount">2</b><button type="button" id="gPlus">+</button></div>
+      <p class="msg" id="fMsg"></p>
+      <div class="acts">
+        <button type="button" class="btn ghost" id="fBack">Orqaga</button>
+        <button type="submit" class="btn" id="fSend">Yuborish</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<p class="demo">Prototip · narx va ma'lumotlar namunaviy</p>
+
+<script type="module" src="/silver-rain/app.js"></script>
+</body>
+</html>
